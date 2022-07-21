@@ -22,6 +22,10 @@
         <button type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로그인</button>
       </div>
     </form>
+    <div class="text-center">
+      <router-link class="mx-3" to="/signup">회원가입</router-link>|
+      <router-link class="mx-3" to="/pwsearch">비밀번호 찾기</router-link>
+    </div>
   </div>
 </template>
 
