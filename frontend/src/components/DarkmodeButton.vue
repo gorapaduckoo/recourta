@@ -4,7 +4,7 @@
     @click="toggleDarkMode"
   >
     <!-- sun -->
-    <svg v-if="isDark" class="h-10 w-10" viewBox="0 0 75 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg v-if="state.isDark" class="h-10 w-10" viewBox="0 0 75 75" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <circle cx="37.5" cy="37.5" r="37.5" fill="white"/>
       <rect x="15" y="15" width="45" height="45" fill="url(#pattern0)"/>
       <defs>
@@ -31,24 +31,29 @@
 </template>
 
 <script>
-export default {
+import {reactive} from 'vue'
+
+export default {  
+
   name: 'DarkModeButton',
   setup(){
-    const isDark = (localStorage.theme === 'dark')? true : false
+    const state = reactive({
+      isDark : (localStorage.theme === 'dark')? true : false
+    })
     const toggleDarkMode = () => {
       if(localStorage.theme === 'dark'){
         document.documentElement.classList.remove('dark')
         localStorage.theme='light'
-        this.isDark=false
+        state.isDark=false
       }
       else {
         document.documentElement.classList.add('dark')
         localStorage.theme='dark'
-        this.isDark=true
+        state.isDark=true
       }
     }
     return {
-      isDark,
+      state,
       toggleDarkMode,
     }
   },
