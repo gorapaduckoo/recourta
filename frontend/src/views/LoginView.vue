@@ -16,7 +16,7 @@
         <div class="flex items-center h-5">
           <input id="remember" type="checkbox" value="" class="w-4 h-4 bg-[#ffffff] checked:bg-[#2c5172] dark:checked:bg-[#2c5172] focus:ring-[#ffffff] dark:focus:ring-[#444444] dark:focus:ring-offset-[#444444] rounded border border-gray-300 dark:border-[#888888] dark:bg-[#444444]">
         </div>
-        <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+        <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">이메일 저장</label>
       </div>
       <div class="text-center w-3/4 mr-auto ml-auto mb-6">
         <button type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로그인</button>
