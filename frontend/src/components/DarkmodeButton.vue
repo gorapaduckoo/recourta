@@ -33,24 +33,43 @@
 <script>
 export default {
   name: 'DarkModeButton',
-  data: function() {
+  setup(){
+    const isDark = (localStorage.theme === 'dark')? true : false
+    const toggleDarkMode = () => {
+      if(localStorage.theme === 'dark'){
+        document.documentElement.classList.remove('dark')
+        localStorage.theme='light'
+        this.isDark=false
+      }
+      else {
+        document.documentElement.classList.add('dark')
+        localStorage.theme='dark'
+        this.isDark=true
+      }
+    }
     return {
-      isDark: localStorage.theme ==='dark' ? true : false,
+      isDark,
+      toggleDarkMode,
     }
   },
-  methods: {
-    toggleDarkMode() {
-      if (localStorage.theme === 'dark') {
-        document.documentElement.classList.remove('dark')
-        localStorage.theme = 'light'
-        this.isDark = false
-      } else {
-        document.documentElement.classList.add('dark')
-        localStorage.theme = 'dark'
-        this.isDark = true
-      }
-    },
-  },
+  // data: function() {
+  //   return {
+  //     isDark: localStorage.theme ==='dark' ? true : false,
+  //   }
+  // },
+  // methods: {
+  //   toggleDarkMode() {
+  //     if (localStorage.theme === 'dark') {
+  //       document.documentElement.classList.remove('dark')
+  //       localStorage.theme = 'light'
+  //       this.isDark = false
+  //     } else {
+  //       document.documentElement.classList.add('dark')
+  //       localStorage.theme = 'dark'
+  //       this.isDark = true
+  //     }
+  //   },
+  // },
 }
 </script>
 
