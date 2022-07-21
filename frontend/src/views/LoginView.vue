@@ -14,7 +14,7 @@
       </div>
       <div class="flex w-3/4 mr-auto ml-auto mb-6">
         <div class="flex items-center h-5">
-          <input id="remember" type="checkbox" value="" class="w-4 h-4 bg-[#ffffff] rounded border border-gray-300 focus:ring-3 focus:ring-blue-300 dark:bg-[#444444] dark:border-[#ffffff] dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+          <input id="remember" type="checkbox" value="" class="w-4 h-4 bg-[#ffffff] checked:bg-[#2c5172] dark:checked:bg-[#2c5172] focus:ring-[#ffffff] dark:focus:ring-[#444444] dark:focus:ring-offset-[#444444] rounded border border-gray-300 dark:border-[#888888] dark:bg-[#444444]">
         </div>
         <label for="remember" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
       </div>
