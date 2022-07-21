@@ -1,8 +1,15 @@
 <template>
   <DarkmodeButton />
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
+    <router-link to="/" class="fixed top-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+      </svg>
+    </router-link>
     <h1 class="my-10 text-center font-bold">회원가입 페이지</h1>
-    <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
+    <router-link to="/">
+      <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
+    </router-link>
     <form class="pt-10">
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
         <input type="text" name="floating_name" id="floating_name" class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
