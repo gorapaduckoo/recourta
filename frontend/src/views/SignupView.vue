@@ -103,8 +103,6 @@
         <canvas class="mr-auto ml-auto" v-show="isPhotoTaken" id="photoTaken" ref="canvas" :width="450" :height="337.5"></canvas>
       </div>
       
-      
-      
       <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
         <a id="downloadPhoto" download="my-photo.jpg" class="button" role="button" @click="downloadImage">
           Download
