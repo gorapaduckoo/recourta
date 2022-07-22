@@ -32,13 +32,13 @@
         <div class="flex justify-between">
           <div class="mr-4">
             <input type="radio" id="student" name="role" value="student" class="hidden peer" required checked>
-            <label for="student" class="flex items-center py-2 px-10 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-[#6c9cc6] peer-checked:text-white peer-checked:bg-[#6c9cc6] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+            <label for="student" class="flex items-center py-2 px-10 w-full text-gray-500 rounded-lg border-2 border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-600 dark:peer-checked:text-gray-200 dark:peer-checked:bg-[#666666] peer-checked:border-[#2c5172] dark:peer-checked:border-gray-300 peer-checked:border-[3px] dark:peer-checked:border-[3px] peer-checked:text-[#2c5172] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#555555]">
               <div class="text-sm mr-auto ml-auto text-center font-semibold">수강생</div>
             </label>
           </div>
           <div>
             <input type="radio" id="lecturer" name="role" value="lecturer" class="hidden peer">
-            <label for="lecturer" class="flex items-center py-2 px-10 w-full text-gray-500 rounded-lg border-2 border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-600 dark:peer-checked:text-white dark:peer-checked:bg-[#666666] peer-checked:border-white peer-checked:border-[3px] dark:peer-checked:border-[3px] peer-checked:text-[#2c5172] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#353535]">
+            <label for="lecturer" class="flex items-center py-2 px-10 w-full text-gray-500 rounded-lg border-2 border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-600 dark:peer-checked:text-gray-200 dark:peer-checked:bg-[#666666] peer-checked:border-[#2c5172] dark:peer-checked:border-gray-300 peer-checked:border-[3px] dark:peer-checked:border-[3px] peer-checked:text-[#2c5172] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#555555]">
               <div class="text-sm mr-auto ml-auto text-center font-semibold">강의자</div>
             </label>
           </div>
