@@ -1,8 +1,8 @@
 module.exports = {
     content: ["./public/**/*.html", "./src/**/*.{html,js,vue}"],
-    theme: {
-      extend: {},
-    },
+    // theme: {
+    //   extend: {},
+    // },
     plugins: [
         require('flowbite/plugin')
     ],
