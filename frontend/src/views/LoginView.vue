@@ -1,4 +1,5 @@
 <template>
+  <CustomNavbar />
   <DarkmodeButton />
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
     <h1 class="my-10 text-center font-bold">로그인 페이지</h1>
@@ -35,12 +36,14 @@
 </template>
 
 <script>
+import CustomNavbar from '../components/CustomNavbar.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 
 export default {
   name: 'loginView',
   components: {
     DarkmodeButton,
+    CustomNavbar,
   },
 }
 </script>
