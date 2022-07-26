@@ -22,7 +22,7 @@
     </div>
     <!-- 로그아웃 버튼 -->
     <div class="flex md:order-2 space-x-3">
-      <button type="button" class="text-white bg-[#4076a5] hover:bg-[#fe5358] focus:outline-none font-medium rounded-lg text-sm px-5 py-1.5 text-center">로그아웃</button>
+      <button type="button" class="text-white bg-[#4076a5] hover:bg-[#fe5358] focus:outline-none font-medium rounded-lg text-sm px-5 text-center">로그아웃</button>
       <!-- 햄버거 버튼 -->
       <button data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-cta" aria-expanded="false">
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
@@ -30,7 +30,7 @@
       <!-- 마이페이지 버튼 -->
       
       <button type="button" class="sr-only md:not-sr-only">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 20 20" fill="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="2 2 16 16" fill="currentColor">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
         </svg>
       </button>

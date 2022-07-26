@@ -4,3 +4,13 @@
 
 <style scoped>
 </style>
+
+<script>
+
+export default {
+  name: 'App',
+  components: {
+    
+  }
+}
+</script>
