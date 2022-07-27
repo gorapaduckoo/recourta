@@ -1,6 +1,12 @@
 <template>
   <CustomNavbar />
   <DarkmodeButton />
+  <div class="container flex justify-around mx-auto">
+    <LecturerCard />
+    <LecturerCard />
+    <LecturerCard />
+  </div>
+  
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
     <h1 class="my-10 text-center font-bold">로그인 페이지</h1>
     <router-link to="/">
@@ -33,17 +39,20 @@
       <router-link class="w-20 text-left" to="/pwsearch">비밀번호 찾기</router-link>
     </div>
   </div>
+ 
 </template>
 
 <script>
 import CustomNavbar from '../components/CustomNavbar.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
+import LecturerCard from '../components/LecturerCard.vue'
 
 export default {
   name: 'loginView',
   components: {
     DarkmodeButton,
     CustomNavbar,
+    LecturerCard,
   },
 }
 </script>
