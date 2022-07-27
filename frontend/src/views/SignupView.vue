@@ -85,7 +85,7 @@
       <div class="flex justify-between items-center w-3/4 mr-auto ml-auto">
         <div class="flex items-end relative">
           <div class="text-sm mr-0.5 text-gray-500 dark:text-gray-400">사진</div>
-          <button id="camexp" type="button" @mouseenter="tooltipon" @mouseleave="tooltipoff" class="text-center">
+          <button id="camexp" type="button" @mouseenter="tooltiptoggle" @mouseleave="tooltiptoggle" class="text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-[#2c5172] dark:fill-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
             </svg>
@@ -163,12 +163,8 @@ export default {
     }
   },
   methods: {
-    tooltipon(){
-      this.istooltip = true;
-    },
-
-    tooltipoff(){
-      this.istooltip = false;
+    tooltiptoggle(){
+      this.istooltip = !this.istooltip;
     },
 
     toggleCamera() {
