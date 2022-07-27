@@ -17,9 +17,9 @@
         <input type="password" name="floating_password" id="floating_password" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
         <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
       </div>
-      <div class="flex items-center w-3/4 mr-auto ml-auto mb-6">
-        <div class="flex items-center h-5">
-          <input id="remember" type="checkbox" value="" class="w-4 h-4 bg-[#ffffff] checked:bg-[#2c5172] dark:checked:bg-[#2c5172] focus:ring-[#ffffff] dark:focus:ring-[#444444] dark:focus:ring-offset-[#444444] rounded border border-gray-300 dark:border-[#888888] dark:bg-[#444444]">
+      <div class="flex items-center w-3/4 mr-auto ml-auto mb-6 form-chec">
+        <div class="flex items-center h-5 form-check">
+          <input id="remember" type="checkbox" class="form-check-input w-4 h-4 accent-[#2c5172] dark:accent-[#2c5172] bg-[#ffffff] focus:ring-[#ffffff] dark:focus:ring-[#444444] dark:focus:ring-offset-[#444444] rounded border border-gray-300 dark:border-[#888888] dark:bg-[#444444]">
         </div>
         <label for="remember" class="ml-2 text-xs text-gray-500 dark:text-gray-400">이메일 저장</label>
       </div>

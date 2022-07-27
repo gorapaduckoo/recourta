@@ -83,17 +83,16 @@
       <!-- 웹캠 캡쳐 -->
       
       <div class="flex justify-between items-center w-3/4 mr-auto ml-auto">
-        <div class="flex items-end">
+        <div class="flex items-end relative">
           <div class="text-sm mr-0.5 text-gray-500 dark:text-gray-400">사진</div>
-          <button data-tooltip-target="tooltip-right" data-tooltip-placement="right" type="button" class="text-center">
+          <button id="camexp" type="button" @mouseenter="tooltipon" @mouseleave="tooltipoff" class="text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-[#2c5172] dark:fill-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
             </svg>
           </button>
-          <div id="tooltip-right" role="tooltip" class="inline-block absolute text-center invisible z-10 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg tooltip dark:bg-[#222222]">
+          <div id="camexptooltip" v-if="istooltip" class="inline-block absolute whitespace-nowrap text-center z-10 -top-4 left-12 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg dark:bg-[#222222]">
             출석 인증과 자리 비움 여부를 판단하기 위해서<br/>
             웹 카메라를 통한 얼굴 캡쳐가 필요합니다.
-            <div class="tooltip-arrow" data-popper-arrow></div>
           </div>
         </div>
 
@@ -159,10 +158,19 @@ export default {
       isPhotoTaken: false,
       isShotPhoto: false,
       isLoading: false,
-      link: '#'
+      link: '#',
+      istooltip: false,
     }
   },
   methods: {
+    tooltipon(){
+      this.istooltip = true;
+    },
+
+    tooltipoff(){
+      this.istooltip = false;
+    },
+
     toggleCamera() {
       if(this.isCameraOpen) {
         this.isCameraOpen = false;
@@ -179,30 +187,30 @@ export default {
       this.isLoading = true;
       
       const constraints = (window.constraints = {
-				audio: false,
-				video: true
-			});
+                audio: false,
+                video: true
+            });
 
 
-			navigator.mediaDevices
-				.getUserMedia(constraints)
-				.then(stream => {
+            navigator.mediaDevices
+                .getUserMedia(constraints)
+                .then(stream => {
           this.isLoading = false;
-					this.$refs.camera.srcObject = stream;
-				})
-				.catch(error => {
+                    this.$refs.camera.srcObject = stream;
+                })
+                .catch(error => {
           this.isLoading = false;
-					alert("May the browser didn't support or there is some errors.");
+                    alert("May the browser didn't support or there is some errors.");
           console.log(error)
-				});
+                });
     },
     
     stopCameraStream() {
       let tracks = this.$refs.camera.srcObject.getTracks();
 
-			tracks.forEach(track => {
-				track.stop();
-			});
+            tracks.forEach(track => {
+                track.stop();
+            });
     },
     
     takePhoto() {

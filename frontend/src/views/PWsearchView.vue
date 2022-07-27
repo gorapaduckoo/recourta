@@ -24,37 +24,39 @@
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
       </div>
     </form>
-    <!-- modal button -->
+
+    <!-- 이메일 발송 버튼 -->
     <div class="mt-10 text-center w-3/4 mr-auto ml-auto mb-6">
-      <button data-modal-toggle="EmailModal" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">이메일 발송</button>
-    </div>  
-    <!-- Main modal -->
-    <div id="EmailModal" tabindex="-1" aria-hidden="true" class="hidden ml-auto mr-auto fixed z-50 w-1/3 min-w-[480px] inset-0 h-full h-modal">
-      <div class="relative p-5 w-full h-auto">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg p-2.5 dark:bg-[#444444]">
-          <!-- Modal header -->
-          <div class="flex justify-between items-start dark:border-gray-600">
-            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-[#353535] rounded-lg text-sm ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="EmailModal">
-              <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-              <span class="sr-only">Close modal</span>
-            </button>
+      <button type="button" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        이메일 발송
+      </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+      id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+        <div
+          class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+          <div
+            class="modal-header flex flex-shrink-0 items-center justify-between p-4 rounded-t-md">
+            <button type="button"
+              class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+              data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <!-- Modal body -->
-          <div class="pt-4 pb-8 text-center">
+          <div class="modal-body py-4 text-center">
             <p class="font-medium">
               비밀번호 재설정 메일을 보내시겠습니까?
             </p>
+           
           </div>
-          <!-- Modal footer -->
-          <div class="flex items-center justify-end space-x-3">
-            <button data-modal-toggle="EmailModal" type="button" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center">예</button>
-            <button data-modal-toggle="EmailModal" type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500">아니오</button>
+          <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 rounded-b-md space-x-3">
+            <button type="button" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center">예</button>
+            <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500" data-bs-dismiss="modal">아니오</button>
           </div>
         </div>
       </div>
     </div>
-  
   </div>
 
     
