@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import DarkmodeButton from '@/components/DarkmodeButton'
+import DarkmodeButton from '../components/DarkmodeButton.vue'
 
 export default {
   name: 'loginView',
