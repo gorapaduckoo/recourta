@@ -1,6 +1,7 @@
 package com.ssafy.recourta.domain.lecture.entity;
 
 
+import com.ssafy.recourta.domain.user.entity.User;
 import com.sun.istack.NotNull;
 import lombok.*;
 
@@ -23,16 +24,23 @@ public class Lecture {
     @JoinColumn(name = "userId")
     private User user; // 개설자
     private String title; // 강의명
-    private String desc; // 강의설명
+    private String content; // 강의설명
     private Date startDate; // 시작일자
     private Date endDate; // 종료일자
     private String lectureImg; // 썸네일 이미지
 
     @Builder
-    public Lecture(User user, String title, String desc, Date startDate, Date endDate, String lectureImg) {
+    public Lecture(User user, String title, String content, Date startDate, Date endDate, String lectureImg) {
         this.user = user;
         this.title = title;
-        this.desc = desc;
+        this.content = content;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.lectureImg = lectureImg;
+    }
+
+    public void update(String content, Date startDate, Date endDate, String lectureImg) {
+        this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
         this.lectureImg = lectureImg;
