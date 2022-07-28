@@ -5,15 +5,15 @@
     <router-link to="/">
       <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
     </router-link>
-    <form class="pt-10">
+    <form @submit.prevent="loginCheck" class="pt-10">
       <!-- 이메일 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="email" name="floating_email" id="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="email" name="floating_email" ref="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
       </div>
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-3 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" id="floating_password" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="password" name="floating_password" ref="floating_password" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" "/>
         <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
       </div>
       <div class="flex items-center w-3/4 mr-auto ml-auto mb-6 form-chec">
@@ -23,7 +23,7 @@
         <label for="remember" class="ml-2 text-xs text-gray-500 dark:text-gray-400">이메일 저장</label>
       </div>
       <div class="text-center w-3/4 mr-auto ml-auto mb-3">
-        <router-link to="/main" type="submit" class="text-white font-bold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</router-link>
+        <button type="submit" class="text-white font-bold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</button>
       </div>
     </form>
     <div class="w-1/2 mr-auto ml-auto mb-6 flex justify-center text-xs text-gray-500 dark:text-gray-400">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 
 export default {
@@ -43,6 +44,27 @@ export default {
   components: {
     DarkmodeButton,
   },
+  setup() {
+    const loginCheck = () => {
+      console.log(this.$refs.floating_email.value)
+      const email = this.$refs.floating_email.value.trim();
+      const password = this.$refs.floating_password.value.trim();
+
+      let email_regex = new RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}');
+      if(email_regex.test(email)) {
+        console.log('이메일이 맞습니다.')
+      } else {
+        console.log('이메일이 아닙니다.')
+      }
+      
+      
+    }
+    
+    return {
+      loginCheck
+    }
+  },
+
 }
 </script>
 
