@@ -1,6 +1,6 @@
 package com.ssafy.recourta.domain.user.entity;
 
-import com.ssafy.recourta.domain.user.dto.request.UserRequest;
+
 import lombok.*;
 
 import javax.persistence.*;
