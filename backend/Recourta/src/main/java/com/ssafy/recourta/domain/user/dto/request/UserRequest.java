@@ -29,19 +29,49 @@ public class UserRequest {
 
 
 
+//    @Builder
+//    @Getter
+//    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+//    public static class Update {
+//        private String password;
+//        private String userImg;
+//
+//    public User update(){
+//        return User.builder()
+//                .password(password)
+//                .userImg(userImg)
+//                .build();
+//        }
+//    }
+
+
+    // 빌드 빼기!!!
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class UpdateImg {
+
+        private String userImg;
+
+        public User update(){
+            return User.builder()
+                    .userImg(userImg)
+                    .build();
+        }
+    }
+
     @Builder
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Update {
-        private String password;
-        private String userImg;
+    public static class UpdatePw {
 
-    public User update(){
-        return User.builder()
-                .password(password)
-                .userImg(userImg)
-                .build();
-        }
+        private int userId;
+        private String nowPw;
+        private String newPw;
+
     }
+
 }
