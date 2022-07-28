@@ -27,14 +27,14 @@
 
     <!-- 이메일 발송 버튼 -->
     <div class="mt-10 text-center w-3/4 mr-auto ml-auto mb-6">
-      <button type="button" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      <button type="button" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]" data-bs-toggle="modal" data-bs-target="#emailSendModal">
         이메일 발송
       </button>
     </div>
 
     <!-- Modal -->
     <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
-      id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      id="emailSendModal" tabindex="-1" aria-labelledby="emailSendModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
         <div
           class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
@@ -51,7 +51,7 @@
            
           </div>
           <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 rounded-b-md space-x-3">
-            <button type="button" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center">예</button>
+            <button type="button" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center" data-bs-dismiss="modal">예</button>
             <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500" data-bs-dismiss="modal">아니오</button>
           </div>
         </div>

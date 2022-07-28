@@ -21,9 +21,7 @@
     </div>
     <!-- 로그아웃 버튼 -->
     <div class="flex items-center md:order-2 space-x-3">
-      <router-link to="/">
-        <button type="button" class="text-white bg-[#4076a5] hover:bg-[#fe5358] focus:outline-none font-medium rounded-lg text-sm px-5 text-center py-2.5">로그아웃</button>
-      </router-link>
+      <button type="button" class="text-white bg-[#4076a5] hover:bg-[#fe5358] focus:outline-none font-medium rounded-lg text-sm px-5 text-center py-2.5" data-bs-toggle="modal" data-bs-target="#logoutModal">로그아웃</button>
       <!-- 햄버거 버튼 -->
       <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg md:hidden hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
         <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
@@ -54,6 +52,26 @@
       </div>
   </div>
 </nav>
+
+<!-- 로그아웃 Modal -->
+<div class="modal fade fixed top-0 left-0 hidden w-1/4 h-full outline-none overflow-x-hidden overflow-y-auto" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered relative w-auto pointer-events-none">
+    <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+      <div class="modal-header flex flex-shrink-0 items-center justify-between px-4 pt-4 rounded-t-md">
+        <button type="button" class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body py-4 text-center">
+        <p class="font-medium">로그아웃 하시겠습니까?</p>
+      </div>
+      <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end px-4 pb-4 rounded-b-md space-x-3">
+        <router-link to="/">
+          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center" data-bs-dismiss="modal">예</button>
+        </router-link>
+        <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500" data-bs-dismiss="modal">아니오</button>
+      </div>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
