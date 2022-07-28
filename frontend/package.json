@@ -8,10 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "tw-elements": "^1.0.0-alpha12",
     "vue": "^3.2.37",
     "vue-router": "^4.0.13",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.0",
