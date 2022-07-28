@@ -53,13 +53,14 @@ public class UserRequest {
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class UpdateImg {
 
+        private int userId;
         private String userImg;
 
-        public User update(){
-            return User.builder()
-                    .userImg(userImg)
-                    .build();
-        }
+//        public User update(){
+//            return User.builder()
+//                    .userImg(userImg)
+//                    .build();
+//        }
     }
 
     @Builder
