@@ -1,5 +1,5 @@
 <template>
-<nav class="fixed w-full bg-[#2c5172] text-white px-2 sm:px-4 py-2.5">
+<nav class="fixed w-full z-30 bg-[#2c5172] text-white px-2 sm:px-4 py-2.5">
   <div class="container flex flex-wrap justify-between items-center mx-auto">
     <div class="flex items-center">
       <!-- 메인페이지, 로고 및 사이트명 -->
