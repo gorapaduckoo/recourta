@@ -39,11 +39,18 @@ public class UserService {
     }
 
 
-    public UserResponse.OnlyId updateImg(int userId, UserRequest.UpdateImg request){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+//    public UserResponse.OnlyId updateImg(int userId, UserRequest.UpdateImg request){
+//        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+//        user.setUserImg(request.getUserImg());
+//        User savedUser = userRepository.save(user);
+//        return UserResponse.OnlyId.build(savedUser);
+//    }
+
+    public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request){
+        User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
         user.setUserImg(request.getUserImg());
         User savedUser = userRepository.save(user);
-        return UserResponse.OnlyId.build(savedUser);
+        return UserResponse.isSuccess.build(true);
     }
 
     public UserResponse.isSuccess updatePw(UserRequest.UpdatePw request){

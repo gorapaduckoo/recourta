@@ -6,12 +6,10 @@ import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,12 +30,11 @@ public class UserController {
         return  ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/user/img/{userId}")
-    public  ResponseEntity<UserResponse.OnlyId> updateImg(@PathVariable int userId, @RequestBody UserRequest.UpdateImg request){
-        UserResponse.OnlyId response = userService.updateImg(userId, request);
+    @PutMapping("/user/img")
+    public  ResponseEntity<UserResponse.isSuccess> updateImg(@RequestBody UserRequest.UpdateImg request){
+        UserResponse.isSuccess response = userService.updateImg(request);
         return  ResponseEntity.ok().body(response);
     }
-
 
    @PutMapping("/user/pw")
    public ResponseEntity<UserResponse.isSuccess> updatePw(@RequestBody UserRequest.UpdatePw request){
