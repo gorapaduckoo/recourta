@@ -1,12 +1,5 @@
 <template>
-  <CustomNavbar />
   <DarkmodeButton />
-  <div class="container flex justify-around mx-auto">
-    <LecturerCard />
-    <LecturerCard />
-    <LecturerCard />
-  </div>
-  
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
     <h1 class="my-10 text-center font-bold">로그인 페이지</h1>
     <router-link to="/">
@@ -30,7 +23,7 @@
         <label for="remember" class="ml-2 text-xs text-gray-500 dark:text-gray-400">이메일 저장</label>
       </div>
       <div class="text-center w-3/4 mr-auto ml-auto mb-3">
-        <button type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</button>
+        <router-link to="/main" type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</router-link>
       </div>
     </form>
     <div class="w-1/2 mr-auto ml-auto mb-6 flex justify-center text-xs text-gray-500 dark:text-gray-400">
@@ -43,16 +36,12 @@
 </template>
 
 <script>
-import CustomNavbar from '../components/CustomNavbar.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
-import LecturerCard from '../components/LecturerCard.vue'
 
 export default {
   name: 'loginView',
   components: {
     DarkmodeButton,
-    CustomNavbar,
-    LecturerCard,
   },
 }
 </script>

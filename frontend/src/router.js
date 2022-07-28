@@ -23,5 +23,25 @@ export default createRouter({
       name: 'pwreset',
       component: () => import('./views/PWresetView.vue'),
     },
+    {
+      path: '/main',
+      name: 'main',
+      component: () => import('./views/MainView.vue'),
+    },
+    {
+      path: '/classlist',
+      name: 'classlist',
+      component: () => import('./views/ClassListView.vue'),
+    },
+    {
+      path: '/pastclass',
+      name: 'pastclass',
+      component: () => import('./views/PastClassView.vue'),
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('./views/ProfileView.vue'),
+    },
   ],
 })
