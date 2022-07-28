@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.json.simple.JSONArray;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 @Data
@@ -25,15 +27,17 @@ public class LectureRequest {
         private Date startDate;
         private Date endDate;
         private String lectureImg;
+        private ArrayList<String> lectureTime;
 
         @Builder
-        public LectureCreateForm(Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg){
+        public LectureCreateForm(Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg, ArrayList<String> lectureTime){
             this.userId = userId;
             this.title = title;
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;
             this.lectureImg = lectureImg;
+            this.lectureTime = lectureTime;
         }
 
         public Lecture toEntity(){
@@ -55,13 +59,16 @@ public class LectureRequest {
         private Date startDate;
         private Date endDate;
         private String lectureImg;
+        private ArrayList<String> lectureTime;
 
         @Builder
-        public LectureUpdateForm(String content, Date startDate, Date endDate, String lectureImg){
+        public LectureUpdateForm(String content, Date startDate, Date endDate, String lectureImg, ArrayList<String> lectureTime){
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;
             this.lectureImg = lectureImg;
+            this.lectureTime = lectureTime;
+            System.out.println(lectureTime.toString());
         }
 
     }

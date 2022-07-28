@@ -29,20 +29,26 @@ public class Lecture {
     private Date endDate; // 종료일자
     private String lectureImg; // 썸네일 이미지
 
+    private String lectureTime; // 강의 시간 정보
+
     @Builder
-    public Lecture(User user, String title, String content, Date startDate, Date endDate, String lectureImg) {
+    public Lecture(User user, String title, String content, Date startDate, Date endDate, String lectureImg, String lectureTime) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
         this.lectureImg = lectureImg;
+        this.lectureTime = lectureTime;
     }
 
-    public void update(String content, Date startDate, Date endDate, String lectureImg) {
+    public void update(String content, Date startDate, Date endDate, String lectureImg, String lectureTime) {
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
         this.lectureImg = lectureImg;
+        this.lectureTime = lectureTime;
     }
+
+
 }

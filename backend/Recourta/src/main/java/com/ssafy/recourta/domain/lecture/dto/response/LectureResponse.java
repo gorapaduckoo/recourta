@@ -1,6 +1,7 @@
 package com.ssafy.recourta.domain.lecture.dto.response;
 
 import lombok.*;
+import org.json.simple.JSONArray;
 
 import java.util.Date;
 
@@ -34,8 +35,10 @@ public class LectureResponse {
         private Date endDate; // 종료일자
         private String lectureImg; // 썸네일 이미지
 
+        private JSONArray lectureTime; // 강의시간
+
         @Builder
-        public LectureDetail(Integer lectureId, Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg) {
+        public LectureDetail(Integer lectureId, Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg, JSONArray lectureTime) {
             this.lectureId = lectureId;
             this.userId = userId;
             this.title = title;
@@ -43,6 +46,7 @@ public class LectureResponse {
             this.startDate = startDate;
             this.endDate = endDate;
             this.lectureImg = lectureImg;
+            this.lectureTime = lectureTime;
         }
     }
 
