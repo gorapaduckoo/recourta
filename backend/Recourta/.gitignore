@@ -1,8 +1,12 @@
 HELP.md
 .gradle
 build/
+
 src/main/java/**/RecourtaApplication.java
 src/main/resources/application.properties
+
+src/main/java/**/global/config/WebSecurityConfig.java
+
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -37,3 +41,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### added
