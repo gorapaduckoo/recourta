@@ -23,13 +23,13 @@
         <label for="remember" class="ml-2 text-xs text-gray-500 dark:text-gray-400">이메일 저장</label>
       </div>
       <div class="text-center w-3/4 mr-auto ml-auto mb-3">
-        <router-link to="/main" type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</router-link>
+        <router-link to="/main" type="submit" class="text-white font-bold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">로 그 인</router-link>
       </div>
     </form>
     <div class="w-1/2 mr-auto ml-auto mb-6 flex justify-center text-xs text-gray-500 dark:text-gray-400">
-      <router-link class="w-20 text-right" to="/signup">회원가입</router-link>
+      <router-link class="w-20 text-right hover:text-gray-700 dark:hover:text-gray-300" to="/signup">회원가입</router-link>
       <div class="mx-4">|</div>
-      <router-link class="w-20 text-left" to="/pwsearch">비밀번호 찾기</router-link>
+      <router-link class="w-20 text-left hover:text-gray-700 dark:hover:text-gray-300" to="/pwsearch">비밀번호 찾기</router-link>
     </div>
   </div>
  

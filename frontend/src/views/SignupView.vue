@@ -31,7 +31,7 @@
       <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
         <input type="email" name="floating_email" id="floating_email" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">이메일</label>
-        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center">
+        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
           <span>메일발송</span>
         </button>
       </div>
@@ -40,7 +40,7 @@
       <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
         <input type="text" name="floating_verify" id="floating_verify" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
         <label for="floating_verify" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">인증번호</label>
-        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center">
+        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
           <span>확인</span>
         </button>
       </div>
@@ -97,11 +97,11 @@
         </div>
 
         <!-- 카메라 버튼 -->
-        <button v-if="!isCameraOpen" type="button" class="text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center" @click="toggleCamera">
+        <button v-if="!isCameraOpen" type="button" class="text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]" @click="toggleCamera">
           <span>사진등록</span>
         </button>
 
-        <button v-if="isCameraOpen && !isLoading" type="button" :class="{'bg-[#fbb026] border-[#fbb026] font-semibold':isPhotoTaken && isCameraOpen,'bg-[#66bb6a] border-[#66bb6a]':!isPhotoTaken || !isCameraOpen}" class="text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md px-3 py-0.5 text-center" @click="takePhoto">
+        <button v-if="isCameraOpen && !isLoading" type="button" :class="{'bg-[#faa405] hover:bg-[#fbb026] border-[#faa405] hover:border-[#fbb026] font-semibold':isPhotoTaken && isCameraOpen,'bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a]':!isPhotoTaken || !isCameraOpen}" class="text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md px-3 py-0.5 text-center" @click="takePhoto">
           <span v-if="isPhotoTaken && isCameraOpen">다시찍기</span>
           <span v-else>사진촬영</span>
         </button>
@@ -135,7 +135,7 @@
       </div> -->
     
       <div class="text-center w-3/4 mr-auto ml-auto mt-4 mb-6">
-        <button type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">회원가입</button>
+        <button type="submit" class="text-white font-bold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">회원가입</button>
       </div>
     </form>
   </div>

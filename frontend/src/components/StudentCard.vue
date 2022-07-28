@@ -19,10 +19,10 @@
       </div>
       <div class="h-[275px] flex flex-col justify-around items-center py-4">
         <router-link to="/class" class="w-[175px]">
-          <button class="w-full py-2.5 text-white rounded-md cursor-pointer bg-black border-gray-300 border-[3px]">강의실 입장</button>
+          <button class="w-full py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]">강의실 입장</button>
         </router-link>
-        <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black border-gray-300 border-[3px]">출결 확인</button>
-        <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black border-gray-300 border-[3px]">수강 철회</button>
+        <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]">출결 확인</button>
+        <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]">수강 철회</button>
       </div>
     </div>
   </div>
