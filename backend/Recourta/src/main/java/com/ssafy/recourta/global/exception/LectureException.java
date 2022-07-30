@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LectureException{
 
     public static class LectureSaveFail extends RuntimeException{
-        public LectureSaveFail(){
+        public LectureSaveFail() {
             super("새로운 강의 저장에 실패했습니다.");
         }
     }
