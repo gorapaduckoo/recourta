@@ -6,15 +6,17 @@ import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
+import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+
+import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 
 @Service
 public class LectureServiceImpl implements LectureService {
@@ -29,7 +31,6 @@ public class LectureServiceImpl implements LectureService {
         // RequestDto에 담긴 userId로 user 객체 조회
         User user = userRepository.findById(input.getUserId()).orElseThrow(UserNotFoundException::new);
 
-        System.out.println(input.getLectureTime().toString());
         // 조회한 user 객체는 저장할 lecture 객체에 담아줌
         Lecture lecture = Lecture.builder()
                 .user(user)
@@ -46,7 +47,7 @@ public class LectureServiceImpl implements LectureService {
         if(result!=null){
             return LectureResponse.LectureId.builder().lectureId(result).build();
         } else {
-            throw new Exception("save 실패!");
+            throw new LectureException.LectureSaveFail();
         }
     }
 
@@ -55,18 +56,9 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse.LectureDetail searchByLectureId(Integer lectureId) throws Exception {
         Lecture result = lectureRepository.findById(lectureId).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지 않는 강의번호입니다. id=" + lectureId.toString()));
+                ()-> new LectureException.UnvalidLectureId(lectureId.toString()));
         if (result != null) {
-            // lectureTime은 "[월 10:00 ~ 11:30, 월 18:30 ~ 19:00, ...] 같은 형식
 
-            ////////// String To JSONArray
-            // str = "월 10:00 ~ 11:30, 월 18:30 ~ 19:00, ... "
-            String str = result.getLectureTime().substring(1, result.getLectureTime().length()-1);
-            // arr = ["월 10:00 ~ 11:30", "월 18:30 ~ 19:00", ... ]
-            String[] arr = str.split(",");
-            JSONArray jsonArray = new JSONArray();
-            jsonArray.addAll(Arrays.asList(arr));
-            //////////
             return LectureResponse.LectureDetail.builder()
                     .lectureId(result.getLectureId())
                     .userId(result.getUser().getUserId())
@@ -75,12 +67,12 @@ public class LectureServiceImpl implements LectureService {
                     .startDate(result.getStartDate())
                     .endDate(result.getEndDate())
                     .lectureImg(result.getLectureImg())
-                    .lectureTime(jsonArray)
+                    .lectureTime(stringToJsonArray(result.getLectureTime()))
                     .build();
 
         }
         else {
-            throw new Exception("Result of findByLectureId is null");
+            throw new LectureException.NullLecture();
         }
     }
 
@@ -88,7 +80,7 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture) throws Exception {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
-                ()-> new IllegalArgumentException("존재하지 않는 강의번호입니다. id=" + lectureId.toString()));
+                ()-> new LectureException.UnvalidLectureId(lectureId.toString()));
         updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureImg(), lecture.getLectureTime().toString());
         Integer result = lectureRepository.save(updatedLecture).getLectureId();
 
@@ -109,7 +101,32 @@ public class LectureServiceImpl implements LectureService {
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
         else {
-            throw new Exception("존재하지 않는 강의번호입니다.");
+            throw new LectureException.UnvalidLectureId(lectureId.toString());
+        }
+    }
+
+    @Override
+    public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) throws Exception {
+        // 존재하는 회원인 경우
+        if(userRepository.existsById(userId)) {
+            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, new Date(), new Date());
+            if(searchResult.size() == 0) {
+                throw new LectureException.NullLecture();
+            } else {
+                System.out.println(searchResult.size());
+                List<LectureResponse.LecturePreview> result = new ArrayList<>();
+                for (Lecture l: searchResult){
+                    result.add(LectureResponse.LecturePreview.builder()
+                            .lectureId(l.getLectureId())
+                            .title(l.getTitle())
+                            .lectureTime(stringToJsonArray(l.getLectureTime()))
+                            .build());
+                }
+                return result;
+            }
+        // 존재하지 않는 회원인 경우
+        } else {
+            throw new UserNotFoundException();
         }
     }
 
