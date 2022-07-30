@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
@@ -49,11 +47,6 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/currentTeachingList")
-    public ResponseEntity<List<LectureResponse.LecturePreview>> searchMyCurrentTeachingLecture(@PathVariable String userId) throws Exception {
-        Integer id = Integer.parseInt(userId);
-        List<LectureResponse.LecturePreview> result = lectureService.searchMyCurrentTeachingLecture(id);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+
 
 }

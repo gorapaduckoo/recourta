@@ -50,21 +50,6 @@ public class LectureResponse {
         }
     }
 
-    // 내가 개설한 강의 중 현재 진행중인 강의 목록 반환
-    @Data
-    public static class LecturePreview {
-
-        private Integer lectureId;
-        private String title;
-        private JSONArray lectureTime;
-
-        @Builder
-        public LecturePreview(Integer lectureId, String title, JSONArray lectureTime) {
-            this.lectureId = lectureId;
-            this.title = title;
-            this.lectureTime = lectureTime;
-        }
-    }
 
 
 }

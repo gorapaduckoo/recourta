@@ -68,6 +68,7 @@ public class LectureRequest {
             this.endDate = endDate;
             this.lectureImg = lectureImg;
             this.lectureTime = lectureTime;
+            System.out.println(lectureTime.toString());
         }
 
     }
