@@ -32,7 +32,7 @@
           <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
         </div>
       </div>
-    </div>
+    </div> 
   </div>
 </template>
 
