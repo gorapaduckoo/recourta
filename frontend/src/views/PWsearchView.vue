@@ -18,9 +18,9 @@
       <p class="text-sm">비밀번호 재설정 링크가 포함된 메일이 발송됩니다.</p>
     </div>
     <!-- 이메일 입력 -->
-    <form id="email_input">
+    <form id="email_input" @submit.prevent="PWsearchSubmit">
       <div class="mt-16 relative z-0 mb-10 mr-auto ml-auto w-3/4 group">
-        <input type="email" name="floating_email" id="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="text" v-model.trim="floating_email" id="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" "/>
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
       </div>
     </form>
@@ -49,7 +49,7 @@
               </p>
             </div>
             <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 rounded-b-md space-x-3">
-              <button type="button" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#325c81]" data-bs-dismiss="modal">예</button>
+              <button type="submit" form="email_input" class="text-white bg-[#2c5172] w-[62.3px] border border-[#2c5172] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#325c81]" data-bs-dismiss="modal">예</button>
               <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
             </div>
         </div>
@@ -59,20 +59,39 @@
   <router-link class="mx-3" to="/pwreset">비밀번호 재설정</router-link>
 </template>
 
-<script>
+<script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
+import {useRouter} from 'vue-router'
+import { ref } from 'vue'
 
-export default {
-  name: 'loginView',
-  components: {
-    DarkmodeButton,
-  },
-  setup(){
+const route = useRouter()
 
-  }
-  
+let email_check = true
+let floating_email = ref("")
+
+const test_email = (id) => {
+  if(id==='test@gmail.com') return 1
+  return 0
 }
 
+const PWsearchSubmit = () => {
+  let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
+  
+  // let pw_regex = new RegExp()
+  console.log(floating_email.value)
+  
+  if(email_regex.test(floating_email.value)) {
+    email_check=true
+  } else {
+    console.log('옳바른 email을 입력하세요')
+    email_check=false
+  }
+
+  if(email_check) {
+    if(test_email(floating_email.value)) route.replace({path:'/'})
+    else console.log('일치하는 회원이 없습니다.')
+  }
+}
 
 </script>
 

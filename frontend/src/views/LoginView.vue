@@ -8,7 +8,7 @@
     <form @submit.prevent="loginSubmit" class="pt-10">
       <!-- 이메일 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="input" name="floating_email" v-model.trim="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
+        <input type="text" name="floating_email" v-model.trim="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
       </div>
       <!-- 비밀번호 입력 -->
@@ -59,8 +59,8 @@ const test_id_pw = (id,pw) => {
 const loginSubmit = () => {
       
       // 영문숫자로만이뤄진id(_-.이아이디포함x)@----.2-3글자(com)
-  let email_regex = new RegExp('[A-Za-z0-9._-]+@[a-z]+(\.[a-z]{2,3})+')
-  let pw_regex = new RegExp("(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*?])(?=.{8,})")
+  let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
       // let pw_regex = new RegExp()
     console.log(floating_email.value)
     console.log(floating_password.value)
