@@ -22,6 +22,7 @@
       <div class="mt-16 relative z-0 mb-10 mr-auto ml-auto w-3/4 group">
         <input type="text" v-model.trim="floating_email" id="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" "/>
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
+        <label v-if="!state.email_check" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">올바른 이메일을 입력하세요</label>
       </div>
     </form>
 
@@ -62,11 +63,13 @@
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import {useRouter} from 'vue-router'
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
 const route = useRouter()
 
-let email_check = true
+const state = reactive({
+  email_check : true
+})
 let floating_email = ref("")
 
 const test_email = (id) => {
@@ -81,13 +84,13 @@ const PWsearchSubmit = () => {
   console.log(floating_email.value)
   
   if(email_regex.test(floating_email.value)) {
-    email_check=true
+    state.email_check=true
   } else {
-    console.log('옳바른 email을 입력하세요')
-    email_check=false
+    console.log('올바른 email을 입력하세요')
+    state.email_check=false
   }
 
-  if(email_check) {
+  if(state.email_check) {
     if(test_email(floating_email.value)) route.replace({path:'/'})
     else console.log('일치하는 회원이 없습니다.')
   }
