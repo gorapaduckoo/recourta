@@ -1,6 +1,6 @@
 <template>
   <button
-    class="fixed right-11 bottom-10"
+    class="fixed right-11 bottom-10 z-30"
     @click="toggleDarkMode"
   >
     <!-- sun -->
