@@ -9,7 +9,12 @@
           <div class="text-3xl font-bold dark:font-semibold mb-6 h-[72px]">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
           <div class="text-xl font-semibold mt-4 text-end">김우석</div>
         </div>
-        <div class="text-base text-end">금 09:00 - 12:00</div>
+        <div class="flex justify-end">
+          <div class="text-lg text-start">
+            <p>목 10:00 ~ 12:00</p>
+            <p>금 09:00 ~ 12:00</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
