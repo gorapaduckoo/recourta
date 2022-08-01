@@ -48,5 +48,10 @@ export default createRouter({
       name: 'class',
       component: () => import('./views/ClassView.vue'),
     },
+    {
+      path: '/classsetting',
+      name: 'classsetting',
+      component: () => import('./views/ClassSettingView.vue'),
+    },
   ],
 })
