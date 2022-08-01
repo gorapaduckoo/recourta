@@ -90,25 +90,25 @@
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
             </svg>
           </button>
-          <div id="camexptooltip" v-if="istooltip" class="inline-block absolute whitespace-nowrap text-center z-10 -top-4 left-12 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg dark:bg-[#222222]">
+          <div id="camexptooltip" v-if="state.istooltip" class="inline-block absolute whitespace-nowrap text-center z-10 -top-4 left-12 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg dark:bg-[#222222]">
             출석 인증과 자리 비움 여부를 판단하기 위해서<br/>
             웹 카메라를 통한 얼굴 캡쳐가 필요합니다.
           </div>
         </div>
 
         <!-- 카메라 버튼 -->
-        <button v-if="!isCameraOpen" type="button" class="text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]" @click="toggleCamera">
+        <button v-if="!state.isCameraOpen" type="button" class="text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]" @click="toggleCamera">
           <span>사진등록</span>
         </button>
 
-        <button v-if="isCameraOpen && !isLoading" type="button" :class="{'bg-[#faa405] hover:bg-[#fbb026] border-[#faa405] hover:border-[#fbb026] font-semibold':isPhotoTaken && isCameraOpen,'bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a]':!isPhotoTaken || !isCameraOpen}" class="text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md px-3 py-0.5 text-center" @click="takePhoto">
-          <span v-if="isPhotoTaken && isCameraOpen">다시찍기</span>
+        <button v-if="state.isCameraOpen && !state.isLoading" type="button" :class="{'bg-[#faa405] hover:bg-[#fbb026] border-[#faa405] hover:border-[#fbb026] font-semibold':state.isPhotoTaken && state.isCameraOpen,'bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a]':!state.isPhotoTaken || !state.isCameraOpen}" class="text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md px-3 py-0.5 text-center" @click="takePhoto">
+          <span v-if="state.isPhotoTaken && state.isCameraOpen">다시찍기</span>
           <span v-else>사진촬영</span>
         </button>
       </div>
 
       <!-- 카메라 로딩 -->
-      <div v-show="isCameraOpen && isLoading" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
+      <div v-show="state.isCameraOpen && state.isLoading" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
         <svg aria-hidden="true" role="status" class="w-[80px] h-[80px] text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#2c5172"/>
           <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#92a8d1"/>
@@ -116,13 +116,13 @@
       </div>
       
       <!-- 사진등록을 위한 캠/사진 화면 -->
-      <div v-if="isCameraOpen" v-show="!isLoading" class="mt-2" :class="{ 'opacity-0' : isShotPhoto }">
+      <div v-if="state.isCameraOpen" v-show="!state.isLoading" class="mt-2" :class="{ 'opacity-0' : state.isShotPhoto }">
         
-        <div :class="{'opacity-0' : isShotPhoto}"></div>
+        <div :class="{'opacity-0' : state.isShotPhoto}"></div>
         <!-- 웹캠 -->
-        <video width="384" height="288" class="mr-auto ml-auto" v-show="!isPhotoTaken" ref="camera" autoplay></video>
+        <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTaken" ref="camera" autoplay></video>
         <!-- 캡쳐 -->
-        <canvas width="384" height="288" class="mr-auto ml-auto" v-show="isPhotoTaken" id="photoTaken" ref="canvas"></canvas>
+        <canvas width="384" height="288" class="mr-auto ml-auto" v-show="state.isPhotoTaken" id="photoTaken" ref="canvas"></canvas>
 
       </div>
       
@@ -141,99 +141,85 @@
   </div>
 </template>
 
-<script>
+<script setup>
 
 import DarkmodeButton from '../components/DarkmodeButton.vue'
+import { ref, reactive } from 'vue'
 
-export default {
-  
-  name: 'SignupView',
+const state = reactive({
+  isCameraOpen: false,
+  isPhotoTaken: false,
+  isShotPhoto: false,
+  isLoading: false,
+  istooltip: false,
+})
 
-  components:{
-    DarkmodeButton,
-  },
-  data() {
-    return {
-      isCameraOpen: false,
-      isPhotoTaken: false,
-      isShotPhoto: false,
-      isLoading: false,
-      link: '#',
-      istooltip: false,
-    }
-  },
-  methods: {
-    tooltiptoggle(){
-      this.istooltip = !this.istooltip;
-    },
+const camera = ref(null)
+const canvas = ref(null)
 
-    toggleCamera() {
-      if(this.isCameraOpen) {
-        this.isCameraOpen = false;
-        this.isPhotoTaken = false;
-        this.isShotPhoto = false;
-        this.stopCameraStream();
-      } else {
-        this.isCameraOpen = true;
-        this.createCameraElement();
-      }
-    },
-    
-    createCameraElement() {
-      this.isLoading = true;
-      
-      const constraints = (window.constraints = {
-                audio: false,
-                video: true
-            });
-
-
-            navigator.mediaDevices
-                .getUserMedia(constraints)
-                .then(stream => {
-          this.isLoading = false;
-                    this.$refs.camera.srcObject = stream;
-                })
-                .catch(error => {
-          this.isLoading = false;
-                    alert("May the browser didn't support or there is some errors.");
-          console.log(error)
-                });
-    },
-    
-    stopCameraStream() {
-      let tracks = this.$refs.camera.srcObject.getTracks();
-
-            tracks.forEach(track => {
-                track.stop();
-            });
-    },
-    
-    takePhoto() {
-      if(!this.isPhotoTaken) {
-        this.isShotPhoto = true;
-
-        const FLASH_TIMEOUT = 50;
-
-        setTimeout(() => {
-          this.isShotPhoto = false;
-        }, FLASH_TIMEOUT);
-      }
-      
-      this.isPhotoTaken = !this.isPhotoTaken;
-      
-      const context = this.$refs.canvas.getContext('2d');
-      context.drawImage(this.$refs.camera, 0, 0, 384, 288);
-    },
-    
-    downloadImage() {
-      const download = document.getElementById("downloadPhoto");
-      const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
-    .replace("image/jpeg", "image/octet-stream");
-      download.setAttribute("href", canvas);
-    }
-  },
+const tooltiptoggle = () => {
+  state.istooltip = !state.istooltip;
 }
+
+const toggleCamera = () => {
+  if(state.isCameraOpen) {
+    state.isCameraOpen = false;
+    state.isPhotoTaken = false;
+    state.isShotPhoto = false;
+    stopCameraStream();
+  } else {
+    state.isCameraOpen = true;
+    createCameraElement();
+  }
+}
+
+const createCameraElement = () => {
+  state.isLoading = true;
+  
+  const constraints = (window.constraints = {
+    audio: false,
+    video: true
+  });
+  navigator.mediaDevices
+  .getUserMedia(constraints)
+  .then(stream => {
+    state.isLoading = false;
+    camera.value.srcObject = stream;
+  })
+  .catch(error => {
+    state.isLoading = false;
+    alert("May the browser didn't support or there is some errors.");
+    console.log(error)
+  });
+}
+
+const stopCameraStream = () => {
+  let tracks = camera.value.srcObject.getTracks();
+  tracks.forEach(track => {
+    track.stop();
+  });
+}
+
+const takePhoto = () => {
+  if(!state.isPhotoTaken) {
+    state.isShotPhoto = true;
+    const FLASH_TIMEOUT = 50;
+    setTimeout(() => {
+      state.isShotPhoto = false;
+    }, FLASH_TIMEOUT);
+  }
+  state.isPhotoTaken = !state.isPhotoTaken;
+  const context = canvas.value.getContext('2d');
+  context.drawImage(camera.value, 0, 0, 384, 288);
+}
+
+const downloadImage = () => {
+  const download = document.getElementById("downloadPhoto");
+  const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
+  .replace("image/jpeg", "image/octet-stream");
+  download.setAttribute("href", canvas);
+}
+
 </script>
 
 <style>
