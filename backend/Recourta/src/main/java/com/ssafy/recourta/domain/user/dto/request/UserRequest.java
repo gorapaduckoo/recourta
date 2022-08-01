@@ -14,7 +14,7 @@ public class UserRequest {
         private String email;
         private String password;
         private int isStudent;
-        private String userImg;
+//        private String userImg;
 
         public User create(){
             return User.builder()
@@ -22,7 +22,7 @@ public class UserRequest {
                     .email(email)
                     .password(password)
                     .isStudent(isStudent)
-                    .userImg(userImg)
+//                    .userImg(userImg)
                     .build();
         }
     }
@@ -54,7 +54,6 @@ public class UserRequest {
     public static class UpdateImg {
 
         private int userId;
-        private String userImg;
 
 //        public User update(){
 //            return User.builder()

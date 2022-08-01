@@ -8,10 +8,17 @@ import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.util.UUID;
+
+import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
 
 
 @Service
@@ -23,11 +30,25 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // 파일을 업로드할 경로를 application.properties 파일에서 가져옴
+    @Value("${com.ssafy.recourta.upload.path}")
+    private String uploadPath;
 
-    public UserResponse.OnlyId create(UserRequest.Create request){
+
+    public UserResponse.OnlyId create(UserRequest.Create request, MultipartFile userImg) throws Exception {
         User user = request.create();
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        if(user==null){
+            throw new UserNotFoundException();
+        }
+
+//        String encodedPassword = passwordEncoder.encode(user.getPassword());
+//        user.setPassword(encodedPassword);
+
+        /////////////////// 이미지 처리 파트 ////////////////////
+        uploadImage(user, userImg);
+
+
+
         User savedUser = userRepository.save(user);
         return UserResponse.OnlyId.build(savedUser);
 
@@ -46,9 +67,9 @@ public class UserService {
 //        return UserResponse.OnlyId.build(savedUser);
 //    }
 
-    public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request){
+    public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request, MultipartFile userImg) throws Exception {
         User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
-        user.setUserImg(request.getUserImg());
+        uploadImage(user, userImg);
         User savedUser = userRepository.save(user);
         return UserResponse.isSuccess.build(true);
     }

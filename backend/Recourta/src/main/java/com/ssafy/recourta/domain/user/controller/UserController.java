@@ -7,10 +7,13 @@ import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class UserController {
@@ -18,9 +21,13 @@ public class UserController {
     private final UserService userService;
 
 
-    @PostMapping("/user")
-    public ResponseEntity<UserResponse.OnlyId> create(@RequestBody UserRequest.Create request){
-        UserResponse.OnlyId response = userService.create(request);
+    @PostMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    // @RequestBody는 JSON형태의 바디로 들어오는 데이터들을 파싱해 줌
+    // Multipart/form-data로 전달되는 컨텐츠는 RequestBody 사용 시 Exception 발생 => @RequestPart 사용
+    public ResponseEntity<UserResponse.OnlyId> create(@RequestPart("request") UserRequest.Create request, @RequestPart("userImg") MultipartFile userImg) throws Exception {
+
+
+        UserResponse.OnlyId response = userService.create(request, userImg);
         return ResponseEntity.ok().body(response);
     }
 
@@ -31,8 +38,8 @@ public class UserController {
     }
 
     @PutMapping("/user/img")
-    public  ResponseEntity<UserResponse.isSuccess> updateImg(@RequestBody UserRequest.UpdateImg request){
-        UserResponse.isSuccess response = userService.updateImg(request);
+    public  ResponseEntity<UserResponse.isSuccess> updateImg(@RequestPart("request") UserRequest.UpdateImg request, @RequestPart("userImg") MultipartFile userImg) throws Exception {
+        UserResponse.isSuccess response = userService.updateImg(request, userImg);
         return  ResponseEntity.ok().body(response);
     }
 
