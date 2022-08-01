@@ -10,7 +10,10 @@ import com.ssafy.recourta.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 
 @Service
@@ -49,5 +52,22 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         return RegistrationResponse.UserList.builder().userList(userList).build();
+    }
+
+    @Override
+    public RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) throws ParseException {
+        List<Registration> registrationList = registrationRepository.findByUserUserId(userId);
+        List<Lecture> currentLectureList = new ArrayList<>();
+
+        SimpleDateFormat sdformat = new SimpleDateFormat("yyyyMMdd");
+        Date now = Date.valueOf(sdformat.format(new Date(System.currentTimeMillis())));
+        for(Registration registration : registrationList) {
+            Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
+            Date startDate = lecture.getStartDate();
+            Date endDate = lecture.getEndDate();
+            if((startDate.before(now) || startDate.equals(now)) && (endDate.after(now) || endDate.equals(now))) currentLectureList.add(lecture);
+        }
+
+        return RegistrationResponse.LectureList.builder().lectureList(currentLectureList).build();
     }
 }

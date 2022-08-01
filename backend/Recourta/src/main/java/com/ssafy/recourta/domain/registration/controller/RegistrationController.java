@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+
 @RestController
 @RequestMapping("/registration")
 public class RegistrationController {
@@ -31,6 +33,13 @@ public class RegistrationController {
     public ResponseEntity<RegistrationResponse.UserList> getUsersOfLecture(@PathVariable String lectureId) {
         Integer id = Integer.parseInt(lectureId);
         RegistrationResponse.UserList result = registrationService.getUsersOfLecture(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/current/{userId}")
+    public ResponseEntity<RegistrationResponse.LectureList> getCurrentLecturesOfUser(@PathVariable String userId) throws ParseException {
+        Integer id = Integer.parseInt(userId);
+        RegistrationResponse.LectureList result = registrationService.getCurrentLecturesOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

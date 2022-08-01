@@ -30,4 +30,13 @@ public class RegistrationResponse {
             this.userList = userList;
         }
     }
+
+    @Getter
+    public static class CurrentLectureList {
+        private List<Lecture> lectureList;
+
+        @Builder CurrentLectureList(List<Lecture> lectureList) {
+            this.lectureList = lectureList;
+        }
+    }
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.json.simple.JSONArray;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @Schema(description = "강의 개설/조회/수정/삭제 시 입력받는 양식")

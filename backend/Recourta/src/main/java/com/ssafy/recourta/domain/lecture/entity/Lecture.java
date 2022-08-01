@@ -6,7 +6,7 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
