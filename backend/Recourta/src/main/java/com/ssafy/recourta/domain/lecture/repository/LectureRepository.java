@@ -4,6 +4,8 @@ import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +16,7 @@ public interface LectureRepository extends JpaRepository<Lecture, Integer> {
 
     @Override
     void deleteById(Integer lectureId);
+
+
+    List<Lecture> findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(Integer userId, Date startDate, Date endDate);
 }
