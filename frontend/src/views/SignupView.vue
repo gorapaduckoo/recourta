@@ -19,41 +19,41 @@
     </router-link>
 
     <!-- 입력form -->
-    <form class="pt-10">
+    <form class="pt-10" @submit.prevent="signupSubmit">
 
       <!-- 이름 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="text" name="floating_name" id="floating_name" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="text" name="floating_name" id="floating_name" v-model.trim="floating_name" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">이름</label>
       </div>
 
       <!-- 이메일 입력 -->
       <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="email" name="floating_email" id="floating_email" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="email" name="floating_email" id="floating_email" v-model.trim="floating_email" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">이메일</label>
-        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
+        <button type="button" @click="sendemailtoserver" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
           <span>메일발송</span>
         </button>
       </div>
 
       <!-- 인증번호 입력 -->
       <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="text" name="floating_verify" id="floating_verify" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="text" name="floating_verify" id="floating_verify" v-model.trim="floating_verify" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_verify" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">인증번호</label>
-        <button type="button" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
+        <button type="button" id="submitverifybtn" @click="sendverifytoserver" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]" disabled="true">
           <span>확인</span>
         </button>
       </div>
 
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" id="floating_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="password" name="floating_password" id="floating_password" v-model.trim="floating_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">비밀번호</label>
       </div>
 
       <!-- 비밀번호 확인 -->
       <div class="relative z-0 mb-4 mr-auto ml-auto w-3/4 group">
-        <input type="password" name="floating_repeat_password" id="floating_repeat_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+        <input type="password" name="floating_repeat_password" v-model.trim="floating_repeat_password" id="floating_repeat_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
         <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">비밀번호 확인</label>
       </div>
 
@@ -64,7 +64,7 @@
 
           <!-- 수강생 -->
           <div class="mr-4">
-            <input type="radio" id="student" name="role" value="student" class="hidden peer" required checked>
+            <input type="radio" id="student" name="role" v-model="isStudent" value="1" class="hidden peer" checked>
             <label for="student" class="flex items-center py-1 px-8 w-full text-gray-500 rounded-lg border-2 border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-600 dark:peer-checked:text-gray-200 dark:peer-checked:bg-[#666666] peer-checked:border-[#2c5172] dark:peer-checked:border-gray-300 peer-checked:border-[3px] dark:peer-checked:border-[3px] peer-checked:text-[#2c5172] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#555555]">
               <div class="text-sm mr-auto ml-auto text-center font-semibold">수강생</div>
             </label>
@@ -72,7 +72,7 @@
 
           <!-- 강의자 -->
           <div>
-            <input type="radio" id="lecturer" name="role" value="lecturer" class="hidden peer">
+            <input type="radio" id="lecturer" name="role" v-model="isStudent" value="0" class="hidden peer">
             <label for="lecturer" class="flex items-center py-1 px-8 w-full text-gray-500 rounded-lg border-2 border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-600 dark:peer-checked:text-gray-200 dark:peer-checked:bg-[#666666] peer-checked:border-[#2c5172] dark:peer-checked:border-gray-300 peer-checked:border-[3px] dark:peer-checked:border-[3px] peer-checked:text-[#2c5172] hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-[#555555]">
               <div class="text-sm mr-auto ml-auto text-center font-semibold">강의자</div>
             </label>
@@ -145,6 +145,9 @@
 
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const route = useRouter()
 
 const state = reactive({
   isCameraOpen: false,
@@ -152,10 +155,28 @@ const state = reactive({
   isShotPhoto: false,
   isLoading: false,
   istooltip: false,
+  isname: true,
+  isemail: true,
+  isverify: true,
+  ispassword: true,
+  isrepeat: true,
+  isphoto: true,
+  isemailsend: false,
+  isemailverified: false,
+  wrongemail:''
 })
 
 const camera = ref(null)
 const canvas = ref(null)
+
+let email = ""
+
+let floating_name = ref(null)
+let floating_email = ref(null)
+let floating_verify = ref(null)
+let floating_password = ref(null)
+let floating_repeat_password = ref(null)
+let isStudent = ref(null)
 
 const tooltiptoggle = () => {
   state.istooltip = !state.istooltip;
@@ -220,6 +241,67 @@ const downloadImage = () => {
   download.setAttribute("href", canvas);
 }
 
+const sendemailtoserver = () => {
+  if(floating_email.value==="test@gmail.com") return 0
+  return 1
+}
+
+const checkemail = () => {
+  let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
+  if(email_regex.test(floating_email.value)){
+    if(sendemailtoserver()) {
+      document.getElementById('submitverifybtn').setAttribute('disabled','false')
+      state.isemailsend = true
+      email = floating_email.value
+    }
+    else{
+      state.wrongemail='이미 가입된 이메일입니다'
+      state.isemail=false
+    }
+  }
+  else {
+    state.wrongemail='올바른 이메일을 입력하세요'
+    state.isemail=false
+  }
+}
+
+const sendverifytoserver = () => {
+  if(flaoting_verify==="123456") return 1
+  return 0
+}
+
+const checkverify = () => {
+  if(sendverifytoserver()){
+    document.getElementById('submitverifybtn').setAttribute('disabled','true')
+    console.log("이메일이 인증되었습니다")
+    state.isemailverified=true
+  }
+  else{
+    state.isverify=false
+  }
+}
+
+const signupSubmit = () => {
+  console.log(floating_name.value)
+  console.log(floating_email.value)
+  console.log(floating_verify.value)
+  console.log(floating_password.value)
+  console.log(floating_repeat_password.value)
+  console.log(isStudent.value)
+
+  if(floating_name==="") state.isname = false
+  
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
+      // let pw_regex = new RegExp()
+  console.log(floating_email.value)
+  console.log(floating_password.value)
+  if(!isemailverified) state.isverify=false
+  if(!pw_regex.test(floating_password.value)) state.ispassword=false
+  if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
+  if(!isPhotoTaken) state.isphoto=false
+
+  if(isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) route.replace({path:"/"})
+}
 </script>
 
 <style>
