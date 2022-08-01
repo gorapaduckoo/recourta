@@ -1,5 +1,5 @@
 <template>
-  <div @mouseenter="cardToggle" @mouseleave="cardToggle" class="relative">
+  <div @mouseenter="cardToggle" @mouseleave="cardToggle" class="relative ml-auto mr-auto mb-10">
     <!-- 보이는 부분 -->
     <div class="w-[400px] h-[500px] z-0 border-2 rounded-lg border-[#2c5172] dark:border-neutral-500 bg-[#fffbf8] dark:bg-[#4c4c4c]">
       <img class="rounded-t-lg w-[400px] h-[225px]" src="https://mdbootstrap.com/img/new/standard/nature/184.jpg" alt=""/>
