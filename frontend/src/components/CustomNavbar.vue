@@ -79,7 +79,7 @@
 </template>
 
 <script setup>
-import { reactive, defineProps } from 'vue'
+import { reactive } from 'vue'
 
 const props = defineProps({
   curpage : {
