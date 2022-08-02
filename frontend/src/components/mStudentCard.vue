@@ -1,8 +1,8 @@
 <template>
 
-	<div class="flex justify-center h-[170px]">
-		<div class="flex flex-col border rounded-lg justify-between p-6 odd:bg-[#fffbf8]">
-			<div class="text-gray-900 text-2xl font-bold mb-2">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
+	<div class="flex justify-center mb-3 h-[170px]">
+		<div class="flex flex-col border rounded-lg justify-between p-6 bg-[#fffbf8] dark:bg-[#4c4c4c]">
+			<div class="text-2xl font-bold mb-2">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
 			<div class="flex justify-between mt-5">
 				<div class="text-xl font-semibold text-end">김우석</div>
 				<div class="space-x-5">
