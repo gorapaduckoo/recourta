@@ -11,10 +11,10 @@
       <div class="hidden ml-8 items-center w-full lg:flex lg:w-auto lg:order-1">
         <ul class="flex flex-row space-x-8 mt-0 font-medium">
           <li>
-            <router-link to="/classlist" :class="{'text-gray-50 font-bold':state.isList}" class="block text-base text-gray-300 hover:text-white" @click="onClassList">강의목록</router-link>
+            <router-link to="/classlist" :class="{'text-neutral-50 font-bold hover:text-neutral-200':props.curpage === 'classList', 'text-neutral-300 hover:text-neutral-100':props.curpage !== 'classList'}" class="block text-base">강의목록</router-link>
           </li>
           <li>
-            <router-link to="/pastclass" :class="{'text-gray-50 font-bold':state.isPast}" class="block text-base text-gray-300 hover:text-white" @click="onPastClass">이전강의</router-link>
+            <router-link to="/pastclass" :class="{'text-neutral-50 font-bold hover:text-neutral-200':props.curpage === 'pastClass', 'text-neutral-300 hover:text-neutral-100':props.curpage !== 'pastClass'}" class="block text-base">이전강의</router-link>
           </li>
         </ul>
       </div>
@@ -40,13 +40,13 @@
     <div v-if="state.isHam" class="lg:sr-only justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="navbar-cta">
         <ul class="border-t-2 boder-white flex flex-col mt-2.5">
           <li>
-            <router-link to="/profile" class="block py-2 pl-3 text-gray-300">마이 페이지</router-link>
+            <router-link to="/profile" :class="{'text-neutral-50 font-bold':props.curpage === 'profile', 'text-neutral-300':props.curpage !== 'profile'}" class="block py-2 pl-3">마이 페이지</router-link>
           </li>
           <li>
-            <router-link to="/classlist" class="block py-2 pl-3 text-gray-300">강의목록</router-link>
+            <router-link to="/classlist" :class="{'text-neutral-50 font-bold':props.curpage === 'classList', 'text-neutral-300':props.curpage !== 'classList'}" class="block py-2 pl-3">강의목록</router-link>
           </li>
           <li>
-            <router-link to="/pastclass" class="block py-2 pl-3 text-gray-300">이전강의</router-link>
+            <router-link to="/pastclass" :class="{'text-neutral-50 font-bold':props.curpage === 'pastClass', 'text-neutral-300':props.curpage !== 'pastClass'}" class="block py-2 pl-3">이전강의</router-link>
           </li>
         </ul>
       </div>
@@ -82,42 +82,18 @@
 import { reactive, defineProps } from 'vue'
 
 const props = defineProps({
-  curpage:{
-    type:String,
-    default:"main",
+  curpage : {
+    type: String,
   }
 })
 
 console.log(props.curpage)
 const state = reactive({
   isHam : false,
-  isList : false,
-  isPast : false,
-  isProfile : false
 })
 
 const hamButtonClick = () => {
   state.isHam = !state.isHam
-}
-// const onMain = () => {
-//   state.isList = false,
-//   state.isPast = false,
-//   state.isProfile = false
-// }
-const onClassList = () => {
-  state.isList = true,
-  state.isPast = false,
-  state.isProfile = false
-}
-const onPastClass = () => {
-  state.isList = false,
-  state.isPast = true,
-  state.isProfile = false
-}
-const onProfile = () => {
-  state.isList = false,
-  state.isPast = false,
-  state.isProfile = true
 }
 
 </script>

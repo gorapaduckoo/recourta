@@ -1,6 +1,6 @@
 <template>
   <DarkmodeButton />
-  <CustomNavbar />
+  <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[60px] w-1/3 min-w-[480px] ml-auto mr-auto border">
     <img class="mt-6 mb-8 w-20 h-20 ml-auto mr-auto" src="../assets/placeholder2.png" alt="">
     <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">김우석</div>
@@ -112,7 +112,6 @@
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
-
 import { ref, reactive } from 'vue'
 
 const state = reactive({
@@ -120,6 +119,7 @@ const state = reactive({
   isPhotoTake: false,
   isShot: false,
   isLoad: false,
+  curpage : "profile",
 })
 
 const camera = ref(null)
