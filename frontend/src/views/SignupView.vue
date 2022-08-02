@@ -55,9 +55,8 @@
 
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onPasswordClick"/>
+        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100 placeholder-gray-500 dark:placeholder-gray-400" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onPasswordClick"/>
         <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.ispassword,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.ispassword,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
-        <label for="floating_password" class="peer-focus:hidden peer-not-placeholder-shown:hidden absolute text-sm peer-placeholder-shown:text-gray-500 dark:peer-placeholder-showntext-gray-400 -z-10 right-0 top-2.5">영문, 숫자, 특수문자 포함 8자 이상</label>
         <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다</label>
       </div>
 
@@ -94,17 +93,20 @@
       <!-- 웹캠 캡쳐 -->
       
       <div class="flex justify-between items-center w-3/4 mr-auto ml-auto">
-        <div class="flex items-end relative">
-          <div :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isphoto,'text-gray-500 dark:text-gray-400':state.isphoto,}" class="text-sm mr-0.5">사진</div>
-          <button id="camexp" type="button" @mouseenter="tooltiptoggle" @mouseleave="tooltiptoggle" class="text-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-[#2c5172] dark:fill-gray-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <div id="camexptooltip" v-if="state.istooltip" class="inline-block absolute whitespace-nowrap text-center z-10 -top-4 left-12 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg dark:bg-[#222222]">
-            출석 인증과 자리 비움 여부를 판단하기 위해서<br/>
-            웹 카메라를 통한 얼굴 캡쳐가 필요합니다.
+        <div class="flex items-center space-x-2"> 
+          <div class="flex items-end relative">
+            <div :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isphoto,'text-gray-500 dark:text-gray-400':state.isphoto,}" class="text-sm mr-0.5">사진</div>
+            <button id="camexp" type="button" @mouseenter="tooltiptoggle" @mouseleave="tooltiptoggle" class="text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-[#2c5172] dark:fill-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div id="camexptooltip" v-if="state.istooltip" class="inline-block absolute whitespace-nowrap text-center z-10 -top-4 left-12 py-2 px-3 text-[12px] text-white dark:text-gray-200 bg-[#444444] rounded-lg dark:bg-[#222222]">
+              출석 인증과 자리 비움 여부를 판단하기 위해서<br/>
+              웹 카메라를 통한 얼굴 캡쳐가 필요합니다.
+            </div>
           </div>
+          <div v-if="!state.isphoto" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">사진을 등록해주세요</div>
         </div>
 
         <!-- 카메라 버튼 -->
@@ -353,5 +355,8 @@ const onRepeatClick = () => {
 </script>
 
 <style scoped>
-
+#floating_password::placeholder{
+  text-align:right;
+  font-size:11px;
+}
 </style>
