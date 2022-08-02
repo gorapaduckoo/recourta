@@ -23,38 +23,49 @@
 
       <!-- 이름 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="text" name="floating_name" id="floating_name" v-model.trim="floating_name" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_name" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">이름</label>
+        <input type="text" name="floating_name" id="floating_name" v-model.trim="floating_name" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isname,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isname,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onNameClick"/>
+        <label for="floating_name" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isname,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isname,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이름</label>
+        <label v-if="!state.isname" for="floating_name" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">이름을 입력하세요</label>
       </div>
 
       <!-- 이메일 입력 -->
-      <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="email" name="floating_email" id="floating_email" v-model.trim="floating_email" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_email" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">이메일</label>
-        <button type="button" @click="sendemailtoserver" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]">
+      <div class="flex items-center justify-between z-0 mb-6 mr-auto ml-auto w-3/4 group">
+        <div class="w-3/4 relative m-0 p-0">
+          <input type="text" name="floating_email" id="floating_email" v-model.trim="floating_email" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isemail,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isemail,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onEmailClick"/>
+          <label for="floating_email" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isemail,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isemail,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
+          <label v-if="!state.isemail" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.wrongemail }}</label>
+        </div>
+        <button type="button" id="checkemailbtn" @click="checkemail" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555] disabled:cursor-not-allowed">
           <span>메일발송</span>
         </button>
       </div>
 
       <!-- 인증번호 입력 -->
       <div class="flex items-center justify-between relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="text" name="floating_verify" id="floating_verify" v-model.trim="floating_verify" class="block py-0.5 px-1 w-3/4 text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_verify" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">인증번호</label>
-        <button type="button" id="submitverifybtn" @click="sendverifytoserver" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555]" disabled="true">
+        <div class="w-3/4 relative m-0 p-0">
+          <input type="text" name="floating_verify" id="floating_verify" v-model.trim="floating_verify" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isverify,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isverify,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer disabled:cursor-not-allowed" placeholder=" " @click="onVerifyClick" disabled/>
+          <label for="floating_verify" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isverify,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isverify,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">인증번호</label>
+          <label v-if="state.isemailverified" for="floating_verify" class="absolute text-[4px] text-[#4fb054] dark:text-[#4fb054] -bottom-3.5 right-0">이메일이 인증되었습니다</label>
+          <label v-else-if="!state.isverify" for="floating_verify" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.wrongverify }}</label>
+        </div>
+        <button type="button" id="checkverifybtn" @click="checkverify" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555] disabled:cursor-not-allowed" disabled>
           <span>확인</span>
         </button>
       </div>
 
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" id="floating_password" v-model.trim="floating_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">비밀번호</label>
+        <input type="password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onPasswordClick"/>
+          <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.ispassword,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.ispassword,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
+          <label for="floating_password" class="peer-focus:hidden absolute text-sm duration-300 text-gray-500 dark:text-gray-400 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] right-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0">영문, 숫자, 특수문자 포함 8자 이상</label>
+        <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다</label>
       </div>
 
       <!-- 비밀번호 확인 -->
-      <div class="relative z-0 mb-4 mr-auto ml-auto w-3/4 group">
-        <input type="password" name="floating_repeat_password" v-model.trim="floating_repeat_password" id="floating_repeat_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">비밀번호 확인</label>
+      <div class="relative z-0 mb-4 mr-auto ml-auto w-3/4 group"> 
+        <input type="password" name="floating_repeat_password" v-model.trim="floating_repeat_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isrepeat,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isrepeat,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onRepeatClick"/>
+        <label for="floating_repeat_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.isrepeat,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isrepeat,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호 확인</label>
+        <label v-if="!state.isrepeat" for="floating_repeat_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호와 일치하지 않습니다</label>
       </div>
 
       <!-- 분류  -->
@@ -84,7 +95,7 @@
       
       <div class="flex justify-between items-center w-3/4 mr-auto ml-auto">
         <div class="flex items-end relative">
-          <div class="text-sm mr-0.5 text-gray-500 dark:text-gray-400">사진</div>
+          <div :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isphoto,'text-gray-500 dark:text-gray-400':state.isphoto,}" class="text-sm mr-0.5">사진</div>
           <button id="camexp" type="button" @mouseenter="tooltiptoggle" @mouseleave="tooltiptoggle" class="text-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-[#2c5172] dark:fill-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
@@ -163,7 +174,8 @@ const state = reactive({
   isphoto: true,
   isemailsend: false,
   isemailverified: false,
-  wrongemail:''
+  wrongemail:'',
+  wrongverify:'',
 })
 
 const camera = ref(null)
@@ -171,18 +183,19 @@ const canvas = ref(null)
 
 let email = ""
 
-let floating_name = ref(null)
-let floating_email = ref(null)
-let floating_verify = ref(null)
-let floating_password = ref(null)
-let floating_repeat_password = ref(null)
-let isStudent = ref(null)
+let floating_name = ref("")
+let floating_email = ref("")
+let floating_verify = ref("")
+let floating_password = ref("")
+let floating_repeat_password = ref("")
+let isStudent = ref("1")
 
 const tooltiptoggle = () => {
   state.istooltip = !state.istooltip;
 }
 
 const toggleCamera = () => {
+  state.isphoto=true
   if(state.isCameraOpen) {
     state.isCameraOpen = false;
     state.isPhotoTaken = false;
@@ -222,6 +235,7 @@ const stopCameraStream = () => {
 }
 
 const takePhoto = () => {
+  state.isphoto = true
   if(!state.isPhotoTaken) {
     state.isShotPhoto = true;
     const FLASH_TIMEOUT = 50;
@@ -250,9 +264,12 @@ const checkemail = () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     if(sendemailtoserver()) {
-      document.getElementById('submitverifybtn').setAttribute('disabled','false')
       state.isemailsend = true
       email = floating_email.value
+      state.isemailverified = false
+      state.isverify = true
+      document.getElementById('floating_verify').removeAttribute("disabled")
+      document.getElementById('checkverifybtn').removeAttribute("disabled")
     }
     else{
       state.wrongemail='이미 가입된 이메일입니다'
@@ -266,42 +283,73 @@ const checkemail = () => {
 }
 
 const sendverifytoserver = () => {
-  if(flaoting_verify==="123456") return 1
+  if(floating_verify.value==="123456") return 1
   return 0
 }
 
 const checkverify = () => {
-  if(sendverifytoserver()){
-    document.getElementById('submitverifybtn').setAttribute('disabled','true')
-    console.log("이메일이 인증되었습니다")
-    state.isemailverified=true
+  if(state.isemailsend){  
+    if(sendverifytoserver()){
+      document.getElementById('floating_verify').setAttribute("disabled",true)
+      document.getElementById('checkverifybtn').setAttribute("disabled",true)
+      document.getElementById('checkemailbtn').setAttribute("disabled",true)
+      state.isemailverified=true
+    }
+    else{
+      state.wrongverify = "인증번호가 일치하지 않습니다"
+      state.isverify=false
+    }
   }
   else{
+    state.wrongverify = "이메일을 발송해주세요"
     state.isverify=false
   }
 }
 
 const signupSubmit = () => {
-  console.log(floating_name.value)
+  console.log(floating_name)
   console.log(floating_email.value)
   console.log(floating_verify.value)
   console.log(floating_password.value)
   console.log(floating_repeat_password.value)
   console.log(isStudent.value)
 
-  if(floating_name==="") state.isname = false
-  
+  if(floating_name.value==="") state.isname = false
+  console.log(state.isname)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
       // let pw_regex = new RegExp()
-  console.log(floating_email.value)
-  console.log(floating_password.value)
-  if(!isemailverified) state.isverify=false
+  if(!state.isemailverified) {
+    state.wrongverify = '이메일이 인증되지 않았습니다'
+    state.isverify=false
+  }
   if(!pw_regex.test(floating_password.value)) state.ispassword=false
   if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
-  if(!isPhotoTaken) state.isphoto=false
+  if(!state.isPhotoTaken) state.isphoto=false
 
-  if(isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) route.replace({path:"/"})
+  if(state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) route.replace({path:"/"})
 }
+
+const onNameClick = () => {
+  state.isname = true
+}
+
+const onEmailClick = () => {
+  document.getElementById('checkemailbtn').removeAttribute("disabled")
+  state.isemail = true
+}
+
+const onVerifyClick = () => {
+  state.isverify = true
+}
+
+const onPasswordClick = () => {
+  state.ispassword = true
+}
+
+const onRepeatClick = () => {
+  state.isrepeat = true
+}
+
 </script>
 
 <style>
