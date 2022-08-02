@@ -1,33 +1,33 @@
 <template>
-<nav class="fixed w-full z-30 bg-[#2c5172] text-white px-2 sm:px-4 py-2.5">
+<nav class="fixed w-full z-30 bg-[#2c5172] text-white px-4 py-2.5">
   <div class="container flex flex-wrap justify-between items-center mx-auto">
     <div class="flex items-center">
       <!-- 메인페이지, 로고 및 사이트명 -->
       <router-link to="/main" class="flex items-center">
-        <img src="../assets/placeholder.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo">
+        <img src="../assets/placeholder.png" class="mr-3 h-9" alt="Flowbite Logo">
         <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">ReCourTa</span>
       </router-link>
       <!-- 메뉴 -->
-      <div class="hidden justify-between ml-8 items-center w-full md:flex md:w-auto md:order-1">
-        <ul class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+      <div class="hidden ml-8 items-center w-full lg:flex lg:w-auto lg:order-1">
+        <ul class="flex flex-row space-x-8 mt-0 font-medium">
           <li>
-            <router-link to="/classlist" class="block py-2 pr-4 pl-3 text-white md:p-0 dark:text-white" aria-current="page">강의목록</router-link>
+            <router-link to="/classlist" :class="{'text-gray-50 font-bold':state.isList}" class="block text-base text-gray-300 hover:text-white" @click="onClassList">강의목록</router-link>
           </li>
           <li>
-            <router-link to="/pastclass" class="block py-2 pr-4 pl-3 text-gray-300 md:hover:bg-transparent md:hover:text-white md:p-0">이전강의</router-link>
+            <router-link to="/pastclass" :class="{'text-gray-50 font-bold':state.isPast}" class="block text-base text-gray-300 hover:text-white" @click="onPastClass">이전강의</router-link>
           </li>
         </ul>
       </div>
     </div>
     <!-- 로그아웃 버튼 -->
-    <div class="flex items-center md:order-2 space-x-3">
+    <div class="flex items-center lg:order-2 space-x-3">
       <button type="button" class="text-white bg-[#4076a5] hover:bg-[#fe5358] focus:outline-none font-medium rounded-lg text-sm px-5 text-center py-2.5" data-bs-toggle="modal" data-bs-target="#logoutModal">로그아웃</button>
       <!-- 햄버거 버튼 -->
-      <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg md:hidden hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
+      <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg lg:hidden hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
         <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
       </button>
       <!-- 마이페이지 버튼 -->
-      <router-link to="/profile" class="sr-only md:not-sr-only">
+      <router-link to="/profile" class="sr-only lg:not-sr-only">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9 hover:text-neutral-200" viewBox="2 2 16 16" fill="currentColor">
           <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
         </svg>
@@ -37,16 +37,16 @@
     
     
     <!-- 햄버거 버튼 클릭 시 메뉴 -->
-    <div v-if="state.isHam" class="md:sr-only justify-between items-center w-full md:flex md:w-auto md:order-1" id="navbar-cta">
-        <ul class="border-t-2 boder-white flex flex-col mt-2.5 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium">
+    <div v-if="state.isHam" class="lg:sr-only justify-between items-center w-full lg:flex lg:w-auto lg:order-1" id="navbar-cta">
+        <ul class="border-t-2 boder-white flex flex-col mt-2.5">
           <li>
-            <a href="#" class="block py-2 pr-4 pl-3 text-gray-300 md:hover:bg-transparent md:hover:text-white md:p-0">마이 페이지</a>
+            <router-link to="/profile" class="block py-2 pl-3 text-gray-300">마이 페이지</router-link>
           </li>
           <li>
-            <a href="#" class="block py-2 pr-4 pl-3 text-white md:p-0 dark:text-white" aria-current="page">강의목록</a>
+            <router-link to="/classlist" class="block py-2 pl-3 text-gray-300">강의목록</router-link>
           </li>
           <li>
-            <a href="#" class="block py-2 pr-4 pl-3 text-gray-300 md:hover:bg-transparent md:hover:text-white md:p-0">이전강의</a>
+            <router-link to="/pastclass" class="block py-2 pl-3 text-gray-300">이전강의</router-link>
           </li>
         </ul>
       </div>
@@ -85,14 +85,40 @@ export default {
   name: 'CustomNavbar',
   setup(){
     const state = reactive({
-      isHam : false
+      isHam : false,
+      isList : false,
+      isPast : false,
+      isProfile : false
     })
     const hamButtonClick = () => {
       state.isHam = !state.isHam
     }
+    // const onMain = () => {
+    //   state.isList = false,
+    //   state.isPast = false,
+    //   state.isProfile = false
+    // }
+    const onClassList = () => {
+      state.isList = true,
+      state.isPast = false,
+      state.isProfile = false
+    }
+    const onPastClass = () => {
+      state.isList = false,
+      state.isPast = true,
+      state.isProfile = false
+    }
+    const onProfile = () => {
+      state.isList = false,
+      state.isPast = false,
+      state.isProfile = true
+    }
     return {
       state,
       hamButtonClick,
+      onClassList,
+      onPastClass,
+      onProfile
     }
   },
 }
