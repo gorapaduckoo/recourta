@@ -78,50 +78,48 @@
 </div>
 </template>
 
-<script>
-import { reactive } from 'vue'
+<script setup>
+import { reactive, defineProps } from 'vue'
 
-export default {
-  name: 'CustomNavbar',
-  setup(){
-    const state = reactive({
-      isHam : false,
-      isList : false,
-      isPast : false,
-      isProfile : false
-    })
-    const hamButtonClick = () => {
-      state.isHam = !state.isHam
-    }
-    // const onMain = () => {
-    //   state.isList = false,
-    //   state.isPast = false,
-    //   state.isProfile = false
-    // }
-    const onClassList = () => {
-      state.isList = true,
-      state.isPast = false,
-      state.isProfile = false
-    }
-    const onPastClass = () => {
-      state.isList = false,
-      state.isPast = true,
-      state.isProfile = false
-    }
-    const onProfile = () => {
-      state.isList = false,
-      state.isPast = false,
-      state.isProfile = true
-    }
-    return {
-      state,
-      hamButtonClick,
-      onClassList,
-      onPastClass,
-      onProfile
-    }
-  },
+const props = defineProps({
+  curpage:{
+    type:String,
+    default:"main",
+  }
+})
+
+console.log(props.curpage)
+const state = reactive({
+  isHam : false,
+  isList : false,
+  isPast : false,
+  isProfile : false
+})
+
+const hamButtonClick = () => {
+  state.isHam = !state.isHam
 }
+// const onMain = () => {
+//   state.isList = false,
+//   state.isPast = false,
+//   state.isProfile = false
+// }
+const onClassList = () => {
+  state.isList = true,
+  state.isPast = false,
+  state.isProfile = false
+}
+const onPastClass = () => {
+  state.isList = false,
+  state.isPast = true,
+  state.isProfile = false
+}
+const onProfile = () => {
+  state.isList = false,
+  state.isPast = false,
+  state.isProfile = true
+}
+
 </script>
 
 <style>
