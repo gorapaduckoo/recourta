@@ -87,7 +87,6 @@ const props = defineProps({
   }
 })
 
-console.log(props.curpage)
 const state = reactive({
   isHam : false,
 })
