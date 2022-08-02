@@ -74,4 +74,26 @@ public class UserRequest {
 
     }
 
+//    @Getter
+//    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+//    public static class CheckMail {
+//
+//        private String email;
+//
+//    }
+
+    //로그인
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Dologin {
+
+        private String email;
+        private String password;
+
+
+    }
+
 }

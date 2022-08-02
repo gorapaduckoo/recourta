@@ -7,6 +7,7 @@ import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,13 +42,11 @@ public class UserService {
             throw new UserNotFoundException();
         }
 
-//        String encodedPassword = passwordEncoder.encode(user.getPassword());
-//        user.setPassword(encodedPassword);
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
 
         /////////////////// 이미지 처리 파트 ////////////////////
         uploadImage(user, userImg);
-
-
 
         User savedUser = userRepository.save(user);
         return UserResponse.OnlyId.build(savedUser);
@@ -60,12 +59,6 @@ public class UserService {
     }
 
 
-//    public UserResponse.OnlyId updateImg(int userId, UserRequest.UpdateImg request){
-//        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-//        user.setUserImg(request.getUserImg());
-//        User savedUser = userRepository.save(user);
-//        return UserResponse.OnlyId.build(savedUser);
-//    }
 
     public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request, MultipartFile userImg) throws Exception {
         User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
@@ -93,6 +86,14 @@ public class UserService {
         return UserResponse.OnlyId.build(user);
     }
 
+    public String doLogin(UserRequest.Dologin request){
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
 
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            return "fail";
+        }
+
+        return "accessToken";
+    }
 
 }

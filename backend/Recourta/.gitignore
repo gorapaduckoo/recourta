@@ -1,5 +1,5 @@
 HELP.md
-.gradle
+
 build/
 
 src/main/java/**/RecourtaApplication.java
@@ -19,6 +19,8 @@ src/main/java/**/global/config/WebSecurityConfig.java
 .settings
 .springBeans
 .sts4-cache
+.properties
+.gradle
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/

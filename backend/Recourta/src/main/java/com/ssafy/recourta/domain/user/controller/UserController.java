@@ -4,9 +4,11 @@ package com.ssafy.recourta.domain.user.controller;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
+import com.ssafy.recourta.domain.user.service.MailService;
 import com.ssafy.recourta.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
+import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+    private final MailService mailService;
 
 
     @PostMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -59,5 +62,29 @@ public class UserController {
     public ResponseEntity<UserResponse.OnlyId> delete(@PathVariable int userId) {
         UserResponse.OnlyId response = userService.delete(userId);
         return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping(value = "/auth/regist")
+    public ResponseEntity<UserResponse.isSuccess> regMail(@RequestBody String data) throws Exception{
+        JSONObject parser = new JSONObject(data);
+        String email = parser.getString("email");
+        // 조건 email null 일 때
+
+       UserResponse.isSuccess response = mailService.registMail(email);
+
+       if(response.isSuccess()){
+           return ResponseEntity.ok().body(response);
+       }
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @PostMapping("/login")
+    public  ResponseEntity login(@RequestBody UserRequest.Dologin request){
+        String loginInfo = userService.doLogin(request);
+        if(loginInfo.equals("fail")){
+            return ResponseEntity.badRequest().body(loginInfo);
+        }
+
+        return ResponseEntity.ok().body(loginInfo);
     }
 }

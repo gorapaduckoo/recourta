@@ -17,7 +17,7 @@ public class Lecture {
 // 강의정보 테이블
 
     @Id
-    @NotNull
+//    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer lectureId; // 강의번호
 
