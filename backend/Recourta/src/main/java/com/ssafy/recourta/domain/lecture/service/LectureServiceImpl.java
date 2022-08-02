@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
@@ -27,7 +27,7 @@ public class LectureServiceImpl implements LectureService {
     UserRepository userRepository;
 
     @Override
-    public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input) throws Exception {
+    public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input) {
         // RequestDto에 담긴 userId로 user 객체 조회
         User user = userRepository.findById(input.getUserId()).orElseThrow(UserNotFoundException::new);
 
@@ -54,9 +54,9 @@ public class LectureServiceImpl implements LectureService {
 
 
     @Override
-    public LectureResponse.LectureDetail searchByLectureId(Integer lectureId) throws Exception {
+    public LectureResponse.LectureDetail searchByLectureId(Integer lectureId) {
         Lecture result = lectureRepository.findById(lectureId).orElseThrow(
-                ()-> new LectureException.UnvalidLectureId(lectureId.toString()));
+                ()-> new LectureException.UnvalidLectureId(lectureId));
         if (result != null) {
 
             return LectureResponse.LectureDetail.builder()
@@ -80,7 +80,7 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture) throws Exception {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
-                ()-> new LectureException.UnvalidLectureId(lectureId.toString()));
+                ()-> new LectureException.UnvalidLectureId(lectureId));
         updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureImg(), lecture.getLectureTime().toString());
         Integer result = lectureRepository.save(updatedLecture).getLectureId();
 
@@ -95,21 +95,21 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public LectureResponse.LectureId deleteLecture(Integer lectureId) throws Exception {
+    public LectureResponse.LectureId deleteLecture(Integer lectureId) {
         if(lectureRepository.existsById(lectureId)) {
             lectureRepository.deleteById(lectureId);
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
         else {
-            throw new LectureException.UnvalidLectureId(lectureId.toString());
+            throw new LectureException.UnvalidLectureId(lectureId);
         }
     }
 
     @Override
-    public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) throws Exception {
+    public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
         if(userRepository.existsById(userId)) {
-            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, new Date(), new Date());
+            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
             if(searchResult.size() == 0) {
                 throw new LectureException.NullLecture();
             } else {

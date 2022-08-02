@@ -1,5 +1,7 @@
 package com.ssafy.recourta.domain.session.service;
 
+import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
+import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
@@ -12,8 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,18 +28,25 @@ public class SessionServiceImpl implements SessionService{
     LectureRepository lectureRepository;
 
     @Override
-    public List<SessionResponse.SessionId> createSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) {
+    public Integer createSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId, boolean isUpdate) {
 
-        List<SessionResponse.SessionId> result = new ArrayList<>();
+        int result = 0;
 
         for(SessionRequest.SessionCreateForm s : sessions) {
             // ex) s: 월 11:30 ~ 12:00 강의
             // lectureId로 lecture 객체 조회
             // 존재하지 않는 강의번호인 경우 Exception 발생
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
-                    () -> new LectureException.UnvalidLectureId(lectureId.toString())
+                    () -> new LectureException.UnvalidLectureId(lectureId)
             );
-            LocalDate startDate = lecture.getStartDate();
+            LocalDate startDate;
+
+
+            if (!isUpdate) { // 새로 생성된 강의인 경우 개강일부터 세션 생성
+                startDate = lecture.getStartDate();
+            } else { // 강의정보가 업데이트된 경우 내일부터 세션 생성
+                startDate = LocalDate.now().plusDays(1);
+            }
             LocalDate endDate = lecture.getEndDate();
             LocalDate targetDate = startDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(s.getWeekDay())));
             while(targetDate.isBefore(endDate.plusDays(1))){
@@ -46,12 +56,39 @@ public class SessionServiceImpl implements SessionService{
                         .endTime(targetDate.atTime(s.getEndHour(), s.getEndMinute()))
                         .build();
                 sessionRepository.save(session);
-                result.add(SessionResponse.SessionId.builder()
-                        .sessionId(session.getSessionId())
-                        .build());
+                result++;
                 targetDate = targetDate.plusDays(7);
             }
         }
         return result;
+    }
+
+    // 강의 기간검색
+    @Override
+    public List<SessionResponse.SessionIdMapping> searchSessionByDateAndLectureId(LocalDate startDate, LocalDate endDate, Integer lectureId) {
+
+        LocalDateTime startTime = LocalDateTime.of(startDate, LocalTime.of(0,0,0));
+        LocalDateTime endTime = LocalDateTime.of(endDate, LocalTime.of(23,59,59));
+        // startDate 이후 ~ endDate 이전의 강의 세션을 전부 검색
+        List<SessionResponse.SessionIdMapping> sessions = sessionRepository.findAllByLecture_LectureIdAndStartTimeAfterAndEndTimeBefore(lectureId, startTime, endTime);
+
+        return sessions;
+    }
+
+    public Integer changeSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) {
+        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
+                () -> new LectureException.UnvalidLectureId(lectureId)
+        );
+        List<SessionResponse.SessionIdMapping> prevSessions = searchSessionByDateAndLectureId(LocalDate.now().plusDays(1), lecture.getEndDate(), lecture.getLectureId());
+        for (SessionResponse.SessionIdMapping s : prevSessions) {
+            deleteSession(s.getSessionId());
+        }
+        Integer sessionResult = createSession(sessions, lectureId, true);
+        return sessionResult;
+    }
+
+    public SessionResponse.SessionId deleteSession(Integer sessionId) {
+        sessionRepository.deleteById(sessionId);
+        return SessionResponse.SessionId.builder().sessionId(sessionId).build();
     }
 }

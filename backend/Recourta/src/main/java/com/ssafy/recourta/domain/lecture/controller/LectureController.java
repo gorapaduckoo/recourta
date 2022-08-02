@@ -2,8 +2,11 @@ package com.ssafy.recourta.domain.lecture.controller;
 
 import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
 import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
+import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.service.LectureService;
+import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
 import com.ssafy.recourta.domain.session.dto.response.SessionResponse;
+import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.session.service.SessionService;
 import com.ssafy.recourta.global.exception.LectureException;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +34,9 @@ public class LectureController {
     @PostMapping
     public ResponseEntity<LectureResponse.LectureId> createLecture(@RequestBody LectureRequest.LectureCreateForm lecture) throws Exception {
         LectureResponse.LectureId result = lectureService.createLecture(lecture);
-        System.out.println(lecture.getLectureTime().toString());
-        List<SessionResponse.SessionId> sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId());
-        if(sessionResult == null || sessionResult.size() == 0){
-            throw new LectureException.SessionSaveFail(result.getLectureId().toString());
+        Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
+        if(sessionResult <=0 ){
+            throw new LectureException.SessionSaveFail(result.getLectureId());
         }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -49,7 +51,11 @@ public class LectureController {
     @PutMapping("/{lectureId}")
     public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable String lectureId, @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
         Integer id = Integer.parseInt(lectureId);
+        System.out.println(input.getLectureTime().toString());
         LectureResponse.LectureId result = lectureService.updateLecture(id, input);
+
+        List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
+        sessionService.changeSession(newLectureTimes,id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

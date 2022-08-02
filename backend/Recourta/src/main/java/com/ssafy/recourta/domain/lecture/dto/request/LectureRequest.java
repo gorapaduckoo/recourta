@@ -63,10 +63,10 @@ public class LectureRequest {
         private LocalDate startDate;
         private LocalDate endDate;
         private String lectureImg;
-        private List<Session> lectureTime;
+        private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
-        public LectureUpdateForm(String content, LocalDate startDate, LocalDate endDate, String lectureImg, List<Session> lectureTime){
+        public LectureUpdateForm(String content, LocalDate startDate, LocalDate endDate, String lectureImg, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;

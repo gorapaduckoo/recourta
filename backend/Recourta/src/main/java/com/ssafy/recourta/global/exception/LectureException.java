@@ -24,16 +24,21 @@ public class LectureException{
     }
 
     public static class UnvalidLectureId extends RuntimeException {
-        public UnvalidLectureId(String lectureId){
+        public UnvalidLectureId(Integer lectureId){
             super(lectureId +"는 존재하지 않는 강의번호입니다.");
         }
     }
 
     public static class SessionSaveFail extends RuntimeException {
-        public SessionSaveFail(String lectureId) {
+        public SessionSaveFail(Integer lectureId) {
             super(lectureId +"에 대한 수업회차 생성에 실패했습니다.");
         }
     }
 
+    public static class SessionDeleteFail extends RuntimeException {
+        public SessionDeleteFail(Integer sessionId) {
+            super(sessionId+"번 세션 삭제에 실패했습니다.");
+        }
+    }
 
 }

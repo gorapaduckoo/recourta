@@ -34,10 +34,30 @@ public class SessionRequest {
 
         public String toString(){
             StringBuilder sb = new StringBuilder();
+            String sMinute, eMinute;
+            if (this.startMinute < 10) {
+                sMinute = "0"+this.startMinute;
+            } else {
+                sMinute = this.startMinute.toString();
+            }
+            if (this.endMinute < 10) {
+                eMinute = "0"+this.endMinute;
+            } else {
+                eMinute = this.endMinute.toString();
+            }
             sb.append(weekDays[this.weekDay]+ " ");
-            sb.append(this.startHour+":"+this.startMinute + " ~ ");
-            sb.append(this.endHour+":"+this.endMinute);
+            sb.append(this.startHour+":"+sMinute + " ~ ");
+            sb.append(this.endHour+":"+eMinute);
             return sb.toString();
+        }
+    }
+
+    public static class SessionId {
+        private Integer sessionId;
+
+        @Builder
+        public SessionId(Integer sessionId){
+            this.sessionId = sessionId;
         }
     }
 

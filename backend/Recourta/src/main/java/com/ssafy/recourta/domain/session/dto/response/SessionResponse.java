@@ -20,4 +20,7 @@ public class SessionResponse {
         }
     }
 
+    public interface SessionIdMapping {
+        Integer getSessionId();
+    }
 }
