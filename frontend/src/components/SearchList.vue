@@ -1,6 +1,6 @@
 <template>
 	<div class="hidden lg:grid lg:pt-10 lg:grid-cols-2 xl:grid-cols-3">
-	<StudentCard 
+	<SearchListCard 
 		v-for="(num) in [0,1,2,3,4,5]"
 		:key="num"
 	/>
@@ -28,7 +28,7 @@
 	</div>
 
 	<div class="lg:hidden flex flex-col my-10">
-		<mStudentCard
+		<mSearchListCard
 			v-for="num in [0,1,2,3,4,5]"
 			:key="num"
 		/>
@@ -37,8 +37,8 @@
 </template>
 
 <script setup>
-import StudentCard from './StudentCard.vue'
-import mStudentCard from './mStudentCard.vue'
+import SearchListCard from './SearchListCard.vue'
+import mSearchListCard from './mSearchListCard.vue'
 
 
 </script>
