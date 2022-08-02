@@ -3,6 +3,7 @@ package com.ssafy.recourta.domain.lecture.dto.response;
 import lombok.*;
 import org.json.simple.JSONArray;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -31,14 +32,14 @@ public class LectureResponse {
         // User 객체를 넣으면 여기서 User 참조 -> User에서는 List<Lecture> 참조 -> List<Lecture>에서 다시 User 참조 -> ... 무한반복!
         private String title; // 강의명
         private String content; // 강의설명
-        private Date startDate; // 시작일자
-        private Date endDate; // 종료일자
+        private LocalDate startDate; // 시작일자
+        private LocalDate endDate; // 종료일자
         private String lectureImg; // 썸네일 이미지
 
         private JSONArray lectureTime; // 강의시간
 
         @Builder
-        public LectureDetail(Integer lectureId, Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg, JSONArray lectureTime) {
+        public LectureDetail(Integer lectureId, Integer userId, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, JSONArray lectureTime) {
             this.lectureId = lectureId;
             this.userId = userId;
             this.title = title;

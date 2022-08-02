@@ -29,5 +29,11 @@ public class LectureException{
         }
     }
 
+    public static class SessionSaveFail extends RuntimeException {
+        public SessionSaveFail(String lectureId) {
+            super(lectureId +"에 대한 수업회차 생성에 실패했습니다.");
+        }
+    }
+
 
 }

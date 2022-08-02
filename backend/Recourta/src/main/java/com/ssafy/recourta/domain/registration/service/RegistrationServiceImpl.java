@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -55,7 +56,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     }
 
     @Override
-    public RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) throws ParseException {
+    public RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) {
         List<Registration> registrationList = registrationRepository.findByUserUserId(userId);
         List<Lecture> currentLectureList = new ArrayList<>();
 
@@ -63,9 +64,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         Date now = Date.valueOf(sdformat.format(new Date(System.currentTimeMillis())));
         for(Registration registration : registrationList) {
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
-            Date startDate = lecture.getStartDate();
-            Date endDate = lecture.getEndDate();
-            if((startDate.before(now) || startDate.equals(now)) && (endDate.after(now) || endDate.equals(now))) currentLectureList.add(lecture);
+            LocalDate startDate = lecture.getStartDate();
+            LocalDate endDate = lecture.getEndDate();
+            if((startDate.isBefore(LocalDate.now()) || startDate.equals(LocalDate.now())) && (endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now()))) currentLectureList.add(lecture);
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(currentLectureList).build();

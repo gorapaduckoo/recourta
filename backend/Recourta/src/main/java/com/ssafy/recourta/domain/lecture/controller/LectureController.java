@@ -3,6 +3,9 @@ package com.ssafy.recourta.domain.lecture.controller;
 import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
 import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.service.LectureService;
+import com.ssafy.recourta.domain.session.dto.response.SessionResponse;
+import com.ssafy.recourta.domain.session.service.SessionService;
+import com.ssafy.recourta.global.exception.LectureException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,14 +20,22 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
 public class LectureController {
-    private Logger logger = LoggerFactory.getLogger(LectureController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LectureController.class);
 
     @Autowired
     private LectureService lectureService;
 
+    @Autowired
+    private SessionService sessionService;
+
     @PostMapping
     public ResponseEntity<LectureResponse.LectureId> createLecture(@RequestBody LectureRequest.LectureCreateForm lecture) throws Exception {
         LectureResponse.LectureId result = lectureService.createLecture(lecture);
+        System.out.println(lecture.getLectureTime().toString());
+        List<SessionResponse.SessionId> sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId());
+        if(sessionResult == null || sessionResult.size() == 0){
+            throw new LectureException.SessionSaveFail(result.getLectureId().toString());
+        }
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

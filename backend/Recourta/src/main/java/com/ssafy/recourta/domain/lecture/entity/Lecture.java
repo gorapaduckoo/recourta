@@ -7,6 +7,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,14 +26,14 @@ public class Lecture {
     private User user; // 개설자
     private String title; // 강의명
     private String content; // 강의설명
-    private Date startDate; // 시작일자
-    private Date endDate; // 종료일자
+    private LocalDate startDate; // 시작일자
+    private LocalDate endDate; // 종료일자
     private String lectureImg; // 썸네일 이미지
 
     private String lectureTime; // 강의 시간 정보
 
     @Builder
-    public Lecture(User user, String title, String content, Date startDate, Date endDate, String lectureImg, String lectureTime) {
+    public Lecture(User user, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime) {
         this.user = user;
         this.title = title;
         this.content = content;
@@ -42,7 +43,7 @@ public class Lecture {
         this.lectureTime = lectureTime;
     }
 
-    public void update(String content, Date startDate, Date endDate, String lectureImg, String lectureTime) {
+    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime) {
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;

@@ -1,6 +1,8 @@
 package com.ssafy.recourta.domain.lecture.dto.request;
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
+import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
+import com.ssafy.recourta.domain.session.entity.Session;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -8,8 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.json.simple.JSONArray;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.List;
 
 @Data
 @Schema(description = "강의 개설/조회/수정/삭제 시 입력받는 양식")
@@ -24,13 +28,13 @@ public class LectureRequest {
         private Integer userId; // 강의 개설자의 회원번호
         private String title;
         private String content;
-        private Date startDate;
-        private Date endDate;
+        private LocalDate startDate;
+        private LocalDate endDate;
         private String lectureImg;
-        private ArrayList<String> lectureTime;
+        private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
-        public LectureCreateForm(Integer userId, String title, String content, Date startDate, Date endDate, String lectureImg, ArrayList<String> lectureTime){
+        public LectureCreateForm(Integer userId, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
             this.userId = userId;
             this.title = title;
             this.content = content;
@@ -56,13 +60,13 @@ public class LectureRequest {
     public static class LectureUpdateForm {
         // 강의 수정 시 입력받는 폼 양식
         private String content;
-        private Date startDate;
-        private Date endDate;
+        private LocalDate startDate;
+        private LocalDate endDate;
         private String lectureImg;
-        private ArrayList<String> lectureTime;
+        private List<Session> lectureTime;
 
         @Builder
-        public LectureUpdateForm(String content, Date startDate, Date endDate, String lectureImg, ArrayList<String> lectureTime){
+        public LectureUpdateForm(String content, LocalDate startDate, LocalDate endDate, String lectureImg, List<Session> lectureTime){
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;
