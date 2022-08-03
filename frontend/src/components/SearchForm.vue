@@ -39,14 +39,14 @@ const state = reactive({
   searchContent : "",
 })
 
-// const onSubmit = () => {
-//       // const searchMovie = state.searchContent
-//       // state.$store.dispatch('fetchSearches', searchMovie) 
-//       state.searchContent = ''
-//       // if (searchMovie) {
-//       //   this.$router.push({ name: '' })
-//       // }
-//   },
+const onSubmit = () => {
+      const searchMovie = state.searchContent
+      // state.$store.dispatch('fetchSearches', searchMovie) 
+      state.searchContent = ''
+      // if (searchMovie) {
+      //   this.$router.push({ name: '' })
+      // }
+  }
 
 </script>
 
