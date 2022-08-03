@@ -7,9 +7,11 @@ import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.implementation.bytecode.Throw;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -28,8 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     // 파일을 업로드할 경로를 application.properties 파일에서 가져옴
     @Value("${com.ssafy.recourta.upload.path}")
@@ -86,14 +87,18 @@ public class UserService {
         return UserResponse.OnlyId.build(user);
     }
 
-    public String doLogin(UserRequest.Dologin request){
+    public User doLogin(UserRequest.Dologin request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            return "fail";
+//        if(!passwordEncoder.matches(user.getPassword(), request.getPassword())) {
+        if(!passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(request.getPassword()))) {
+            throw new UserNotFoundException();
         }
 
-        return "accessToken";
+        return user;
     }
 
+    public User getUser(int userId) {
+        return userRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
+    }
 }
