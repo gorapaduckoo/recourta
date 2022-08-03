@@ -6,9 +6,11 @@ import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.service.MailService;
 import com.ssafy.recourta.domain.user.service.UserService;
+import com.ssafy.recourta.global.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,8 @@ public class UserController {
     private final UserService userService;
     private final MailService mailService;
 
+    @Autowired
+    private final JwtTokenUtil jwtTokenUtil;
 
     @PostMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     // @RequestBody는 JSON형태의 바디로 들어오는 데이터들을 파싱해 줌
@@ -79,13 +83,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public  ResponseEntity login(@RequestBody UserRequest.Dologin request){
-        String loginInfo = userService.doLogin(request);
-        if(loginInfo.equals("fail")){
-            return ResponseEntity.badRequest().body(loginInfo);
-        }
-
-        return ResponseEntity.ok().body(loginInfo);
+    public ResponseEntity login(@RequestBody UserRequest.Dologin request) throws Exception {
+        User user = userService.doLogin(request);
+        String accessToken = jwtTokenUtil.generateAccessToken(jwtTokenUtil.getClaims(user));
+        return ResponseEntity.ok().body(accessToken);
     }
 
     @PostMapping("/auth/code")

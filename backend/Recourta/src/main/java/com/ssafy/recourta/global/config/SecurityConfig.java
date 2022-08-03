@@ -1,5 +1,7 @@
 package com.ssafy.recourta.global.config;
 
+import com.ssafy.recourta.global.Filter.JwtAuthenticationFilter;
+import com.ssafy.recourta.global.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.security.ConditionalOnDefaultWebSecurity;
@@ -9,9 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -20,6 +24,8 @@ import org.springframework.security.web.SecurityFilterChain;
 //@ConditionalOnDefaultWebSecurity
 //@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfig{
+
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
@@ -35,9 +41,13 @@ public class SecurityConfig{
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
-                    .antMatchers("/**", "/css/**", "/images/**",
+                    .antMatchers("/user/**").authenticated()
+                    .antMatchers("/css/**", "/images/**",
                         "/js/**", "/h2-console/**", "/profile").permitAll()
-                    .anyRequest().authenticated();
+//                    .anyRequest().authenticated()
+                .and()
+                    .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 
