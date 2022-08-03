@@ -36,7 +36,7 @@
           <label v-if="!state.isemail" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.wrongemail }}</label>
         </div>
         <button type="button" id="checkemailbtn" @click="checkemail" class="w-[76.4px] text-[#2c5172] dark:text-gray-300 text-sm border-2 border-[#2c5172] dark:border-gray-300 focus:outline-none rounded-md px-3 py-0.5 text-center hover:bg-gray-100 dark:hover:bg-[#555555] disabled:cursor-not-allowed">
-          <span>메일발송</span>
+          <span>{{ state.emailsendbtnmsg }}</span>
         </button>
       </div>
 
@@ -182,6 +182,7 @@ const state = reactive({
   Timer:null,
   settime:300,
   timermsg:'5:00',
+  emailsendbtnmsg:'메일발송',
   istimer: false,
 })
 
@@ -276,6 +277,7 @@ const checkemail = () => {
       state.isemailverified = false
       state.isverify = true
       if(state.Timer!==null) verifytimerStop(state.Timer)
+      state.emailsendbtnmsg='재발송'
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
       verifytimer()
@@ -301,7 +303,10 @@ const verifytimer = () => {
   state.Timer = setInterval(()=>{
     state.settime--
     state.timermsg = Math.floor(state.settime / 60) + ":" + (state.settime % 60).toString().padStart(2,"0")
-    if(state.settime<=0) verifytimerStop(state.Timer)
+    if(state.settime<=0) {
+      verifytimerStop(state.Timer)
+      state.emailsendbtnmsg='메일발송'
+    }
   },1000)
 }
 
