@@ -31,7 +31,7 @@
       <!-- 이메일 입력 -->
       <div class="flex items-center justify-between z-0 mb-6 mr-auto ml-auto w-3/4 group">
         <div class="w-3/4 relative m-0 p-0">
-          <input type="text" name="floating_email" id="floating_email" v-model.trim="floating_email" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isemail,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isemail,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onEmailClick"/>
+          <input type="text" name="floating_email" id="floating_email" v-model.trim="floating_email" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isemail,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isemail,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer disabled:cursor-not-allowed" placeholder=" " @click="onEmailClick"/>
           <label for="floating_email" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isemail,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isemail,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
           <label v-if="!state.isemail" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.wrongemail }}</label>
         </div>
@@ -45,6 +45,7 @@
         <div class="w-3/4 relative m-0 p-0">
           <input type="text" name="floating_verify" id="floating_verify" v-model.trim="floating_verify" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.isverify,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.isverify,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer disabled:cursor-not-allowed" placeholder=" " @click="onVerifyClick" disabled/>
           <label for="floating_verify" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.isverify,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.isverify,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">인증번호</label>
+          <label v-if="state.istimer" for="floating_verify" class="text-gray-500 dark:text-gray-400 absolute text-sm -z-10 top-2.5 right-0">{{ state.timermsg }}</label>
           <label v-if="state.isemailverified" for="floating_verify" class="absolute text-[4px] text-[#4fb054] dark:text-[#4fb054] -bottom-3.5 right-0">이메일이 인증되었습니다</label>
           <label v-else-if="!state.isverify" for="floating_verify" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.wrongverify }}</label>
         </div>
@@ -178,6 +179,10 @@ const state = reactive({
   isemailverified: false,
   wrongemail:'',
   wrongverify:'',
+  Timer:null,
+  settime:300,
+  timermsg:'5:00',
+  istimer: false,
 })
 
 const camera = ref(null)
@@ -270,8 +275,10 @@ const checkemail = () => {
       email = floating_email.value
       state.isemailverified = false
       state.isverify = true
+      if(state.Timer!==null) verifytimerStop(state.Timer)
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
+      verifytimer()
     }
     else{
       state.wrongemail='이미 가입된 이메일입니다'
@@ -289,22 +296,40 @@ const sendverifytoserver = () => {
   return 0
 }
 
+const verifytimer = () => {
+  state.istimer=true
+  state.Timer = setInterval(()=>{
+    state.settime--
+    state.timermsg = Math.floor(state.settime / 60) + ":" + (state.settime % 60).toString().padStart(2,"0")
+    if(state.settime<=0) verifytimerStop(state.Timer)
+  },1000)
+}
+
+const verifytimerStop = (timer) => {
+  clearInterval(timer)
+  document.getElementById('floating_verify').setAttribute("disabled",true)
+  document.getElementById('checkverifybtn').setAttribute("disabled",true)
+  state.istimer=false
+  state.settime=300
+  state.timermsg = Math.floor(state.settime / 60) + ":" + (state.settime % 60).toString().padStart(2,"0")
+}
+
 const checkverify = () => {
   if(state.isemailsend){  
     if(sendverifytoserver()){
-      document.getElementById('floating_verify').setAttribute("disabled",true)
-      document.getElementById('checkverifybtn').setAttribute("disabled",true)
+      document.getElementById('floating_email').setAttribute("disabled",true)
       document.getElementById('checkemailbtn').setAttribute("disabled",true)
-      state.isemailverified=true
+      state.isemailverified = true
+      verifytimerStop(state.Timer)
     }
     else{
       state.wrongverify = "인증번호가 일치하지 않습니다"
-      state.isverify=false
+      state.isverify = false
     }
   }
   else{
     state.wrongverify = "이메일을 발송해주세요"
-    state.isverify=false
+    state.isverify = false
   }
 }
 
