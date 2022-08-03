@@ -21,8 +21,6 @@
 
   <SearchForm />
 
-  
-
   <SearchList />
 
   <!-- 강의 만들기 Modal -->
@@ -85,7 +83,7 @@
             <!-- 강의 썸네일 -->
             <div class="form-group mb-6 flex justify-between">
               <div>강의 썸네일</div>
-              <input type="file" name="floating_lecture_image" id="floating_lecture_image" accept="image/gif, image/jpeg, image/png" onchange="fileCheck(this)" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+              <input type="file" @change="onInputImage()" ref="floating_lecture_image" name="floating_lecture_image" id="floating_lecture_image" accept="image/gif, image/jpeg, image/png" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
             </div>
 
             <!-- 등록하기 버튼 -->
@@ -97,6 +95,8 @@
       </div>
     </div>
   </div>
+
+
 </template>
 
 <script setup>
@@ -114,6 +114,9 @@ import {useStore} from 'vuex'
 
 const state = reactive({
   curpage : "classList",
+  image : '',
+  preview: '',
+  saveFile: null,
 })
 
 let floating_lecture_name = ref("")
@@ -122,23 +125,26 @@ let floating_lecture_end_time = ref("00:00")
 let floating_lecture_duration_start = ref(new Date().toISOString().substring(0, 10))
 let floating_lecture_duration_end = ref(new Date().toISOString().substring(0, 10))
 let floating_lecture_info = ref("")
+let floating_lecture_image = ref("")
 
-const fileCheck = (file) => {
-  const pathpoint = file.value.lastIndexOf('.');
-  const filepoint = file.value.substring(pathpoint + 1, file.length);
-  const filetype = filepoint.toLowerCase();
 
-  if (filetype=='jpg' || filetype=='jpeg' || filetype=='png' || filetype=='gif') {
-    // 정상적인 이미지 확장자 파일인 경우
-  } else {
-    alert('이미지 파일만 선택할 수 있습니다.');
-    const parentObj = file.parentNode
-    const node = parentObj.replaceChild(file.cloneNoded(true), file);
-    return false;
-  }
-}
+// const fileCheck = (file) => {
+//   const pathpoint = file.value.lastIndexOf('.');
+//   const filepoint = file.value.substring(pathpoint + 1, file.length);
+//   const filetype = filepoint.toLowerCase();
+
+//   if (filetype=='jpg' || filetype=='jpeg' || filetype=='png' || filetype=='gif') {
+//     // 정상적인 이미지 확장자 파일인 경우
+//   } else {
+//     alert('이미지 파일만 선택할 수 있습니다.');
+//     const parentObj = file.parentNode
+//     const node = parentObj.replaceChild(file.cloneNoded(true), file);
+//     return false;
+//   }
+// }
 
 const makeClassSubmit = async () => {
+  console.log(floating_lecture_image.value.files[0])
   await axios({
       url: rct.lecture.lecturecreate(),
       method: 'post',
@@ -149,10 +155,37 @@ const makeClassSubmit = async () => {
         lectureStart : floating_lecture_start_time.value,
         lectureEnd : floating_lecture_end_time.value,
         info : floating_lecture_info.value,
+        image: state.image,
       }
+    })
+    
+    .then()
+    .catch(error => {
+      console.log(floating_lecture_name.value,
+        floating_lecture_duration_start.value,
+        floating_lecture_duration_end.value,
+        floating_lecture_start_time.value,
+        floating_lecture_end_time.value,
+        floating_lecture_info.value,
+        floating_lecture_image.value.files,)
     })
 }
 
+const onInputImage = () => {
+  state.image = window.URL.createObjectURL(floating_lecture_image.value.files[0])
+  console.log(state.image)
+}
+
+const previewFile = (file) => {
+  const fileData = (data) => {
+    state.preview = data
+  }
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.addEventListener("load", function () {
+    fileData(reader.result)
+  }, false);
+}
 
 </script>
 
