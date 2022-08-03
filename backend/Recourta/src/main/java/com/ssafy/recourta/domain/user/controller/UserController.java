@@ -87,4 +87,17 @@ public class UserController {
 
         return ResponseEntity.ok().body(loginInfo);
     }
+
+    @PostMapping("/auth/code")
+    public ResponseEntity regist(@RequestBody UserRequest.CodeCheck request){
+        String registInfo = mailService.codeCheck(request);
+        if(registInfo.equals("fail")){
+            return ResponseEntity.badRequest().body(registInfo);
+        }else if(registInfo.equals("expired")){
+            return ResponseEntity.badRequest().body(registInfo);
+        }
+        else{
+            return ResponseEntity.ok().body(registInfo);
+        }
+    }
 }
