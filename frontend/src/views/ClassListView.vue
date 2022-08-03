@@ -176,16 +176,6 @@ const onInputImage = () => {
   console.log(state.image)
 }
 
-const previewFile = (file) => {
-  const fileData = (data) => {
-    state.preview = data
-  }
-  const reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.addEventListener("load", function () {
-    fileData(reader.result)
-  }, false);
-}
 
 </script>
 
