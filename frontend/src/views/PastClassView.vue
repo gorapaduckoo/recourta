@@ -1,18 +1,15 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
-  <div class="pt-[60px] container flex justify-around mx-auto">
-    <div class="font-bold text-4xl">이전 강의</div>
-    <PastCard />
-    <PastCard />
-    <PastCard />
+  <div class="pt-[60px]">
+    <PastCardList />
   </div>
 </template>
 
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
-import PastCard from '../components/PastCard.vue'
+import PastCardList from '../components/PastCardList.vue'
 import { reactive } from 'vue'
 
 const state = reactive({

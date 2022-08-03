@@ -24,7 +24,7 @@ export default createRouter({
       component: () => import('./views/PWresetView.vue'),
     },
     {
-      path: '/main',
+      path: '/main/userId?isStudent',
       name: 'main',
       component: () => import('./views/MainView.vue'),
     },

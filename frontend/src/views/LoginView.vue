@@ -44,8 +44,12 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import {useRouter} from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
+import {useStore} from 'vuex'
 
 const route = useRouter()
+const store = useStore()
 
 const state = reactive({
   email_check:true,
@@ -55,6 +59,27 @@ const state = reactive({
 let floating_email = ref("")
 let floating_password = ref("")
 
+const login = async () => {
+  await axios({
+    url: rct.login.login(),
+    method: 'post',
+    data: {
+      email : floating_email.value,
+      password : floating_password.value,
+    }
+  })
+  .then(res => {
+    store.dispatch('user/saveToken', res.data.token)
+    store.commit("user/Set_userId",res.data.userId)
+    store.commit("user/Set_isStudent",res.data.isStudent)
+    route.replace({path:'/main'})
+  })
+  .catch(err => {
+    store.commit('SET_AUTH_ERROR', err.response.data)
+  })
+}
+
+
 const test_id_pw = (id,pw) => {
   if(id==="test@gmail.com"&&pw==="Test123@") return 1
   return 0
@@ -62,12 +87,10 @@ const test_id_pw = (id,pw) => {
 
 const loginSubmit = () => {
       
-      // 영문숫자로만이뤄진id(_-.이아이디포함x)@----.2-3글자(com)
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
-      // let pw_regex = new RegExp()
-    console.log(floating_email.value)
-    console.log(floating_password.value)
+    // console.log(floating_email.value)
+    // console.log(floating_password.value)
     if(email_regex.test(floating_email.value)) {
       state.email_check=true
     } else {
@@ -82,8 +105,7 @@ const loginSubmit = () => {
     }
 
     if(state.email_check&&state.pw_check) {
-      if(test_id_pw(floating_email.value,floating_password.value)) route.replace({path:'/main'})
-      else console.log('일치하는 회원이 없습니다.')
+      login()
     }
     
   }
