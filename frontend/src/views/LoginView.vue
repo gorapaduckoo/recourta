@@ -94,13 +94,13 @@ const loginSubmit = () => {
     if(email_regex.test(floating_email.value)) {
       state.email_check=true
     } else {
-      console.log('올바른 email을 입력하세요')
+      // console.log('올바른 email을 입력하세요')
       state.email_check=false
     }
     if(pw_regex.test(floating_password.value)) {
       state.pw_check=true
     } else {
-      console.log('올바른 pw를 입력하세요.')
+      // console.log('올바른 pw를 입력하세요.')
       state.pw_check=false
     }
 

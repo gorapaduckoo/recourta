@@ -46,8 +46,8 @@ const PWresetSubmit = () => {
       
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
 
-  console.log(floating_password.value)
-  console.log(repeat_password.value)
+  //console.log(floating_password.value)
+  //console.log(repeat_password.value)
 
   if(!pw_regex.test(floating_password.value)) state.pw_check = false
   if(floating_password.value!==repeat_password.value) state.repeat_check = false

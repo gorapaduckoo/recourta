@@ -231,7 +231,7 @@ const createCameraElement = () => {
   .catch(error => {
     state.isLoading = false;
     alert("May the browser didn't support or there is some errors.");
-    console.log(error)
+    // console.log(error)
   });
 }
 
@@ -339,15 +339,15 @@ const checkverify = () => {
 }
 
 const signupSubmit = () => {
-  console.log(floating_name)
-  console.log(floating_email.value)
-  console.log(floating_verify.value)
-  console.log(floating_password.value)
-  console.log(floating_repeat_password.value)
-  console.log(isStudent.value)
+  // console.log(floating_name)
+  // console.log(floating_email.value)
+  // console.log(floating_verify.value)
+  // console.log(floating_password.value)
+  // console.log(floating_repeat_password.value)
+  // console.log(isStudent.value)
 
   if(floating_name.value==="") state.isname = false
-  console.log(state.isname)
+  // console.log(state.isname)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
       // let pw_regex = new RegExp()
   if(!state.isemailverified) {

@@ -81,12 +81,12 @@ const PWsearchSubmit = () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   
   // let pw_regex = new RegExp()
-  console.log(floating_email.value)
+  // console.log(floating_email.value)
   
   if(email_regex.test(floating_email.value)) {
     state.email_check=true
   } else {
-    console.log('올바른 email을 입력하세요')
+    // console.log('올바른 email을 입력하세요')
     state.msg='올바른 email을 입력하세요'
     state.email_check=false
   }
@@ -107,12 +107,12 @@ const onEmailClick = () => {
 }
 
 const modalOpen = () => {
-  console.log('함수0')
+  // console.log('함수0')
   document.getElementById('emailSendModal').classList.replace('hidden', 'show')
 }
 
 const modalClose = () => {
-  console.log('함수0')
+  // console.log('함수0')
   document.getElementById('emailSendModal').classList.replace('show', 'hidden')
   route.replace({path:'/'})
 }
