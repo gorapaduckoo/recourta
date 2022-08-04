@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @Getter
 @NoArgsConstructor
@@ -12,6 +14,7 @@ public class SessionResponse {
 
     @Data
     public static class SessionId {
+        @NotNull
         private Integer sessionId;
 
         @Builder

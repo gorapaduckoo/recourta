@@ -59,6 +59,9 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public List<NoticeResponse.NoticeTitle> searchByUserId(Integer userId) {
         List<NoticeResponse.NoticeTitle> result = new ArrayList<>();
+        if(!userRepository.existsById(userId)){
+            throw new UserNotFoundException();
+        }
         List<Notice> notices = noticeRepository.findAllByUser_UserId(userId);
         // 빈 리스트인 경우 조회에 실패한 것
         // 조회 결과가 없는 경우에는 빈 리스트 반환

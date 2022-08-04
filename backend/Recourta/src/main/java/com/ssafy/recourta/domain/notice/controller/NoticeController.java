@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,13 +22,13 @@ public class NoticeController {
     private NoticeService noticeService;
 
     @PostMapping
-    public ResponseEntity<NoticeResponse.NoticeCount> createNotice(@RequestBody NoticeRequest.NoticeCreateForm notice) throws Exception {
+    public ResponseEntity<NoticeResponse.NoticeCount> createNotice(@Valid @RequestBody NoticeRequest.NoticeCreateForm notice) throws Exception {
         NoticeResponse.NoticeCount result = noticeService.createNotice(notice);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<NoticeResponse.NoticeTitle>> searchNoticeListByUserId(@PathVariable Integer userId) throws Exception {
+    @GetMapping
+    public ResponseEntity<List<NoticeResponse.NoticeTitle>> searchNoticeListByUserId(@Valid @RequestParam Integer userId) throws Exception {
         List<NoticeResponse.NoticeTitle> result = noticeService.searchByUserId(userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

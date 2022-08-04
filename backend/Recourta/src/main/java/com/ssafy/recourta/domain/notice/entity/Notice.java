@@ -24,15 +24,20 @@ public class Notice {
     private Integer noticeId;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "lectureId")
     private Lecture lecture; // 송신 강의
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "userId")
     private User user; // 수신자
 
+    @NotNull
     String title; // 제목
+    @NotNull
     String content; // 내용
+    @NotNull
     LocalDateTime datetime; // 송신일시
 
     Boolean isChecked; // 1: 읽음, 0: 읽지않음

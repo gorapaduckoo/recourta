@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,10 +16,15 @@ public class NoticeResponse {
 
     @Data
     public static class NoticeTitle {
+        @NotNull
         private Integer noticeId;
+        @NotNull
         private String lectureTitle;
+        @NotNull
         private String title;
+        @NotNull
         private LocalDate date;
+        @NotNull
         private boolean isChecked;
 
         @Builder
@@ -36,10 +42,15 @@ public class NoticeResponse {
 
     @Data
     public static class NoticeDetail {
+        @NotNull
         private Integer noticeId;
+        @NotNull
         private String lectureTitle;
+        @NotNull
         private String title;
+        @NotNull
         private String content;
+        @NotNull
         private LocalDateTime datetime;
 
         @Builder
@@ -54,6 +65,7 @@ public class NoticeResponse {
 
     @Data
     public static class NoticeCount {
+        @NotNull
         private Integer noticeCnt;
 
         @Builder

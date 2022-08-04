@@ -22,9 +22,12 @@ public class Session {
     private Integer sessionId; // 해당 회차의 수업 번호
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "lectureId")
     private Lecture lecture;
+    @NotNull
     private LocalDateTime startTime;
+    @NotNull
     private LocalDateTime endTime;
 
     @Builder

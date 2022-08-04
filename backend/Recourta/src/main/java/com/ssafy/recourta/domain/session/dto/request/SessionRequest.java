@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @Getter
 public class SessionRequest {
@@ -16,10 +18,15 @@ public class SessionRequest {
     @NoArgsConstructor
     public static class SessionCreateForm {
 
+        @NotNull
         private Integer weekDay;
+        @NotNull
         private Integer startHour;
+        @NotNull
         private Integer startMinute;
+        @NotNull
         private Integer endHour;
+        @NotNull
         private Integer endMinute;
 
         @Builder
@@ -52,6 +59,7 @@ public class SessionRequest {
     }
 
     public static class SessionId {
+        @NotNull
         private Integer sessionId;
 
         @Builder

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,9 +16,13 @@ public class NoticeRequest {
     @Data
     @NoArgsConstructor
     public static class NoticeCreateForm {
+        @NotNull
         private List<Integer> userIds; // 수신자 명단
+        @NotNull
         private Integer lectureId;
+        @NotNull
         private String title;
+        @NotNull
         private String content;
 
         @Builder

@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class LectureController {
     private SessionService sessionService;
 
     @PostMapping
-    public ResponseEntity<LectureResponse.LectureId> createLecture(@RequestBody LectureRequest.LectureCreateForm lecture) throws Exception {
+    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestBody LectureRequest.LectureCreateForm lecture) throws Exception {
         LectureResponse.LectureId result = lectureService.createLecture(lecture);
         Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
         if(sessionResult <=0 ){
@@ -49,7 +50,7 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable String lectureId, @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
+    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable String lectureId,@Valid @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
         Integer id = Integer.parseInt(lectureId);
         System.out.println(input.getLectureTime().toString());
         LectureResponse.LectureId result = lectureService.updateLecture(id, input);

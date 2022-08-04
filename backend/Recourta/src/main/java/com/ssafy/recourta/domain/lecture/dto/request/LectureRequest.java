@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.json.simple.JSONArray;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -25,12 +26,18 @@ public class LectureRequest {
     public static class LectureCreateForm {
         // 강의 개설 시 입력받는 폼 양식
 
+        @NotNull
         private Integer userId; // 강의 개설자의 회원번호
+        @NotNull
         private String title;
+        @NotNull
         private String content;
+        @NotNull
         private LocalDate startDate;
+        @NotNull
         private LocalDate endDate;
         private String lectureImg;
+        @NotNull
         private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
@@ -59,10 +66,14 @@ public class LectureRequest {
     @NoArgsConstructor
     public static class LectureUpdateForm {
         // 강의 수정 시 입력받는 폼 양식
+        @NotNull
         private String content;
+        @NotNull
         private LocalDate startDate;
+        @NotNull
         private LocalDate endDate;
         private String lectureImg;
+        @NotNull
         private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder

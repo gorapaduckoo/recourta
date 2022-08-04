@@ -90,7 +90,7 @@ public class LectureServiceImpl implements LectureService {
                     .lectureId(result)
                     .build();
         } else {
-            throw new Exception("강의 업데이트 실패!");
+            throw new LectureException.LectureSaveFail();
         }
     }
 
