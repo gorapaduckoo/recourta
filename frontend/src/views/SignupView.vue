@@ -365,8 +365,7 @@ const UrltoBlob = async (dataURL) => {
 const signupdatatoserver = async () => {
   const camimgurl = document.getElementById("photoTaken").toDataURL("image/jpeg");
   let blob = await UrltoBlob(camimgurl)
-  console.log("blob:" + blob)
-  console.log("typeof(blob): " + typeof(blob))
+  console.log(blob)
   // const img = new Image()
   // img.src = URL.createObjectURL(blob)
   // await img.decode()
@@ -378,22 +377,8 @@ const signupdatatoserver = async () => {
     password : floating_password.value,
     isStudent : Number(isStudent.value),
   }
-
   const json = JSON.stringify(data)
-  const datablob = new Blob([json], { type: "application/json" })
-
-  fd.append("userImg",blob)
-  fd.append("request",datablob)
-  const data = {
-    name : floating_name.value,
-    email : email,
-    password : floating_password.value,
-    isStudent : Number(isStudent.value),
-  }
-
-  const json = JSON.stringify(data)
-  const datablob = new Blob([json], { type: "application/json" })
-
+  const datablob = new Blob([json],{type:"application/json"})
   fd.append("userImg",blob)
   fd.append("request",datablob)
   for(let pair of fd.entries()){
