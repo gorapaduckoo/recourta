@@ -41,6 +41,7 @@ public class SecurityConfig{
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
+                    .antMatchers("/user").permitAll()
                     .antMatchers("/user/**").authenticated()
                     .antMatchers("/css/**", "/images/**",
                         "/js/**", "/h2-console/**", "/profile").permitAll()

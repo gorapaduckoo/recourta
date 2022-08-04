@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping(value = "/user", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     // @RequestBody는 JSON형태의 바디로 들어오는 데이터들을 파싱해 줌
     // Multipart/form-data로 전달되는 컨텐츠는 RequestBody 사용 시 Exception 발생 => @RequestPart 사용
-    public ResponseEntity<UserResponse.OnlyId> create(@RequestPart("request") UserRequest.Create request, @RequestPart("userImg") MultipartFile userImg) throws Exception {
+    public ResponseEntity<UserResponse.OnlyId> create(@Valid @RequestPart("request") UserRequest.Create request, @RequestPart("userImg") MultipartFile userImg) throws Exception {
 
 
         UserResponse.OnlyId response = userService.create(request, userImg);
