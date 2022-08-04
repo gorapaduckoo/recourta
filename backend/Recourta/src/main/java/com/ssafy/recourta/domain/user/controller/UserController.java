@@ -34,8 +34,6 @@ public class UserController {
     // @RequestBody는 JSON형태의 바디로 들어오는 데이터들을 파싱해 줌
     // Multipart/form-data로 전달되는 컨텐츠는 RequestBody 사용 시 Exception 발생 => @RequestPart 사용
     public ResponseEntity<UserResponse.OnlyId> create(@Valid @RequestPart("request") UserRequest.Create request, @RequestPart("userImg") MultipartFile userImg) throws Exception {
-
-
         UserResponse.OnlyId response = userService.create(request, userImg);
         return ResponseEntity.ok().body(response);
     }
@@ -99,7 +97,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@Valid @RequestBody UserRequest.Dologin request) throws Exception {
+    public ResponseEntity login(@Valid @RequestBody UserRequest.Dologin request) {
         User user = userService.doLogin(request);
         String accessToken = jwtTokenUtil.generateAccessToken(jwtTokenUtil.getClaims(user));
         return ResponseEntity.ok().body(accessToken);

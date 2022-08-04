@@ -20,18 +20,19 @@ public class UserUtil {
             throw new Exception("이미지가 등록되지 않았습니다.");
         }
         // 이미지 파일만 업로드 가능
-//        if(userImg.getContentType().startsWith("image")) {
-//            throw new Exception("이미지 파일이 아닙니다.");
-//        }
+        if(!userImg.getContentType().startsWith("image")) {
+            throw new Exception("이미지 파일이 아닙니다.");
+        }
 
         // 파일명은 UUID로 설정
         String uuid = UUID.randomUUID().toString();
         // 파일 확장자는 original file name에서 가져옴
-        String fileExtension = userImg.getOriginalFilename();
-        fileExtension = fileExtension.substring(fileExtension.lastIndexOf("."));
+//        String fileExtension = userImg.getOriginalFilename();
+//        System.out.println(fileExtension);
+//        fileExtension = fileExtension.substring(fileExtension.lastIndexOf("."));
 
         // 저장할 파일명 = UUID + 파일확장자
-        String storedFileName = uuid+fileExtension;
+        String storedFileName = uuid+".png";
         // 파일 전체 경로 = uploadPath + storedFileName
         File file = new File(uploadPath + storedFileName);
         userImg.transferTo(file);

@@ -160,9 +160,13 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import rct from '../api/rct'
+import axios from 'axios'
+
 
 const route = useRouter()
+const store = useStore()
 
 const state = reactive({
   isCameraOpen: false,
@@ -258,25 +262,26 @@ const takePhoto = () => {
 }
 
 const sendemailtoserver = async () => {
-  await axios({
+  const res = await axios({
     url: rct.user.userauth(),
     method: 'post',
     data: {
       email : email,
     }
   })
+  return res
 }
 
-const checkemail = () => {
+const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = sendemailtoserver().data
-    if(res.success) {
-      state.isemailsend = true
-      state.isemailverified = false
-      state.isverify = true
-      if(state.Timer!==null) verifytimerStop(state.Timer)
+    const res = await sendemailtoserver()
+  if(res.data.success) {
+    state.isemailsend = true
+    state.isemailverified = false
+    state.isverify = true
+    if(state.Timer!==null) verifytimerStop(state.Timer)
       state.emailsendbtnmsg='재발송'
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
@@ -294,14 +299,15 @@ const checkemail = () => {
 }
 
 const sendverifytoserver = async () => {
-  await axios({
+  const res = await axios({
     url: rct.user.usercode(),
     method: 'post',
     data: {
       email : email,
-      code : floating_verify,
+      code : floating_verify.value,
     }
   })
+  return res
 }
 
 const verifytimer = () => {
@@ -325,10 +331,10 @@ const verifytimerStop = (timer) => {
   state.timermsg = Math.floor(state.settime / 60) + ":" + (state.settime % 60).toString().padStart(2,"0")
 }
 
-const checkverify = () => {
+const checkverify = async () => {
   if(state.isemailsend){  
-    const res = sendverifytoserver().data
-    if(res==="success"){
+    const res = await sendverifytoserver()
+    if(res.data==="success"){
       document.getElementById('floating_email').setAttribute("disabled",true)
       document.getElementById('checkemailbtn').setAttribute("disabled",true)
       state.isemailverified = true
@@ -359,12 +365,37 @@ const UrltoBlob = async (dataURL) => {
 const signupdatatoserver = async () => {
   const camimgurl = document.getElementById("photoTaken").toDataURL("image/jpeg");
   let blob = await UrltoBlob(camimgurl)
+  console.log("blob:" + blob)
+  console.log("typeof(blob): " + typeof(blob))
+  // const img = new Image()
+  // img.src = URL.createObjectURL(blob)
+  // await img.decode()
+  // console.log(img)
   let fd = new FormData()
-  fd.append("name",floating_name.value)
-  fd.append("email",email)
-  fd.append("password",floating_password.value)
-  fd.append("isStudent",Number(isStudent.value))
-  fd.append("image",blob,"image.jpeg")
+  const data = {
+    name : floating_name.value,
+    email : email,
+    password : floating_password.value,
+    isStudent : Number(isStudent.value),
+  }
+
+  const json = JSON.stringify(data)
+  const datablob = new Blob([json], { type: "application/json" })
+
+  fd.append("userImg",blob)
+  fd.append("request",datablob)
+  const data = {
+    name : floating_name.value,
+    email : email,
+    password : floating_password.value,
+    isStudent : Number(isStudent.value),
+  }
+
+  const json = JSON.stringify(data)
+  const datablob = new Blob([json], { type: "application/json" })
+
+  fd.append("userImg",blob)
+  fd.append("request",datablob)
   for(let pair of fd.entries()){
     console.log(pair[0] + ',' + pair[1])
   }
@@ -380,7 +411,7 @@ const signupdatatoserver = async () => {
     route.replace({path:'/'})
   })
   .catch(err => {
-    store.commit('SET_AUTH_ERROR', err.response.data)
+    console.log(err)
   })
 }
 
