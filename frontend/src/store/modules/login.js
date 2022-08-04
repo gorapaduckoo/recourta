@@ -1,13 +1,13 @@
 export const login = {
-    state: {
-    },
-    getters: {
-    },
-    mutations: {
-    },
-    actions: {
-    },
-    modules: {
-    },
-  }
+  state: {
+  },
+  getters: {
+  },
+  mutations: {
+  },
+  actions: {
+  },
+  modules: {
+  },
+}
   

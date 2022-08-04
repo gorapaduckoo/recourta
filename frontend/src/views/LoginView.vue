@@ -8,15 +8,15 @@
     <form @submit.prevent="loginSubmit" class="pt-10">
       <!-- 이메일 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="text" name="floating_email" v-model.trim="floating_email" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " />
-        <label for="floating_email" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.email_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.email_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
-        <label v-if="!state.email_check" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">올바른 이메일을 입력하세요</label>
+        <input type="text" name="floating_email" v-model.trim="floating_email" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.email_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.email_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @click="onEmailClick"/>
+        <label for="floating_email" :class="{'text-[#fe5358] dark:text-[#fe5358]':!state.email_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.email_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
+        <label v-if="!state.email_check" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">가입된 메일이 아니거나</label>
       </div>
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-3 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" v-model.trim="floating_password" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" "/>
+        <input type="password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @click="onPasswordClick"/>
         <label for="floating_password"  :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
-        <label v-if="!state.pw_check" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 8자 이상이고 영문, 숫자, 특수문자를 포함해야 합니다</label>
+        <label v-if="!state.pw_check" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호가 바르지 않습니다</label>
       </div>
       <div class="flex items-center w-3/4 mr-auto ml-auto mb-6 form-chec">
         <div class="flex items-center h-5 form-check">
@@ -44,8 +44,12 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import {useRouter} from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
+import {useStore} from 'vuex'
 
 const route = useRouter()
+const store = useStore()
 
 const state = reactive({
   email_check:true,
@@ -55,6 +59,27 @@ const state = reactive({
 let floating_email = ref("")
 let floating_password = ref("")
 
+const login = async () => {
+  await axios({
+    url: rct.login.login(),
+    method: 'post',
+    data: {
+      email : floating_email.value,
+      password : floating_password.value,
+    }
+  })
+  .then(res => {
+    store.dispatch('user/saveToken', res.data.token)
+    store.commit("user/Set_userId",res.data.userId)
+    store.commit("user/Set_isStudent",res.data.isStudent)
+    route.replace({path:'/main'})
+  })
+  .catch(err => {
+    store.commit('SET_AUTH_ERROR', err.response.data)
+  })
+}
+
+
 const test_id_pw = (id,pw) => {
   if(id==="test@gmail.com"&&pw==="Test123@") return 1
   return 0
@@ -62,12 +87,10 @@ const test_id_pw = (id,pw) => {
 
 const loginSubmit = () => {
       
-      // 영문숫자로만이뤄진id(_-.이아이디포함x)@----.2-3글자(com)
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
-      // let pw_regex = new RegExp()
-    console.log(floating_email.value)
-    console.log(floating_password.value)
+    // console.log(floating_email.value)
+    // console.log(floating_password.value)
     if(email_regex.test(floating_email.value)) {
       state.email_check=true
     } else {
@@ -82,11 +105,18 @@ const loginSubmit = () => {
     }
 
     if(state.email_check&&state.pw_check) {
-      if(test_id_pw(floating_email.value,floating_password.value)) route.replace({path:'/main'})
-      else console.log('일치하는 회원이 없습니다.')
+      login()
     }
     
   }
+
+const onEmailClick = () => {
+  state.email_check = true
+}
+
+const onPasswordClick = () => {
+  state.pw_check = true
+}
 </script>
 
 <style>
