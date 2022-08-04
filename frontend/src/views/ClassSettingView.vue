@@ -1,6 +1,6 @@
 <template>
   <DarkmodeButton />
-  <CustomNavbar />
+  <CustomNavbar :curpage="state.curpage"/>
   <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[70px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
     <div>강의썸네일</div>
     <div>강의 제목</div>
@@ -46,14 +46,43 @@
   
   </div>
 
-  <div class="container flex flex-wrap pt-[70px] justify-between items-center mx-auto lg:hidden">
-    <div>강의 제목</div>
-    <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
-      <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+  <div class="fixed flex w-full flex-wrap justify-center mt-[68px] space-x-4 items-center lg:hidden">
+    <button @click="onClickInfo" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isinfo,'bg-[#ffffff] dark:bg-[#444444]':!state.isinfo}" class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f] border border-neutral-300 dark:border-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+        <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+      </svg>
+    </button>
+  
+    <button @click="onClickAtten" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isatten,'bg-[#ffffff] dark:bg-[#444444]':!state.isatten}" class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f] border border-neutral-300 dark:border-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+      </svg>
+    </button>
+  
+    <button @click="onClickRegi" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isregi,'bg-[#ffffff] dark:bg-[#444444]':!state.isregi}" class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f] border border-neutral-300 dark:border-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+      </svg>
+    </button>
+  
+    <button @click="onClickDM" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isdm,'bg-[#ffffff] dark:bg-[#444444]':!state.isdm}" class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f] border border-neutral-300 dark:border-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    </button>
+    
+    <button class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded text-[#fe5358] hover:text-white hover:bg-[#fe5358] border border-neutral-300 dark:border-neutral-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
     </button>
   </div>
 
-  <div class="left-[15rem] lg:pl-60 w-full pt-[140px] lg:pt-[70px]">
+  <div class="pt-[115px] text-justify mx-auto lg:hidden" >강의 제목</div>
+
+  <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
     <ClassSetInfo v-if="state.isinfo"/>
     <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
@@ -77,6 +106,7 @@ const state = reactive({
   isregi:false,
   isdm:false,
   isham:false,
+  curpage:"main",
 })
 
 const setfalse = () => {
