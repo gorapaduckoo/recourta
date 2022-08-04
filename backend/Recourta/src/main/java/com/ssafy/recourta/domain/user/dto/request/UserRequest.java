@@ -93,6 +93,16 @@ public class UserRequest {
         private String email;
         private String password;
 
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class CodeCheck {
+
+        private String email;
+        private String code;
 
     }
 

@@ -4,7 +4,10 @@ package com.ssafy.recourta.domain.user.service;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
+import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
+import com.ssafy.recourta.global.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,13 +16,20 @@ import org.springframework.stereotype.Service;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class MailService {
 
     @Autowired
     JavaMailSender javaMailSender;
+
+    @Autowired
+    RedisUtil redisUtil;
+
+    private final UserRepository userRepository;
 
 
 
@@ -28,8 +38,10 @@ public class MailService {
 
         message.addRecipients(Message.RecipientType.TO, email);
         message.setSubject("Recourta 인증번호입니다.");
-        // 변경 예정
+
         String  code = UUID.randomUUID().toString().replaceAll("-","").substring(0, 9);
+
+        redisUtil.setDataExpire(code,email,60*5L);
 
         String msg="";
         msg+= "<div style='margin:100px;'>";
@@ -69,13 +81,27 @@ public class MailService {
     public UserResponse.isSuccess registMail(String email) throws  Exception{
 
 
-//        if(passwordEncoder.matches(request.getNowPw(), user.getPassword())){
-//            user.setPassword(passwordEncoder.encode(request.getNewPw()));
-//            userRepository.save(user);
-//            return UserResponse.isSuccess.build(false);
-//        }  이메일이 이미 있으면(가입한 사람) fail 보내기/// null이면
+        Optional<User> user = userRepository.findByEmail(email);
 
-        sendMail(email);
-        return UserResponse.isSuccess.build(true);
+        if(!user.isPresent()){
+
+            sendMail(email);
+            return UserResponse.isSuccess.build(true);
+        }
+
+
+        return UserResponse.isSuccess.build(false);
+    }
+
+    public String codeCheck(UserRequest.CodeCheck request){
+
+
+        if(redisUtil.getData(request.getCode()).equals(request.getEmail())){
+            return "success";
+        }else if(!redisUtil.getData(request.getCode()).equals(request.getEmail())){
+            return  "fail";
+        }
+
+        return "expired";
     }
 }
