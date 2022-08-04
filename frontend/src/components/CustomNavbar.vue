@@ -28,7 +28,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
         <!-- 읽지 않은 알림 있을 때 빨간 불 -->
-        <div class="absolute top-0 right-0 w-4 h-4 pt-[1px] bg-[#fe5358] group-hover:bg-[#fe343b] rounded-full text-white text-center text-[8px] font-semibold">9+</div>
+        <div class="absolute top-0 right-0 w-4 h-4 bg-[#fe5358] group-hover:bg-[#fe343b] rounded-full text-white text-center text-[11px] font-medium">1</div>
       </router-link>
       <!-- 햄버거 버튼 -->
       <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg lg:hidden hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
