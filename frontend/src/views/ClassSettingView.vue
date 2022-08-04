@@ -1,8 +1,9 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar />
-  <div class="w-60 flex flex-col items-center h-full pt-[70px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500" id="sidenavSecExample">
-    <div>강의제목</div>
+  <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[70px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
+    <div>강의썸네일</div>
+    <div>강의 제목</div>
     
     <button @click="onClickInfo" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isinfo,'bg-[#ffffff] dark:bg-[#444444]':!state.isinfo}" class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f]">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -45,8 +46,18 @@
   
   </div>
 
-  <div class="absolute left-[15rem] h-full w-full pt-[70px]">
+  <div class="container flex flex-wrap pt-[70px] justify-between items-center mx-auto lg:hidden">
+    <div>강의 제목</div>
+    <button @click="hamButtonClick" data-collapse-toggle="navbar-cta" type="button" class="inline-flex items-center p-2 text-sm text-white rounded-lg hover:bg-[#4076a5] focus:outline-none" aria-controls="navbar-cta" aria-expanded="false">
+      <svg class="w-8 h-8" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+    </button>
+  </div>
 
+  <div class="left-[15rem] lg:pl-60 w-full pt-[140px] lg:pt-[70px]">
+    <ClassSetInfo v-if="state.isinfo"/>
+    <ClassSetAtt v-if="state.isatten"/>
+    <ClassSetRegi v-if="state.isregi"/>
+    <ClassSetDM v-if="state.isdm"/>
   </div>
   
 </template>
@@ -54,6 +65,10 @@
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
+import ClassSetInfo from '../components/ClassSetInfo.vue'
+import ClassSetAtt from '../components/ClassSetAtt.vue'
+import ClassSetRegi from '../components/ClassSetRegi.vue'
+import ClassSetDM from '../components/ClassSetDM.vue'
 import { ref, reactive } from 'vue'
 
 const state = reactive({
@@ -61,6 +76,7 @@ const state = reactive({
   isatten:false,
   isregi:false,
   isdm:false,
+  isham:false,
 })
 
 const setfalse = () => {
@@ -68,6 +84,7 @@ const setfalse = () => {
   state.isatten = false
   state.isregi = false
   state.isdm = false
+  state.isham = false
 }
 
 const onClickInfo = () => {
@@ -96,6 +113,10 @@ const onClickDM = () => {
     setfalse()
     state.isdm = true
   }
+}
+
+const onClickHam = () => {
+  state.isham = !state.isham
 }
 
 </script>

@@ -44,7 +44,7 @@ let repeat_password = ref("")
 
 const PWresetSubmit = () => {
       
-  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
 
   console.log(floating_password.value)
   console.log(repeat_password.value)

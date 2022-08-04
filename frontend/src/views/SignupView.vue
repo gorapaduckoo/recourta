@@ -348,7 +348,7 @@ const signupSubmit = () => {
 
   if(floating_name.value==="") state.isname = false
   console.log(state.isname)
-  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
       // let pw_regex = new RegExp()
   if(!state.isemailverified) {
     state.wrongverify = '이메일이 인증되지 않았습니다'

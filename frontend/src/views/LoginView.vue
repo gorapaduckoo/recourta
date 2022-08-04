@@ -88,7 +88,7 @@ const test_id_pw = (id,pw) => {
 const loginSubmit = () => {
       
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
-  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
     // console.log(floating_email.value)
     // console.log(floating_password.value)
     if(email_regex.test(floating_email.value)) {
