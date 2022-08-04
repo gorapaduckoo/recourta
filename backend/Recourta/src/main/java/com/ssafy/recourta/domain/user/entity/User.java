@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,21 +29,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userId;
 
-    @NotBlank(message = "이름은 필수 입력 값입니다.")
     @Column
     private  String name;
 
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
-    @Email
     @Column(unique = true)
     private  String email;
 
-    @NotBlank(message = "비밀번호는 필수 입력 값입니다.")
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*\\\\W)(?=\\\\S+$).{8,20}", message = "비밀번호는 8~20자리수여야 합니다. 영문, 숫자, 특수문자를 1개 이상 포함해야 합니다.")
     @Column
     private String password;
 
-    @NotBlank(message = "타입을 선택해주세요.")
     @Column
     private int isStudent;
 
