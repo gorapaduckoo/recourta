@@ -160,6 +160,7 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import rct from '../api/rct'
 
 const route = useRouter()
@@ -258,20 +259,21 @@ const takePhoto = () => {
 }
 
 const sendemailtoserver = async () => {
-  await axios({
+  const res = await axios({
     url: rct.user.userauth(),
     method: 'post',
     data: {
       email : email,
     }
   })
+  return res.data  
 }
 
-const checkemail = () => {
+const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = sendemailtoserver().data
+    const res = await sendemailtoserver().data
     if(res.success) {
       state.isemailsend = true
       state.isemailverified = false
@@ -325,9 +327,9 @@ const verifytimerStop = (timer) => {
   state.timermsg = Math.floor(state.settime / 60) + ":" + (state.settime % 60).toString().padStart(2,"0")
 }
 
-const checkverify = () => {
+const checkverify = async () => {
   if(state.isemailsend){  
-    const res = sendverifytoserver().data
+    const res = await sendverifytoserver().data
     if(res==="success"){
       document.getElementById('floating_email').setAttribute("disabled",true)
       document.getElementById('checkemailbtn').setAttribute("disabled",true)

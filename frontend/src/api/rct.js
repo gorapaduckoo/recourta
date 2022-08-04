@@ -23,8 +23,8 @@ export default {
         registinfo: regiid => HOST + REGIST + '/' + regiid, 
     },
     login: {
-        login: () => HOST + 'login/',
-        pwreset: () => HOST + 'reset/',
-        logout: () => HOST + 'logout/',
+        login: () => HOST + '/login',
+        pwreset: () => HOST + '/reset',
+        logout: () => HOST + '/logout',
     }
 }
