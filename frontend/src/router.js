@@ -53,5 +53,10 @@ export default createRouter({
       name: 'classsetting',
       component: () => import('./views/ClassSettingView.vue'),
     },
+    {
+      path: '/notice',
+      name: 'notice',
+      component: () => import('./views/NoticeListView.vue'),
+    },
   ],
 })
