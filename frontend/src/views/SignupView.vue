@@ -266,15 +266,15 @@ const sendemailtoserver = async () => {
       email : email,
     }
   })
-  return res.data  
+  return res 
 }
 
 const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = await sendemailtoserver().data
-    if(res.success) {
+    const res = await sendemailtoserver()
+    if(res.data.success) {
       state.isemailsend = true
       state.isemailverified = false
       state.isverify = true
@@ -296,14 +296,15 @@ const checkemail = async () => {
 }
 
 const sendverifytoserver = async () => {
-  await axios({
+  const res = await axios({
     url: rct.user.usercode(),
     method: 'post',
     data: {
       email : email,
-      code : floating_verify,
+      code : floating_verify.value,
     }
   })
+  return res
 }
 
 const verifytimer = () => {
