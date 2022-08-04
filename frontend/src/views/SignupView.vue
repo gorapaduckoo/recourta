@@ -160,6 +160,7 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import rct from '../api/rct'
 
 const route = useRouter()
 
@@ -231,7 +232,7 @@ const createCameraElement = () => {
   .catch(error => {
     state.isLoading = false;
     alert("May the browser didn't support or there is some errors.");
-    console.log(error)
+    // console.log(error)
   });
 }
 
@@ -256,24 +257,23 @@ const takePhoto = () => {
   context.drawImage(camera.value, 0, 0, 384, 288);
 }
 
-const downloadImage = () => {
-  const download = document.getElementById("downloadPhoto");
-  const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
-  .replace("image/jpeg", "image/octet-stream");
-  download.setAttribute("href", canvas);
-}
-
-const sendemailtoserver = () => {
-  if(floating_email.value==="test@gmail.com") return 0
-  return 1
+const sendemailtoserver = async () => {
+  await axios({
+    url: rct.user.userauth(),
+    method: 'post',
+    data: {
+      email : email,
+    }
+  })
 }
 
 const checkemail = () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
-    if(sendemailtoserver()) {
+    email = floating_email.value
+    const res = sendemailtoserver().data
+    if(res.success) {
       state.isemailsend = true
-      email = floating_email.value
       state.isemailverified = false
       state.isverify = true
       if(state.Timer!==null) verifytimerStop(state.Timer)
@@ -293,9 +293,15 @@ const checkemail = () => {
   }
 }
 
-const sendverifytoserver = () => {
-  if(floating_verify.value==="123456") return 1
-  return 0
+const sendverifytoserver = async () => {
+  await axios({
+    url: rct.user.usercode(),
+    method: 'post',
+    data: {
+      email : email,
+      code : floating_verify,
+    }
+  })
 }
 
 const verifytimer = () => {
@@ -321,14 +327,19 @@ const verifytimerStop = (timer) => {
 
 const checkverify = () => {
   if(state.isemailsend){  
-    if(sendverifytoserver()){
+    const res = sendverifytoserver().data
+    if(res==="success"){
       document.getElementById('floating_email').setAttribute("disabled",true)
       document.getElementById('checkemailbtn').setAttribute("disabled",true)
       state.isemailverified = true
       verifytimerStop(state.Timer)
     }
-    else{
+    else if(res==="fail"){
       state.wrongverify = "인증번호가 일치하지 않습니다"
+      state.isverify = false
+    }
+    else {
+      state.wrongverify = "인증시간이 초과되었습니다"
       state.isverify = false
     }
   }
@@ -338,17 +349,52 @@ const checkverify = () => {
   }
 }
 
+const UrltoBlob = async (dataURL) => {
+  //console.log(dataURL)
+  const res = await fetch(dataURL)
+  const blob = await res.blob()
+  return blob
+}
+
+const signupdatatoserver = async () => {
+  const camimgurl = document.getElementById("photoTaken").toDataURL("image/jpeg");
+  let blob = await UrltoBlob(camimgurl)
+  let fd = new FormData()
+  fd.append("name",floating_name.value)
+  fd.append("email",email)
+  fd.append("password",floating_password.value)
+  fd.append("isStudent",Number(isStudent.value))
+  fd.append("image",blob,"image.jpeg")
+  for(let pair of fd.entries()){
+    console.log(pair[0] + ',' + pair[1])
+  }
+  await axios.post(rct.user.signup(),fd,{
+    header:{
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    store.dispatch('user/saveToken', res.data.token)
+    store.commit("user/Set_userId",res.data.userId)
+    store.commit("user/Set_isStudent",res.data.isStudent)
+    route.replace({path:'/'})
+  })
+  .catch(err => {
+    store.commit('SET_AUTH_ERROR', err.response.data)
+  })
+}
+
 const signupSubmit = () => {
-  console.log(floating_name)
-  console.log(floating_email.value)
-  console.log(floating_verify.value)
-  console.log(floating_password.value)
-  console.log(floating_repeat_password.value)
-  console.log(isStudent.value)
+  // console.log(floating_name)
+  // console.log(floating_email.value)
+  // console.log(floating_verify.value)
+  // console.log(floating_password.value)
+  // console.log(floating_repeat_password.value)
+  // console.log(isStudent.value)
 
   if(floating_name.value==="") state.isname = false
-  console.log(state.isname)
-  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,})/)
+  // console.log(state.isname)
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
       // let pw_regex = new RegExp()
   if(!state.isemailverified) {
     state.wrongverify = '이메일이 인증되지 않았습니다'
@@ -358,7 +404,9 @@ const signupSubmit = () => {
   if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
   if(!state.isPhotoTaken) state.isphoto=false
 
-  if(state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) route.replace({path:"/"})
+  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) {
+    signupdatatoserver()
+  }
 }
 
 const onNameClick = () => {
