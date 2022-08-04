@@ -37,7 +37,7 @@ public class SecurityConfig{
                 // h2-console 화면을 사용하기 위해 옵션을 disable
                 .and()
                     .logout()
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl("http://localhost:5173/")
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
