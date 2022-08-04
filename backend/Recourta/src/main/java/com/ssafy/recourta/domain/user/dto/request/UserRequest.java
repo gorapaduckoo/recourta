@@ -74,14 +74,6 @@ public class UserRequest {
 
     }
 
-//    @Getter
-//    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-//    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-//    public static class CheckMail {
-//
-//        private String email;
-//
-//    }
 
     //로그인
     @Builder
@@ -103,6 +95,17 @@ public class UserRequest {
 
         private String email;
         private String code;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ResetPw {
+
+        private String code;
+        private String newPw;
 
     }
 

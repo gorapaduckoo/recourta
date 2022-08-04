@@ -82,6 +82,20 @@ public class UserController {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @PostMapping(value = "/reset")
+    public ResponseEntity<UserResponse.isSuccess> resetMail(@RequestBody String data) throws Exception{
+        JSONObject parser = new JSONObject(data);
+        String email = parser.getString("email");
+        // 조건 email null 일 때
+
+        UserResponse.isSuccess response = mailService.resetMail(email);
+
+        if(response.isSuccess()){
+            return ResponseEntity.ok().body(response);
+        }
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody UserRequest.Dologin request) throws Exception {
         User user = userService.doLogin(request);
@@ -100,5 +114,15 @@ public class UserController {
         else{
             return ResponseEntity.ok().body(registInfo);
         }
+    }
+
+    @PutMapping("/reset/pw")
+    public ResponseEntity resetPw(@RequestBody UserRequest.ResetPw request){
+        String resetInfo = mailService.resetPw(request);
+        if(resetInfo.equals("expired")){
+            return  ResponseEntity.badRequest().body(resetInfo);
+        }
+
+        return ResponseEntity.ok().body(resetInfo);
     }
 }
