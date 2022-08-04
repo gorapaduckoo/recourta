@@ -23,9 +23,9 @@ import java.util.List;
 public class SessionServiceImpl implements SessionService{
 
     @Autowired
-    SessionRepository sessionRepository;
+    private SessionRepository sessionRepository;
     @Autowired
-    LectureRepository lectureRepository;
+    private LectureRepository lectureRepository;
 
     @Override
     public Integer createSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId, boolean isUpdate) {

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
-@Schema(description = "강의 개설/조회/수정/삭제 시 입력받는 양식")
 @Getter
 public class SessionRequest {
 

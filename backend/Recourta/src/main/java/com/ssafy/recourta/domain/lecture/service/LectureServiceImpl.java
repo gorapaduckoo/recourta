@@ -22,9 +22,9 @@ import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 public class LectureServiceImpl implements LectureService {
 
     @Autowired
-    LectureRepository lectureRepository;
+    private LectureRepository lectureRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input) {
@@ -113,7 +113,6 @@ public class LectureServiceImpl implements LectureService {
             if(searchResult.size() == 0) {
                 throw new LectureException.NullLecture();
             } else {
-                System.out.println(searchResult.size());
                 List<LectureResponse.LecturePreview> result = new ArrayList<>();
                 for (Lecture l: searchResult){
                     result.add(LectureResponse.LecturePreview.builder()
