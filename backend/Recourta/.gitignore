@@ -1,6 +1,13 @@
 HELP.md
-.gradle
+
 build/
+
+src/main/java/**/RecourtaApplication.java
+src/main/resources/application.properties
+src/main/java/com/ssafy/recourta/global/config/MailConfig.java
+
+src/main/java/**/global/config/WebSecurityConfig.java
+
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -13,6 +20,8 @@ build/
 .settings
 .springBeans
 .sts4-cache
+.properties
+.gradle
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
@@ -35,3 +44,5 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### added

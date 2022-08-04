@@ -14,7 +14,7 @@ public class UserRequest {
         private String email;
         private String password;
         private int isStudent;
-        private String userImg;
+//        private String userImg;
 
         public User create(){
             return User.builder()
@@ -22,26 +22,91 @@ public class UserRequest {
                     .email(email)
                     .password(password)
                     .isStudent(isStudent)
-                    .userImg(userImg)
+//                    .userImg(userImg)
                     .build();
         }
     }
 
 
 
+//    @Builder
+//    @Getter
+//    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+//    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+//    public static class Update {
+//        private String password;
+//        private String userImg;
+//
+//    public User update(){
+//        return User.builder()
+//                .password(password)
+//                .userImg(userImg)
+//                .build();
+//        }
+//    }
+
+
+    // 빌드 빼기!!!
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class UpdateImg {
+
+        private int userId;
+
+//        public User update(){
+//            return User.builder()
+//                    .userImg(userImg)
+//                    .build();
+//        }
+    }
+
     @Builder
     @Getter
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Update {
-        private String password;
-        private String userImg;
+    public static class UpdatePw {
 
-    public User update(){
-        return User.builder()
-                .password(password)
-                .userImg(userImg)
-                .build();
-        }
+        private int userId;
+        private String nowPw;
+        private String newPw;
+
     }
+
+
+    //로그인
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Dologin {
+
+        private String email;
+        private String password;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class CodeCheck {
+
+        private String email;
+        private String code;
+
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ResetPw {
+
+        private String code;
+        private String newPw;
+
+    }
+
 }
