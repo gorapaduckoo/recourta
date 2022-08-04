@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+
 
 @CrossOrigin
 @RestController
@@ -51,7 +53,7 @@ public class UserController {
     }
 
    @PutMapping("/user/pw")
-   public ResponseEntity<UserResponse.isSuccess> updatePw(@RequestBody UserRequest.UpdatePw request){
+   public ResponseEntity<UserResponse.isSuccess> updatePw(@Valid @RequestBody UserRequest.UpdatePw request){
         UserResponse.isSuccess response = userService.updatePw(request);
         if(response.isSuccess()){
             System.out.println(response.isSuccess());
@@ -69,7 +71,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/auth/regist")
-    public ResponseEntity<UserResponse.isSuccess> regMail(@RequestBody String data) throws Exception{
+    public ResponseEntity<UserResponse.isSuccess> regMail(@Valid @RequestBody String data) throws Exception{
         JSONObject parser = new JSONObject(data);
         String email = parser.getString("email");
         // 조건 email null 일 때
@@ -83,7 +85,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/reset")
-    public ResponseEntity<UserResponse.isSuccess> resetMail(@RequestBody String data) throws Exception{
+    public ResponseEntity<UserResponse.isSuccess> resetMail(@Valid @RequestBody String data) throws Exception{
         JSONObject parser = new JSONObject(data);
         String email = parser.getString("email");
         // 조건 email null 일 때
@@ -97,14 +99,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody UserRequest.Dologin request) throws Exception {
+    public ResponseEntity login(@Valid @RequestBody UserRequest.Dologin request) throws Exception {
         User user = userService.doLogin(request);
         String accessToken = jwtTokenUtil.generateAccessToken(jwtTokenUtil.getClaims(user));
         return ResponseEntity.ok().body(accessToken);
     }
 
     @PostMapping("/auth/code")
-    public ResponseEntity regist(@RequestBody UserRequest.CodeCheck request){
+    public ResponseEntity regist(@Valid @RequestBody UserRequest.CodeCheck request){
         String registInfo = mailService.codeCheck(request);
         if(registInfo.equals("fail")){
             return ResponseEntity.badRequest().body(registInfo);
@@ -117,7 +119,7 @@ public class UserController {
     }
 
     @PutMapping("/reset/pw")
-    public ResponseEntity resetPw(@RequestBody UserRequest.ResetPw request){
+    public ResponseEntity resetPw(@Valid @RequestBody UserRequest.ResetPw request){
         String resetInfo = mailService.resetPw(request);
         if(resetInfo.equals("expired")){
             return  ResponseEntity.badRequest().body(resetInfo);
