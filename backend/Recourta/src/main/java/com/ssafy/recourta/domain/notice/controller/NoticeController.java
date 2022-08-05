@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,6 +27,9 @@ public class NoticeController {
         NoticeResponse.NoticeCount result = noticeService.createNotice(notice);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+//    @GetMapping(value = "/subscribe", produces = "text/event-stream")
+//    public SseEmitter
 
     @GetMapping
     public ResponseEntity<List<NoticeResponse.NoticeTitle>> searchNoticeListByUserId(@Valid @RequestParam Integer userId) throws Exception {
