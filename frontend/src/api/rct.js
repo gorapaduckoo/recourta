@@ -24,7 +24,8 @@ export default {
     },
     login: {
         login: () => HOST + '/login',
-        pwreset: () => HOST + '/reset',
+        pwsearch: () => HOST + '/reset',
+        pwreset: () => HOST + '/reset/pw',
         logout: () => HOST + '/logout',
     }
 }
