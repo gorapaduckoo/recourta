@@ -51,7 +51,7 @@ const sendresettoserver = async () => {
   const code = url.search.substr(6)
   const res = await axios({
     url: rct.login.pwreset(),
-    method: 'post',
+    method: 'put',
     data: {
       code : code,
       newPw : floating_password.value,

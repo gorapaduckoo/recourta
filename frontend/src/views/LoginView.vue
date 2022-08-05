@@ -47,6 +47,7 @@ import {useRouter} from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 import {useStore} from 'vuex'
+import jwt_decode from "jwt-decode"
 
 const route = useRouter()
 const store = useStore()
@@ -71,12 +72,10 @@ const login = async () => {
     }
   })
   .then(res => {
-    store.dispatch('user/saveToken', res.data.token)
-    // store에 값이 재대로 들어가는지 확인 필요
-    store.commit("user/Set_userId",res.data.userId)
-    console.log(res.data.userId)
-    store.commit("user/Set_isStudent",res.data.isStudent)
-    console.log(res.data.isStudent)
+    store.dispatch('saveToken', res.data)
+    const jwt = jwt_decode(res.data)
+    store.commit("Set_userId",jwt.sub)
+    store.commit("Set_isStudent",jwt.isStudent)
     route.replace({path:'/main'})
   })
   .catch(err => {

@@ -10,8 +10,8 @@ export default {
         userauth: () => HOST + '/auth/regist',
         usercode: () => HOST + '/auth/code',
         userinfo: userid => HOST + USER + '/' + userid,
-        userimgmod: () => HOST + USER + 'img',
-        userpwmod: () => HOST + USER + 'pw',
+        userimgmod: () => HOST + USER + '/img',
+        userpwmod: () => HOST + USER + '/pw',
         
     },
     lecture: {
