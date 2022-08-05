@@ -63,7 +63,7 @@ public class MailService {
         //message.setText("이메일 인증코드: "+code, "utf-8", "html");
         message.setText(msg, "utf-8", "html");
 
-        message.setFrom(new InternetAddress("recourta@naver.com","리코타"));
+        message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
 
         return  message;
     }
@@ -97,7 +97,7 @@ public class MailService {
         //message.setText("이메일 인증코드: "+code, "utf-8", "html");
         message.setText(msg, "utf-8", "html");
 
-        message.setFrom(new InternetAddress("recourta@naver.com","리코타"));
+        message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
 
         return  message;
     }

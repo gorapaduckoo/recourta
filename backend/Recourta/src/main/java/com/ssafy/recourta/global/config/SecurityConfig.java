@@ -33,14 +33,13 @@ public class SecurityConfig{
     @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-            http.cors().disable()
+            http.cors().configurationSource(corsConfigurationSource()).and()
                 .csrf().disable()  // 위조 요청 방지
                 .formLogin().disable()
                 .headers().frameOptions().disable()
                 // h2-console 화면을 사용하기 위해 옵션을 disable
                 .and()
                     .logout()
-                    .logoutUrl("/logout")
                     .logoutSuccessUrl("http://localhost:5173/")
                 .and()
                     .httpBasic().disable()
@@ -66,7 +65,7 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("http://127.0.0.1:5173");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
@@ -75,5 +74,4 @@ public class SecurityConfig{
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }
