@@ -56,13 +56,15 @@
       </div>
     </div>    
   </div>
-  <router-link class="mx-3" to="/pwreset">비밀번호 재설정</router-link>
+  <router-link class="mx-3" to="/reset">비밀번호 재설정</router-link>
 </template>
 
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'
+import axios from 'axios'
+import rct from '../api/rct'
 
 const route = useRouter()
 
@@ -72,12 +74,19 @@ const state = reactive({
 })
 let floating_email = ref("")
 
-const test_email = (id) => {
-  if(id==='test@gmail.com') return 1
-  return 0
+const sendsearchtoserver = async () => {
+  const res = await axios({
+    url: rct.login.pwsearch(),
+    method: 'post',
+    data: {
+      email : floating_email.value,
+    }
+  })
+
+  return res
 }
 
-const PWsearchSubmit = () => {
+const PWsearchSubmit = async() => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   
   // let pw_regex = new RegExp()
@@ -92,12 +101,14 @@ const PWsearchSubmit = () => {
   }
 
   if(state.email_check) {
-    if(test_email(floating_email.value)) {
+    const res = await sendsearchtoserver()
+
+    if(res.data.success) {
       modalOpen()
     }
     else {
-      state.email_check=false
       state.msg='일치하는 회원이 없습니다.'
+      state.email_check=false
     }
   }
 }

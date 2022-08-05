@@ -19,7 +19,7 @@ export default createRouter({
       component: () => import('./views/PWsearchView.vue'),
     },
     {
-      path: '/pwreset',
+      path: '/recourta/reset',
       name: 'pwreset',
       component: () => import('./views/PWresetView.vue'),
     },

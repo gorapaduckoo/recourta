@@ -392,9 +392,6 @@ const signupdatatoserver = async () => {
     }
   })
   .then(res => {
-    store.dispatch('user/saveToken', res.data.token)
-    store.commit("user/Set_userId",res.data.userId)
-    store.commit("user/Set_isStudent",res.data.isStudent)
     route.replace({path:'/'})
   })
   .catch(err => {

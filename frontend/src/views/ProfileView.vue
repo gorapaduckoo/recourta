@@ -113,6 +113,30 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import { ref, reactive } from 'vue'
+import axios from 'axios'
+import rct from '../api/rct'
+import { useStore } from "vuex"
+
+const store = useStore()
+
+const getProfile = async () => {
+  await axios({
+    url: rct.user.userinfo(store.state.user.userId),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.token,
+    }
+  })
+  .then(res => {
+    console.log(res.data)
+    state.takenImg = res.data.userImg
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+getProfile()
 
 const state = reactive({
   isCamOpen: false,
@@ -120,6 +144,9 @@ const state = reactive({
   isShot: false,
   isLoad: false,
   curpage : "profile",
+  name : "",
+  email : "",
+  takenImg : "",
 })
 
 const camera = ref(null)
