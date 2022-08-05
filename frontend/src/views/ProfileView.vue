@@ -3,9 +3,10 @@
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[60px] w-1/3 min-w-[480px] ml-auto mr-auto border">
     <img class="mt-6 mb-8 w-20 h-20 ml-auto mr-auto" src="../assets/placeholder2.png" alt="">
-    <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">김우석</div>
-    <div class="mb-12 text-lg font-medium text-center">terrykim96@naver.com</div>
+    <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
+    <div class="mb-12 text-lg font-medium text-center">{{ state.email }}</div>
     <!-- 저장되어 있는 사진 -->
+    <img :src="state.takenImg" alt="" class="w-[384px] h-[288px]">
     <div v-if="!state.isCamOpen" class="my-2 w-[384px] h-[288px] ml-auto mr-auto bg-neutral-400"></div>
     <!-- 카메라 로딩 -->
     <div v-show="state.isCamOpen && state.isLoad" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
@@ -129,7 +130,10 @@ const getProfile = async () => {
   })
   .then(res => {
     console.log(res.data)
-    state.takenImg = res.data.userImg
+    state.userId = res.data.userId
+    state.name = res.data.name
+    state.email = res.data.email
+    state.takenImg = 'C:/Users/SSAFY/Desktop/uploads/'+res.data.userImg
   })
   .catch(err => {
     console.log(err)
@@ -144,6 +148,7 @@ const state = reactive({
   isShot: false,
   isLoad: false,
   curpage : "profile",
+  userId : null,
   name : "",
   email : "",
   takenImg : "",
