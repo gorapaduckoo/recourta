@@ -2,41 +2,18 @@
   <DarkmodeButton/>
   <CustomNavbar :curpage="state.curpage"/>
   
-  <div class="flex justify-end pt-[80px] mr-16 lg:mr-20 2xl:mr-32">
+  <!-- <div class="flex justify-end pt-[80px] mr-16 lg:mr-20 2xl:mr-32">
     <button v-if="!store.state.user.isStudent" type="submit" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" data-bs-toggle="modal" data-bs-target="#classMakeModalLabel">
+      강의 생성
+    </button>
+  </div> -->
+
+  <div class="flex justify-end pt-[80px] mr-16 lg:mr-20 2xl:mr-32">
+    <button type="submit" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" data-bs-toggle="modal" data-bs-target="#classMakeModalLabel">
       강의 생성
     </button>
   </div>
   
-  <!-- <div class="form-group mb-2 flex justify-between">
-    <div class="flex flex-col justify-center">강의 시간</div>
-    <div class="flex justify-between w-4/5">
-      <select name="floating_lecture_weekday" id="floating_lecture_weekday" class="form-control block w-2/7 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
-        <option value="">요일 선택</option>
-        <option value="1">월요일</option>
-        <option value="2">화요일</option>
-        <option value="3">수요일</option>
-        <option value="4">목요일</option>
-        <option value="5">금요일</option>
-        <option value="6">토요일</option>
-        <option value="7">일요일</option>
-      </select>
-      <input type="time" step="900" v-model.trim="floating_lecture_start_time" id="floating_lecture_start_time" class="timepicker block w-1/3  px-3 py-1.5 text-xs text-center font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
-      <div class="flex flex-col justify-center">-</div>
-      <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
-      <button type="button" @click="addLectureTime">추가</button>
-    </div>
-  </div>
-
-  <div class="flex justify-end mb-6">
-    <div class="w-4/5 border">
-      <LectureTime
-        v-for="lecTime in store.state.lecture.lectureTimeList"
-        :key="lecTime"
-        :lecTime="lecTime"
-      />
-    </div>
-  </div> -->
 
   <div class="flex items-center mb-8">
 		<!-- The left line -->
@@ -89,7 +66,6 @@
               <div class="flex flex-col justify-center">강의 시간</div>
               <div class="flex justify-between w-4/5">
                 <select name="floating_lecture_weekday" id="floating_lecture_weekday" class="form-control block w-2/7 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
-                  <option value="" selected disabled>요일 선택</option>
                   <option value="1">월요일</option>
                   <option value="2">화요일</option>
                   <option value="3">수요일</option>
@@ -102,7 +78,7 @@
                 <div class="flex flex-col justify-center">-</div>
                 <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
                 <button type="button" @click="addLectureTime">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0066eb] dark:text-[#1a7dff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </button>
@@ -184,6 +160,9 @@ const addLectureTime = () => {
   lectureTime['endHour'] = endTime[0]
   lectureTime['endMinute'] = endTime[1]
   store.state.lecture.lectureTimeList.push(lectureTime)
+  store.state.lecture.lectureTimeList.sort(function(a, b) {
+    return a["weekDay"] - b["weekDay"];
+  })
 }
 
 // const fileCheck = (file) => {
