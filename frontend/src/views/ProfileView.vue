@@ -133,7 +133,10 @@ const getProfile = async () => {
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = 'C:/Users/SSAFY/Desktop/uploads/'+res.data.userImg
+    state.takenImg = res.data.userImg
+    console.log(typeof(state.takenImg))
+    // state.takenImg = window.URL.createObjectURL(res.data.userImg)
+    console.log(state.takenImg)
   })
   .catch(err => {
     console.log(err)

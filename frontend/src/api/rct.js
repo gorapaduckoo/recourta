@@ -15,7 +15,7 @@ export default {
         
     },
     lecture: {
-        lecturecreate: () => HOST,
+        lecturecreate: () => HOST + LECTURE,
         lectureinfo: lectureid => HOST + LECTURE + '/' + lectureid,
     },
     regist: {
