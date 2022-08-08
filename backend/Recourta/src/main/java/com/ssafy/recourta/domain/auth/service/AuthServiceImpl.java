@@ -20,7 +20,7 @@ public class AuthServiceImpl implements AuthService {
     private final RedisUtil redisUtil;
 
     @Override
-    public TokenDto.Refresh createTokens(User user) throws Exception {
+    public TokenDto.Refresh createTokens(User user) {
         String accessToken = jwtTokenUtil.generateAccessToken(jwtTokenUtil.getClaims(user));
         String refreshToken = jwtTokenUtil.generateRefreshToken();
 
