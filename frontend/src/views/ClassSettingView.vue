@@ -1,9 +1,9 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
-  <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[70px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
-    <div>강의썸네일</div>
-    <div>강의 제목</div>
+  <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[68px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
+    <img class="rounded-md w-[224px] h-[126px] mb-[4px]" src="https://mdbootstrap.com/img/new/standard/nature/184.jpg" alt=""/>
+    <div class="text-xl text-justify overflow-hidden px-2 w-full font-bold dark:font-semibold h-[56px]">데이터로 표현한 세상</div>
     
     <button @click="onClickInfo" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isinfo,'bg-[#ffffff] dark:bg-[#444444]':!state.isinfo}" class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f]">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

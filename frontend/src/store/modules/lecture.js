@@ -1,5 +1,6 @@
 export const lecture = {
     state: {
+      lectureTimeList : [],
     },
     getters: {
     },
