@@ -3,7 +3,7 @@
   <CustomNavbar :curpage="state.curpage"/>
   
   <div class="flex justify-end pt-[80px] mr-16 lg:mr-20 2xl:mr-32">
-    <button type="submit" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" data-bs-toggle="modal" data-bs-target="#classMakeModalLabel">
+    <button v-if="!store.state.user.isStudent" type="submit" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" data-bs-toggle="modal" data-bs-target="#classMakeModalLabel">
       강의 생성
     </button>
   </div>
@@ -41,25 +41,24 @@
             <!-- 이름 입력 -->
             <div class="form-group mb-6 flex justify-between">
               <div class="flex flex-col justify-center">강의명</div>
-              <input type="text" v-model.trim="floating_lecture_name" id="floating_lecture_name" class="form-control block w-4/5 px-3 py-1.5 text-base font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+              <input type="text" v-model.trim="floating_lecture_name" id="floating_lecture_name" class="form-control block w-4/5 px-3 py-1.5 text-base font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
             </div>
 
             <!-- 강의 기간 -->
             <div class="form-group mb-6 flex justify-between">
               <div class="flex flex-col justify-center">강의기간</div>
               <div class="flex justify-between w-4/5">
-                <input type="date" v-model.trim="floating_lecture_duration_start" id="floating_lecture_duration_start" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+                <input type="date" v-model.trim="floating_lecture_duration_start" id="floating_lecture_duration_start" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                 <div class="flex flex-col justify-center">-</div>
-                <input type="date" v-model.trim="floating_lecture_duration_end" id="floating_lecture_duration_end" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+                <input type="date" v-model.trim="floating_lecture_duration_end" id="floating_lecture_duration_end" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
               </div>
             </div>
 
             <!-- 강의 시간 -->
-            <div class="form-group mb-6 flex justify-between">
+            <div class="form-group mb-2 flex justify-between">
               <div class="flex flex-col justify-center">강의 시간</div>
               <div class="flex justify-between w-4/5">
-                <select name="floating_lecture_weekday" id="floating_lecture_weekday" class="form-control block w-2/7 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
-                  <option value="">요일 선택</option>
+                <select name="floating_lecture_weekday" id="floating_lecture_weekday" class="form-control block w-2/7 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                   <option value="1">월요일</option>
                   <option value="2">화요일</option>
                   <option value="3">수요일</option>
@@ -68,27 +67,42 @@
                   <option value="6">토요일</option>
                   <option value="7">일요일</option>
                 </select>
-                <input type="time" step="900" v-model.trim="floating_lecture_start_time" id="floating_lecture_start_time" class="timepicker block w-1/3  px-3 py-1.5 text-xs text-center font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+                <input type="time" step="900" v-model.trim="floating_lecture_start_time" id="floating_lecture_start_time" class="timepicker block w-1/3  px-3 py-1.5 text-xs text-center font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                 <div class="flex flex-col justify-center">-</div>
-                <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+                <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
+                <button type="button" @click="addLectureTime">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0066eb] dark:text-[#1a7dff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </button>
               </div>
             </div>
 
+            <!-- 시간 추가 / 제거 -->
+            <div class="flex justify-end mb-6">
+              <div class="w-4/5">
+                <LectureTime
+                  v-for="lecTime in store.state.lecture.lectureTimeList"
+                  :key="lecTime"
+                  :lecTime="lecTime"
+                />
+              </div>
+            </div>
             <!-- 강의 설명 -->
             <div class="form-group mb-6 flex justify-between">
               <div >강의 설명</div>
-              <textarea rows="3" name="floating_lecture_info" v-model.trim="floating_lecture_info" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700"></textarea>
+              <textarea rows="3" name="floating_lecture_info" v-model.trim="floating_lecture_info" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required></textarea>
             </div>
 
             <!-- 강의 썸네일 -->
             <div class="form-group mb-6 flex justify-between">
               <div>강의 썸네일</div>
-              <input type="file" @change="onInputImage()" ref="floating_lecture_image" name="floating_lecture_image" id="floating_lecture_image" accept="image/gif, image/jpeg, image/png" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+              <input type="file" @change="onInputImage()" ref="floating_lecture_image" name="floating_lecture_image" id="floating_lecture_image" accept="image/gif, image/jpeg, image/png" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
             </div>
 
             <!-- 등록하기 버튼 -->
             <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-center px-8 pb-4 rounded-b-md space-x-3">
-              <button type="submit" class="text-white bg-[#4fb054] w-[120px] border border-[#4fb054] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#66bb6a]" data-bs-dismiss="modal">강의 생성</button>
+              <button type="submit" class="text-white bg-[#4fb054] w-[120px] border border-[#4fb054] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#66bb6a]">강의 생성</button>
             </div>
           </form>
         </div>
@@ -104,6 +118,7 @@ import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import SearchList from '../components/SearchList.vue'
 import SearchForm from '../components/SearchForm.vue'
+import LectureTime from '../components/LectureTime.vue'
 
 import { ref,reactive } from 'vue'
 import {useRouter} from 'vue-router'
@@ -111,6 +126,8 @@ import axios from 'axios'
 import rct from '../api/rct'
 import {useStore} from 'vuex'
 
+const store = useStore()
+const route = useRouter()
 
 const state = reactive({
   curpage : "classList",
@@ -127,6 +144,20 @@ let floating_lecture_duration_end = ref(new Date().toISOString().substring(0, 10
 let floating_lecture_info = ref("")
 let floating_lecture_image = ref("")
 
+const addLectureTime = () => {
+  let lectureTime = {}
+  lectureTime['weekDay'] = floating_lecture_weekday.value
+  const startTime = floating_lecture_start_time.value.split(':')
+  lectureTime['startHour'] = startTime[0]
+  lectureTime['startMinute'] = startTime[1]
+  const endTime = floating_lecture_end_time.value.split(':')
+  lectureTime['endHour'] = endTime[0]
+  lectureTime['endMinute'] = endTime[1]
+  store.state.lecture.lectureTimeList.push(lectureTime)
+  store.state.lecture.lectureTimeList.sort(function(a, b) {
+    return a["weekDay"] - b["weekDay"];
+  })
+}
 
 // const fileCheck = (file) => {
 //   const pathpoint = file.value.lastIndexOf('.');
@@ -149,25 +180,23 @@ const makeClassSubmit = async () => {
       url: rct.lecture.lecturecreate(),
       method: 'post',
       data: {
-        name : floating_lecture_name.value,
-        durationStart : floating_lecture_duration_start.value,
-        durationEnd : floating_lecture_duration_end.value,
-        lectureStart : floating_lecture_start_time.value,
-        lectureEnd : floating_lecture_end_time.value,
-        info : floating_lecture_info.value,
-        image: state.image,
+        userId : store.state.user.userId,
+        title : floating_lecture_name.value,
+        content : floating_lecture_info.value,
+        startDate : floating_lecture_duration_start.value,
+        endDate : floating_lecture_duration_end.value,
+        lectureImg : state.image,
+        lectureTime : store.state.lecture.lectureTimeList,
       }
     })
-    
-    .then()
+    .then(res => {
+      store.state.lecture.lectureTimeList = []
+      // 모달 닫히는 방법 해야 함
+      // location.reload()
+    })
     .catch(error => {
-      console.log(floating_lecture_name.value,
-        floating_lecture_duration_start.value,
-        floating_lecture_duration_end.value,
-        floating_lecture_start_time.value,
-        floating_lecture_end_time.value,
-        floating_lecture_info.value,
-        floating_lecture_image.value.files,)
+      console.log(store.state.lecture.lectureTimeList)
+      // location.reload()
     })
 }
 

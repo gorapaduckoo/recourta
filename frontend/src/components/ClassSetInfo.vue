@@ -1,5 +1,5 @@
 <template>
-  <div>Class Information</div>
+  <div class="px-3">class information</div>
 </template>
 
 <script setup>
