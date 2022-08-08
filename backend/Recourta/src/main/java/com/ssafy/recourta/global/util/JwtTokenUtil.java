@@ -24,7 +24,7 @@ public class JwtTokenUtil implements Serializable {
     public static final long ACCESS_TOKEN_VALIDITY = 30 * 60L;              // 초 단위(=30분)
     public static final long REFRESH_TOKEN_VALIDITY = 3 * 24 * 60 * 60L;    // 초 단위(= 3일)
 
-    @Value("${jwt.secret}")                                                 // application.properties 에 저장된 값
+    @Value("${jwt.secret}")                   // application.properties 에 저장된 값
     private String secretKey;
 
     private final UserService userService;
@@ -65,13 +65,22 @@ public class JwtTokenUtil implements Serializable {
     }
 
     // Refresh Token을 생성한다.
-    public String generateRefreshToken(Claims claims) {
-        return "";
+    public String generateRefreshToken() {
+        Date now = new Date();
+        return Jwts.builder()
+                    .setIssuedAt(now)
+                    .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_VALIDITY * 1000))
+                    .signWith(SignatureAlgorithm.HS256, secretKey)
+                    .compact();
     }
 
     // Request의 Header에서 token을 가져온다.
-    public String resolveToken(HttpServletRequest request) {
+    public String resolveAccessToken(HttpServletRequest request) {
         return request.getHeader("Authorization");      // Header에 담을 이름
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request) {
+        return request.getHeader("Refresh");
     }
 
     // Token에서 인증 정보 조회
