@@ -39,20 +39,4 @@ public class UserResponse {
                     .build();
         }
     }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class isSuccess {
-        private boolean success;
-
-        public static UserResponse.isSuccess build(boolean success){
-            return isSuccess.builder()
-                    .success(success)
-                    .build();
-        }
-    }
-
-
 }

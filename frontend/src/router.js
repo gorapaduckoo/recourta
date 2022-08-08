@@ -19,7 +19,7 @@ export default createRouter({
       component: () => import('./views/PWsearchView.vue'),
     },
     {
-      path: '/recourta/reset',
+      path: '/pwreset',
       name: 'pwreset',
       component: () => import('./views/PWresetView.vue'),
     },
@@ -47,16 +47,6 @@ export default createRouter({
       path: '/class',
       name: 'class',
       component: () => import('./views/ClassView.vue'),
-    },
-    {
-      path: '/classsetting',
-      name: 'classsetting',
-      component: () => import('./views/ClassSettingView.vue'),
-    },
-    {
-      path: '/notice',
-      name: 'notice',
-      component: () => import('./views/NoticeListView.vue'),
     },
   ],
 })

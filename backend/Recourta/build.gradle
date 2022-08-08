@@ -1,14 +1,13 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.1'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-//	 id 'org.asciidoctor.convert' version '1.5.8'
-	id 'org.asciidoctor.jvm.convert' version '3.3.2'
+	id 'org.asciidoctor.convert' version '1.5.8'
 	id 'java'
 }
 
-group 'com.example'
-version '0.0.1-SNAPSHOT' + new Date().format("yyyyMMddHHmmss")
-sourceCompatibility = 1.8
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 configurations {
 	compileOnly {
@@ -25,58 +24,16 @@ ext {
 }
 
 dependencies {
-
-
-	// junit
-	testImplementation('org.junit.jupiter:junit-jupiter-api:5.8.1')
-	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.8.1')
-
-	// web
-	implementation('org.springframework.boot:spring-boot-starter-web')
-
-	// test
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('org.springframework.security:spring-security-test')
-
-	// lombok
-	compileOnly('org.projectlombok:lombok')
-	annotationProcessor('org.projectlombok:lombok')
-	testImplementation('org.projectlombok:lombok')
-	testAnnotationProcessor('org.projectlombok:lombok')
-
-	// DB
-	implementation('org.springframework.boot:spring-boot-starter-data-jdbc')
-	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
-	implementation('org.springframework.boot:spring-boot-starter-jdbc')
-	runtimeOnly('com.h2database:h2')
-	runtimeOnly('mysql:mysql-connector-java')
-
-	// Spring security
-	implementation('org.springframework.boot:spring-boot-starter-security')
-
-	// jwt
-	implementation group:'io.jsonwebtoken', name:'jjwt', version:'0.9.1'
-
-	// MockMVC
-	testImplementation('org.springframework.restdocs:spring-restdocs-mockmvc')
-
-	// Swagger
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
-	// JSON
-	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
-
-	implementation group: 'org.json', name: 'json', version: '20160810'
-
-	// SMTP
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-
-	//Redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-	//validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'mysql:mysql-connector-java'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
