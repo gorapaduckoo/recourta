@@ -58,28 +58,31 @@
           </button>
         </div>
         <div class="modal-body pt-0 pb-4">
-          <form class="pt-10">
+          <form id="pwChange_input" class="pt-10" @submit.prevent="pwChange">
             <!-- 현재 비밀번호 입력 -->
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
-              <input type="password" name="floating_current_password" id="floating_current_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
+              <input type="password" name="floating_current_password" id="floating_current_password" v-model.trim="floating_current_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " @click="onCurrentPasswordClick" required />
               <label for="floating_current_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">현재 비밀번호</label>
+              <label v-if="!state.current_pw_check" for="floating_current_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
             <!-- 새 비밀번호 입력 -->
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
-              <input type="password" name="floating_new_password" id="floating_new_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
-              <label for="floating_new_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호</label>
+              <input type="password" id="floating_new_password" name="floating_new_password" v-model.trim="floating_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onNewPasswordClick"/>
+              <label for="floating_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호</label>
+              <label v-if="!state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
             <!-- 새 비밀번호 확인 -->
             <div class="relative z-0 mb-4 mr-auto ml-auto w-3/4 group">
-              <input type="password" name="floating_repeat_new_password" id="floating_repeat_new_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
-              <label for="floating_repeat_new_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호 확인</label>
+              <input type="password" name="floating_repeat_new_password" v-model.trim="floating_repeat_new_password" id="floating_repeat_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_repeat_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_repeat_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @Click="onNewRepeatClick"/>
+              <label for="floating_repeat_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_repeat_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_repeat_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호 확인</label>
+              <label v-if="!state.new_repeat_check" for="floating_repeat_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호와 일치하지 않습니다</label>
             </div>
           </form>
         </div>
         <div class="modal-footer text-center w-3/4 mr-auto ml-auto mt-4 mb-6">
-          <button type="button" class="text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]" data-bs-dismiss="modal">비밀번호 변경하기</button>
+          <button form="pwChange_input" type="submit" class="text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">비밀번호 변경하기</button>
         </div>
       </div>
     </div> 
@@ -150,12 +153,20 @@ const state = reactive({
   isPhotoTake: false,
   isShot: false,
   isLoad: false,
+  current_pw_check : true,
+  new_pw_check : true,
+  new_pw_err_msg : '',
+  new_repeat_check : true,
   curpage : "profile",
   userId : null,
   name : "",
   email : "",
   takenImg : "",
 })
+
+let floating_current_password = ref("")
+let floating_new_password = ref("")
+let floating_repeat_new_password = ref("")
 
 const camera = ref(null)
 const canvas = ref(null)
@@ -233,6 +244,57 @@ const downloadImages = () => {
   download.setAttribute("href", canvas);
 }
 
+// 비밀번호 변경 함수
+const sendChangetoServer = async () => {
+  const res = await axios({
+    url: rct.user.userpwmod(),
+    method: 'put',
+    data: {
+      userId : store.state.user.userId,
+      nowPw : floating_current_password.value,
+      newPw : floating_new_password.value,
+    }
+  })
+  return res
+}
+
+const pwChange = async () => {
+      
+  let pw_reg = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
+
+  if(!pw_reg.test(floating_new_password.value)) {
+    state.new_pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다'
+    state.new_pw_check = false
+  }
+  if (floating_new_password.value!==floating_repeat_new_password.value) {
+    state.new_pw_err_msg = '새 비밀번호가 일치하지 않습니다'
+    state.new_repeat_check = false
+  }
+  if (state.new_pw_check&&state.new_repeat_check) {
+    const res = await sendChangetoServer()
+    console.log(res.data)
+    if (res.data==="success") route.replace({path:'/profile'})
+    else if (res.data==="fail") {
+      state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
+      state.current_pw_check = false
+    }
+  }
+}
+
+const onCurrentPasswordClick = () => {
+  state.current_pw_check = true
+}
+
+const onNewPasswordClick = () => {
+  state.new_pw_check = true
+}
+
+const onNewRepeatClick = () => {
+  state.new_repeat_check = true
+}
+
+
+// 회원 탈퇴 함수
 const deleteUser = async () => {
   await axios({
     url: rct.user.userinfo(store.state.user.userId),
