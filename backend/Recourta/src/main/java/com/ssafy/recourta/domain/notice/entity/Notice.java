@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -40,15 +39,15 @@ public class Notice {
     @NotNull
     LocalDateTime datetime; // 송신일시
 
-    Boolean isChecked; // 1: 읽음, 0: 읽지않음
+    Boolean isRead; // 1: 읽음, 0: 읽지않음
 
     @Builder
-    public Notice(Lecture lecture, User user, String title, String content, LocalDateTime datetime, boolean isChecked) {
+    public Notice(Lecture lecture, User user, String title, String content, LocalDateTime datetime, boolean isRead) {
         this.lecture = lecture;
         this.user = user;
         this.title = title;
         this.content = content;
         this.datetime = datetime;
-        this.isChecked = isChecked;
+        this.isRead = isRead;
     }
 }

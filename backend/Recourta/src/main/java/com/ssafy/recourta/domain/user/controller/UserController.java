@@ -1,11 +1,13 @@
 package com.ssafy.recourta.domain.user.controller;
 
 
+import com.ssafy.recourta.domain.auth.service.AuthService;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.service.MailService;
 import com.ssafy.recourta.domain.user.service.UserService;
+import com.ssafy.recourta.domain.auth.dto.TokenDto;
 import com.ssafy.recourta.global.util.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +28,8 @@ public class UserController {
 
     private final UserService userService;
     private final MailService mailService;
+
+    private final AuthService authService;
 
     @Autowired
     private final JwtTokenUtil jwtTokenUtil;
@@ -99,8 +103,10 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@Valid @RequestBody UserRequest.Dologin request) {
         User user = userService.doLogin(request);
-        String accessToken = jwtTokenUtil.generateAccessToken(jwtTokenUtil.getClaims(user));
-        return ResponseEntity.ok().body(accessToken);
+
+        TokenDto.Refresh refresh = authService.createTokens(user);
+
+        return ResponseEntity.ok().body(refresh);
     }
 
     @PostMapping("/auth/code")

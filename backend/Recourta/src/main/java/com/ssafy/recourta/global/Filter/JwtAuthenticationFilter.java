@@ -20,16 +20,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = jwtTokenUtil.resolveToken((HttpServletRequest)request);
+        String accessToken = jwtTokenUtil.resolveAccessToken((HttpServletRequest) request);
 
-        if(token != null) {
-            // Access Token이 유효하다면
-            if(jwtTokenUtil.validateToken(token)) {
-                Authentication authentication = jwtTokenUtil.getAuthentication(token);
+        if(accessToken != null) {
+            // Access Token이 유효하다면 인증 정보를 저장한다.
+            if(jwtTokenUtil.validateToken(accessToken)) {
+                Authentication authentication = jwtTokenUtil.getAuthentication(accessToken);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                // Refresh Token이 유효하다면 새로운 AccessToken을 발급한다.
             }
+            // 아니면 403 에러 발생
         }
 
         chain.doFilter(request, response);

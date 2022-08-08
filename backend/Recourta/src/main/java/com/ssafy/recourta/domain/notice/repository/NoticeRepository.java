@@ -11,4 +11,6 @@ import java.util.List;
 public interface NoticeRepository extends JpaRepository<Notice, Integer> {
     List<Notice> findAllByUser_UserId(Integer userId);
     List<Notice> findAllByLecture_LectureId(Integer lectureId);
+
+    List<Notice> findAllByUser_UserIdAndIsRead(Integer userId, Boolean isRead);
 }

@@ -1,26 +1,31 @@
 package com.ssafy.recourta.domain.notice.service;
 
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.notice.dto.request.NoticeRequest;
 import com.ssafy.recourta.domain.notice.dto.response.NoticeResponse;
 import com.ssafy.recourta.domain.notice.entity.Notice;
+import com.ssafy.recourta.domain.notice.repository.EmitterRepository;
 import com.ssafy.recourta.domain.notice.repository.NoticeRepository;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.NoticeException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
+import com.ssafy.recourta.global.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class NoticeServiceImpl implements NoticeService{
+
+    private Long DEFAULT_TIMEOUT = 60L * 1000L * 60L;
 
     @Autowired
     private LectureRepository lectureRepository;
@@ -31,9 +36,12 @@ public class NoticeServiceImpl implements NoticeService{
     @Autowired
     private NoticeRepository noticeRepository;
 
+    @Autowired
+    private EmitterRepository emitterRepository;
+
 
     @Override
-    public NoticeResponse.NoticeCount createNotice(NoticeRequest.NoticeCreateForm notice) {
+    public NoticeResponse.NoticeCount createNotice(NoticeRequest.NoticeCreateForm notice) throws Exception {
         int cnt = 0;
         List<Integer> users = notice.getUserIds();
         Integer lectureId = notice.getLectureId();
@@ -49,9 +57,13 @@ public class NoticeServiceImpl implements NoticeService{
                     .content((notice.getContent()))
                     .datetime(LocalDateTime.now())
                     .build();
-            if (noticeRepository.save(newNotice) == null){
+
+            if ((newNotice = noticeRepository.save(newNotice)) == null){
                 throw new NoticeException.NoticeSaveFail();
-            } else cnt++;
+            } else {
+                System.out.println(newNotice.getNoticeId() + ", " + newNotice.getTitle());
+                emitEvent(userId, newNotice);
+            }
         }
         return new NoticeResponse.NoticeCount(cnt);
     }
@@ -74,7 +86,7 @@ public class NoticeServiceImpl implements NoticeService{
                     .lectureTitle(n.getLecture().getTitle())
                     .title(n.getTitle())
                     .date(n.getDatetime().toLocalDate())
-                    .isChecked(n.getIsChecked())
+                    .isRead(n.getIsRead())
                     .build());
         }
 
@@ -96,7 +108,7 @@ public class NoticeServiceImpl implements NoticeService{
                     .lectureTitle(n.getLecture().getTitle())
                     .title(n.getTitle())
                     .date(n.getDatetime().toLocalDate())
-                    .isChecked(n.getIsChecked())
+                    .isRead(n.getIsRead())
                     .build());
         }
         return result;
@@ -116,4 +128,37 @@ public class NoticeServiceImpl implements NoticeService{
 
         return result;
     }
+
+    @Override
+    public SseEmitter subscribe(Integer userId) throws IOException {
+        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
+        emitter.send(SseEmitter.event().data("subscribe success!"));
+        emitterRepository.save(userId, emitter);
+
+
+        emitter.onCompletion(()-> emitterRepository.deleteEmitterByUserId(userId));
+        emitter.onTimeout(()-> emitterRepository.deleteEmitterByUserId(userId));
+        emitter.onError((e)-> emitterRepository.deleteEmitterByUserId(userId));
+
+        // 읽지 않은 알림들을 가져와 전송
+        List<Notice> notices = noticeRepository.findAllByUser_UserIdAndIsRead(userId, false);
+        for (Notice n : notices) {
+            emitter.send(SseEmitter.event()
+                    .data(n));
+        }
+
+
+        return emitter;
+    }
+
+
+    @Override
+    public void emitEvent(Integer userId, Notice notice) throws Exception {
+        SseEmitter emitter = emitterRepository.findSseEmitterByUserId(userId);
+        emitter.send(SseEmitter.event()
+                .data(notice)
+                .build());
+    }
+
+
 }
