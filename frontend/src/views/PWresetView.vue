@@ -1,44 +1,102 @@
 <template>
   <DarkmodeButton />
+  
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
-    <router-link to="/" class="fixed top-3">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-      </svg>
-    </router-link>
-    
     <router-link to="/">
       <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
     </router-link>
     <div class="w-3/4 ml-auto mr-auto dark:text-gray-300">
       <h1 class="mt-10 mb-6 font-bold">비밀번호 재설정</h1>
     </div>
-    <form class="pt-10">
+    <form class="pt-10" @submit.prevent="PWresetSubmit">
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" name="floating_password" id="floating_password" class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
-        <label for="floating_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호</label>
+        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onPasswordClick"/>
+        <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호</label>
+        <label v-if="!state.pw_check" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.pw_err_msg }}</label>
       </div>
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
-        <input type="password" name="repeat_password" id="floating_repeat_password" class="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " required />
-        <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호 확인</label>
+        <input type="password" name="repeat_password" v-model.trim="repeat_password" id="floating_repeat_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.repeat_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.repeat_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @Click="onRepeatClick"/>
+        <label for="floating_repeat_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.repeat_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.repeat_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호 확인</label>
+        <label v-if="!state.repeat_check" for="floating_repeat_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호와 일치하지 않습니다</label>
       </div>
-      <div class="mt-16 text-center w-3/4 mr-auto ml-auto mb-6">
-        <button type="submit" class="text-white font-bold bg-[#2c5172] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">비밀번호 재설정</button>
+      <div class="mt-10 text-center w-3/4 mr-auto ml-auto mb-6">
+        <button type="submit" class="text-white font-bold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center dark:bg-[#2c5172]">비밀번호 재설정</button>
       </div>
     </form>
   </div>
+  
 </template>
 
-<script>
-import DarkmodeButton from '@/components/DarkmodeButton'
+<script setup>
+import DarkmodeButton from '../components/DarkmodeButton.vue'
+import { ref, reactive } from 'vue'
+import {useRouter} from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
 
-export default {
-  name: 'loginView',
-  components: {
-    DarkmodeButton,
-  },
+const route = useRouter()
+
+const state = reactive({
+  pw_check : true,
+  pw_err_msg : '',
+  repeat_check : true,
+})
+
+
+let floating_password = ref("")
+let repeat_password = ref("")
+
+const sendresettoserver = async () => {
+  const url = new URL(window.location.href)
+  const code = url.search.substr(6)
+  const res = await axios({
+    url: rct.login.pwreset(),
+    method: 'put',
+    data: {
+      code : code,
+      newPw : floating_password.value,
+    }
+  })
+
+  return res
 }
+const PWresetSubmit = async () => {
+      
+  let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
+
+  if(!pw_regex.test(floating_password.value)) {
+    state.pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다'
+    state.pw_check = false
+  }
+  if(floating_password.value!==repeat_password.value) state.repeat_check = false
+
+  if(state.pw_check&&state.repeat_check) {
+    const res = await sendresettoserver()
+    if(res.data==="success") route.replace({path:'/'})
+    else if(res.data==="fail"){
+      state.pw_err_msg = '비밀번호 재설정을 실패하셨습니다'
+      state.pw_check = false
+    }else{
+      state.pw_err_msg = '재설정 유효시간이 만료되었습니다. 비밀번호찾기를 다시 시도해주세요'
+      state.pw_check = false
+    }
+  }
+
+}
+
+const onPasswordClick = () => {
+  state.pw_check = true
+}
+
+const onRepeatClick = () => {
+  state.repeat_check = true
+}
+
 </script>
 
-<style>
+<style scoped>
+#floating_password::placeholder{
+  text-align:right;
+  font-size:11px;
+}
 </style>
