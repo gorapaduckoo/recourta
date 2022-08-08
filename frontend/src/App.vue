@@ -1,18 +1,19 @@
 <template>
   <router-view/>
-  <CustomFooter />
+  <CustomFooter ref="customfooter" v-if="!state.isclass"/>
 </template>
 
 <style scoped>
 </style>
 
-<script>
+<script setup>
 import CustomFooter from './components/CustomFooter.vue'
-export default {
-  
-  name: 'App',
-  components: {
-    CustomFooter,
-  }
-}
+import { reactive, computed } from 'vue'
+
+const state = reactive({
+  isclass:computed(() => {
+    return document.location.pathname==="/class"
+  }),
+})
+
 </script>
