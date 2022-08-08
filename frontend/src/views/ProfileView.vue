@@ -100,9 +100,7 @@
           <p class="font-medium">정말 탈퇴하시겠습니까?<br/>(탈퇴 시, 모든 정보가 삭제됩니다.)</p>
         </div>
         <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end px-4 pb-4 rounded-b-md space-x-3">
-          <router-link to="/">
-            <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" data-bs-dismiss="modal">예</button>
-          </router-link>
+          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" @click="deleteUser" data-bs-dismiss="modal">예</button>
           <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
         </div>
       </div>
@@ -117,8 +115,10 @@ import { ref, reactive } from 'vue'
 import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from "vuex"
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const route = useRouter()
 
 const getProfile = async () => {
   await axios({
@@ -232,7 +232,23 @@ const downloadImages = () => {
   .replace("image/jpeg", "image/octet-stream");
   download.setAttribute("href", canvas);
 }
-  
+
+const deleteUser = async () => {
+  await axios({
+    url: rct.user.userinfo(store.state.user.userId),
+    method: 'delete',
+    headers: {
+      Authorization: store.state.user.token,
+    }
+  })
+  .then(res => {
+    route.replace({path:'/'})
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
 </script>
 
 <style>
