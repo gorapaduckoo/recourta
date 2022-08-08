@@ -25,15 +25,15 @@ public class NoticeResponse {
         @NotNull
         private LocalDate date;
         @NotNull
-        private boolean isChecked;
+        private boolean isRead;
 
         @Builder
-        public NoticeTitle(Integer noticeId, String lectureTitle, String title, LocalDate date, boolean isChecked) {
+        public NoticeTitle(Integer noticeId, String lectureTitle, String title, LocalDate date, boolean isRead) {
             this.noticeId = noticeId;
             this.lectureTitle = lectureTitle;
             this.title = title;
             this.date = date;
-            this.isChecked = isChecked;
+            this.isRead = isRead;
 
         }
     }

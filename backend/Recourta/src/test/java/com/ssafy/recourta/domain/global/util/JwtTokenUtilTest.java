@@ -51,6 +51,13 @@ class JwtTokenUtilTest {
     }
 
     @Test
+    public void generateRefreshTokenTest() throws Exception {
+        String token = jwtTokenUtil.generateRefreshToken();
+        // 생성된 token을 jwt.io에서 decode 하여 정보 확인 가능
+        System.out.println(token);
+    }
+
+    @Test
     public void getUserIdFromTokenTest() throws Exception {
         User user = User.builder()
                 .userId(1)

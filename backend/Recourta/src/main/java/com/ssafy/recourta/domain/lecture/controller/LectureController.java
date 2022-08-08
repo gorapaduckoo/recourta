@@ -52,7 +52,6 @@ public class LectureController {
     @PutMapping("/{lectureId}")
     public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable String lectureId,@Valid @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
         Integer id = Integer.parseInt(lectureId);
-        System.out.println(input.getLectureTime().toString());
         LectureResponse.LectureId result = lectureService.updateLecture(id, input);
 
         List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
