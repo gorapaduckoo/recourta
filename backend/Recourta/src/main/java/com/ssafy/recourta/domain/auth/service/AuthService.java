@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 public interface AuthService {
 
-    TokenDto.Refresh createTokens(User user) throws Exception;
+    TokenDto.Refresh createTokens(User user);
     TokenDto.Refresh refreshTokens(String accessToken, String refreshToken) throws Exception;
 }
