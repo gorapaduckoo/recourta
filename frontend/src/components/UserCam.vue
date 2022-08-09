@@ -1,9 +1,9 @@
 <template>
-  <UserCam />
+  <video autoplay/>
 </template>
 
 <script setup>
-import UserCam from "./UserCam.vue"
+
 </script>
 
 <style>

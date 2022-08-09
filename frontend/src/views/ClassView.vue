@@ -1,11 +1,11 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen pb-[24px] justify-between items-center font-bold text-4xl">
+  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen pb-3 justify-between items-center font-bold text-4xl">
     <ClassList />
     <ClassMain />
     <ClassToolbar />
   </div>
-  <ClassSidebar v-if="state.isside" class="absolute top-0 right-0 h-screen pb-[24px] width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
 <button @click="toggleside" class="text-white absolute top-0 right-0">X</button>
 </template>
