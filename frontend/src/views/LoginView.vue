@@ -72,8 +72,9 @@ const login = async () => {
     }
   })
   .then(res => {
-    store.dispatch('saveToken', res.data)
-    const jwt = jwt_decode(res.data)
+    store.dispatch('saveAccessToken', res.data.accessToken)
+    store.dispatch('saveRefreshToken', res.data.refreshToken)
+    const jwt = jwt_decode(res.data.accessToken)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
     route.replace({path:'/main'})
@@ -83,10 +84,8 @@ const login = async () => {
     state.email_check=false
     state.pw_err_msg = "잘못된 비밀번호를 입력하였습니다"
     state.pw_check=false
-    store.commit('SET_AUTH_ERROR', err.response.data)
   })
 }
-
 
 const test_id_pw = (id,pw) => {
   if(id==="test@gmail.com"&&pw==="Test123@") return 1
