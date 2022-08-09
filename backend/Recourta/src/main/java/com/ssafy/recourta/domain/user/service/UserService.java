@@ -95,7 +95,7 @@ public class UserService {
     @Transactional
     public UserResponse.OnlyId delete(int userId){
 
-        // 회원 탈퇴 진행 전, 회원이 가르칠 예정이었던 강의들을 삭제 또는 종강처리
+        // 개강일이 오늘 이후인 강의들
         List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndStartDateAfter(userId, LocalDate.now().minusDays(1));
         for (Lecture l : lectures) {
             Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
@@ -109,6 +109,15 @@ public class UserService {
                 sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
             }
         }
+
+        // 개강일이 어제 이전이고, 종강일이 오늘 이후인 강의들
+        lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
+        for (Lecture l : lectures) {
+            l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
+            lectureRepository.save(l);
+            sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
+        }
+
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(userId);
