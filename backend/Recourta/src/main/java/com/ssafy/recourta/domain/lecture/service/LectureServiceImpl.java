@@ -98,6 +98,8 @@ public class LectureServiceImpl implements LectureService {
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
         if(lectureRepository.existsById(lectureId)) {
             lectureRepository.deleteById(lectureId);
+
+
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
         else {

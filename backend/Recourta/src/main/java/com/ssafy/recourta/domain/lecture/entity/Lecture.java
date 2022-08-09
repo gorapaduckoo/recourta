@@ -12,12 +12,12 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Table(name = "lecture")
 public class Lecture {
 // 강의정보 테이블
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer lectureId; // 강의번호
 

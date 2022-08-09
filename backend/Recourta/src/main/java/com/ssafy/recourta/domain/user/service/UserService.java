@@ -1,10 +1,13 @@
 package com.ssafy.recourta.domain.user.service;
 
 
+import com.ssafy.recourta.domain.lecture.entity.Lecture;
+import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
+import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.File;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
@@ -29,6 +35,7 @@ import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
 public class UserService {
 
     private final UserRepository userRepository;
+    private LectureRepository lectureRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -83,12 +90,29 @@ public class UserService {
     @Transactional
     public UserResponse.OnlyId delete(int userId){
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if(user.getIsStudent() == 0){
+            // 수강 시작 전인 강의
+            List<Lecture> notstart = lectureRepository.findAllByUser_UserIdAndStartDateAfter(user.getUserId(), LocalDate.now().minusDays(1));
+            for(Lecture l : notstart){
+                lectureRepository.deleteById(l.getLectureId());
+            }
+
+            // 현재 수강중인 강의
+            List<Lecture> unfinished = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(user.getUserId(), LocalDate.now().plusDays(1),LocalDate.now().minusDays(1));
+            for(Lecture l : unfinished ){
+                l.setEndDate(LocalDate.now());
+                lectureRepository.save(l);
+            }
+        }
+
         userRepository.deleteById(userId);
         return UserResponse.OnlyId.build(user);
     }
 
     public User doLogin(UserRequest.Dologin request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
+        System.out.println("유저서비스"+user);
 
         if(!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
 //        if(!passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(request.getPassword()))) {
