@@ -68,13 +68,16 @@ public class LectureResponse {
         private Integer lectureId;
         @NotNull
         private String title;
+        @NotNull
+        private String teacher;
         @NotBlank
         private JSONArray lectureTime;
 
         @Builder
-        public LecturePreview(Integer lectureId, String title, JSONArray lectureTime) {
+        public LecturePreview(Integer lectureId, String title, String teacher, JSONArray lectureTime) {
             this.lectureId = lectureId;
             this.title = title;
+            this.teacher = teacher;
             this.lectureTime = lectureTime;
         }
     }
