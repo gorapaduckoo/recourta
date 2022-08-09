@@ -4,7 +4,7 @@ import rct from '../../api/rct'
 
 export const user = {
   state: {
-	    accessToken: localStorage.getItem('accessToken') || '' ,
+	  accessToken: localStorage.getItem('accessToken') || '' ,
 		refreshToken: localStorage.getItem('refreshToken') || '' ,
 		currentUser: {},
 		authError: null,
