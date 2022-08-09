@@ -128,7 +128,7 @@ const getProfile = async () => {
     url: rct.user.userinfo(store.state.user.userId),
     method: 'get',
     headers: {
-      Authorization: store.state.user.token,
+      Authorization: store.state.user.accessToken,
     }
   })
   .then(res => {
