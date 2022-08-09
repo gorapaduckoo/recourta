@@ -3,11 +3,11 @@ package com.ssafy.recourta.domain.user.service;
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
+import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
-import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
@@ -35,7 +35,12 @@ import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
 public class UserService {
 
     private final UserRepository userRepository;
-    private LectureRepository lectureRepository;
+
+    @Autowired
+    private final LectureRepository lectureRepository;
+
+    @Autowired
+    private final SessionRepository sessionRepository;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -89,30 +94,31 @@ public class UserService {
 
     @Transactional
     public UserResponse.OnlyId delete(int userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        if(user.getIsStudent() == 0){
-            // 수강 시작 전인 강의
-            List<Lecture> notstart = lectureRepository.findAllByUser_UserIdAndStartDateAfter(user.getUserId(), LocalDate.now().minusDays(1));
-            for(Lecture l : notstart){
+        // 회원 탈퇴 진행 전, 회원이 가르칠 예정이었던 강의들을 삭제 또는 종강처리
+        List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndStartDateAfter(userId, LocalDate.now().minusDays(1));
+        for (Lecture l : lectures) {
+            Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
+            if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
                 lectureRepository.deleteById(l.getLectureId());
-            }
-
-            // 현재 수강중인 강의
-            List<Lecture> unfinished = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(user.getUserId(), LocalDate.now().plusDays(1),LocalDate.now().minusDays(1));
-            for(Lecture l : unfinished ){
-                l.setEndDate(LocalDate.now());
+            } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
+                // 강의 종강일 업데이트 & 강의자 null 처리
+                l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
                 lectureRepository.save(l);
+                // 현재 시간 이후 세션 삭제 처리
+                sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
             }
         }
 
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(userId);
+
+
         return UserResponse.OnlyId.build(user);
     }
 
     public User doLogin(UserRequest.Dologin request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
-        System.out.println("유저서비스"+user);
 
         if(!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
 //        if(!passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(request.getPassword()))) {

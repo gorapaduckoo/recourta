@@ -21,6 +21,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Integer> {
     // startDate <= 현재날짜 면서 현재날짜 <= endDate인 강의 찾기
     List<Lecture> findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(Integer userId, LocalDate tomorrow, LocalDate yesterday);
 
-    // 아직 수강시작 전인 강의 찾기 (현재날짜보다 시작날짜가 뒤)
+    // startDate >= 현재날짜 인 강의 찾기
     List<Lecture> findAllByUser_UserIdAndStartDateAfter(Integer userId, LocalDate yesterday);
 }

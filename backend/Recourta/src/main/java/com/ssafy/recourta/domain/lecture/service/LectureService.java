@@ -13,7 +13,6 @@ public interface LectureService {
     LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture) throws Exception;
     LectureResponse.LectureId deleteLecture(Integer lectureId) throws Exception;
     List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) throws Exception;
-
     List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException;
 
 }

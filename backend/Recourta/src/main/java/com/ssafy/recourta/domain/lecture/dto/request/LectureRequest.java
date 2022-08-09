@@ -26,7 +26,7 @@ public class LectureRequest {
     public static class LectureCreateForm {
         // 강의 개설 시 입력받는 폼 양식
 
-        @NotNull
+
         private Integer userId; // 강의 개설자의 회원번호
         @NotNull
         private String title;
