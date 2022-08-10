@@ -6,8 +6,7 @@
     <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
     <div class="mb-12 text-lg font-medium text-center">{{ state.email }}</div>
     <!-- 저장되어 있는 사진 -->
-    <img :src="state.takenImg" alt="" class="w-[384px] h-[288px]">
-    <div v-if="!state.isCamOpen" class="my-2 w-[384px] h-[288px] ml-auto mr-auto bg-neutral-400"></div>
+    <img v-if="!state.isCamOpen" v-bind:src="state.imgurl+state.takenImg" alt="" class="my-2 ml-auto mr-auto w-[384px] h-[288px]">
     <!-- 카메라 로딩 -->
     <div v-show="state.isCamOpen && state.isLoad" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
       <svg aria-hidden="true" role="status" class="w-[80px] h-[80px] text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,9 +18,9 @@
     <div v-if="state.isCamOpen" v-show="!state.isLoad" class="my-2" :class="{ 'opacity-0' : state.isShot }">
       <div :class="{'opacity-0' : state.isShot}"></div>
       <!-- 웹캠 -->
-      <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="camera" autoplay></video>
+      <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="profileCamera" autoplay></video>
       <!-- 캡쳐 -->
-      <canvas width="384" height="288" class="mr-auto ml-auto" v-show="state.isPhotoTake" id="photoTaken" ref="canvas"></canvas>
+      <canvas width="384" height="288" class="mr-auto ml-auto" v-show="state.isPhotoTake" id="profilePhotoTaken" ref="profileCanvas"></canvas>
     </div>
     <!-- 웹캠 버튼 -->
     <div class="flex justify-center mb-8">
@@ -129,17 +128,14 @@ const getProfile = async () => {
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
     }
   })
   .then(res => {
-    console.log(res.data)
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
     state.takenImg = res.data.userImg
-    console.log(typeof(state.takenImg))
-    // state.takenImg = window.URL.createObjectURL(res.data.userImg)
-    console.log(state.takenImg)
   })
   .catch(err => {
     console.log(err)
@@ -162,14 +158,15 @@ const state = reactive({
   name : "",
   email : "",
   takenImg : "",
+  imgurl : 'http://localhost:8081/recourta/uploads/img/',
 })
 
 let floating_current_password = ref("")
 let floating_new_password = ref("")
 let floating_repeat_new_password = ref("")
 
-const camera = ref(null)
-const canvas = ref(null)
+const profileCamera = ref(null)
+const profileCanvas = ref(null)
 
 const toggleCam = () => {
   if(state.isCamOpen) {
@@ -196,7 +193,7 @@ const createCamera = () => {
   .getUserMedia(constraints)
   .then(stream => {
     state.isLoad = false;
-    camera.value.srcObject = stream;
+    profileCamera.value.srcObject = stream;
   })
   .catch(error => {
     state.isLoad = false;
@@ -206,7 +203,7 @@ const createCamera = () => {
 }
 
 const stopCamStream = () => {
-  let tracks = camera.value.srcObject.getTracks();
+  let tracks = profileCamera.value.srcObject.getTracks();
   tracks.forEach(track => {
     track.stop();
   });
@@ -225,23 +222,50 @@ const takePhotoShot = () => {
   
   state.isPhotoTake = !state.isPhotoTake;
   
-  const context = canvas.value.getContext('2d');
-  context.drawImage(camera.value, 0, 0, 384, 288);
+  const context = profileCanvas.value.getContext('2d');
+  context.drawImage(profileCamera.value, 0, 0, 384, 288);
 }
 
-const changePhoto = () => {
+// 사진 변경 함수
+const UrltoBlob = async (dataURL) => {
+  const res = await fetch(dataURL)
+  const blob = await res.blob()
+  return blob
+}
+
+const changePhoto = async () => {
   state.isCamOpen = false;
   state.isPhotoTake = false;
-  sate.isShot = false;
+  state.isShot = false;
   stopCamStream();
-  // 새로운 사진으로 바꾸는 과정 필요
+  const procamimgurl = document.getElementById("profilePhotoTaken").toDataURL("image/jpeg");
+  let problob = await UrltoBlob(procamimgurl)
+  let profd = new FormData()
+  const data = {
+    userId : store.state.user.userId,
+  }
+  const json = JSON.stringify(data)
+  const datablob = new Blob([json],{type:"application/json"})
+  profd.append("userImg",problob)
+  profd.append("request",datablob)
+  await axios.put(rct.user.userimgmod(),profd,{
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    route.replace({path:'/profile'})
+  })
+  .catch(err => {
+  })
 }
 
 const downloadImages = () => {
   const download = document.getElementById("downloadPhoto");
-  const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
+  const profileCanvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
   .replace("image/jpeg", "image/octet-stream");
-  download.setAttribute("href", canvas);
+  download.setAttribute("href", profileCanvas);
 }
 
 // 비밀번호 변경 함수
@@ -300,7 +324,7 @@ const deleteUser = async () => {
     url: rct.user.userinfo(store.state.user.userId),
     method: 'delete',
     headers: {
-      Authorization: store.state.user.token,
+      Authorization: store.state.user.accessToken,
     }
   })
   .then(res => {
