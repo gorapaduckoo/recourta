@@ -12,17 +12,16 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Setter
 @Table(name = "lecture")
 public class Lecture {
 // 강의정보 테이블
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer lectureId; // 강의번호
 
     @ManyToOne
-    @NotNull
     @JoinColumn(name = "userId")
     private User user; // 개설자
     @NotNull
@@ -57,5 +56,13 @@ public class Lecture {
         this.lectureTime = lectureTime;
     }
 
+    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime, User user) {
+        this.content = content;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.lectureImg = lectureImg;
+        this.lectureTime = lectureTime;
+        this.user = user;
+    }
 
 }

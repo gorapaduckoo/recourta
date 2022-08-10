@@ -4,6 +4,8 @@ import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
 import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
+import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
+import com.ssafy.recourta.domain.registration.service.RegistrationService;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.LectureException;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,9 @@ public class LectureServiceImpl implements LectureService {
     private LectureRepository lectureRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RegistrationService registrationService;
 
     @Override
     public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input) {
@@ -98,6 +104,8 @@ public class LectureServiceImpl implements LectureService {
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
         if(lectureRepository.existsById(lectureId)) {
             lectureRepository.deleteById(lectureId);
+
+
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
         else {
@@ -127,6 +135,25 @@ public class LectureServiceImpl implements LectureService {
         } else {
             throw new UserNotFoundException();
         }
+    }
+
+    @Override
+    public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
+        List<LectureResponse.LecturePreview> result  = new ArrayList<>();
+        if(userRepository.existsById(userId)) {
+            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
+            for (Lecture l : lectures) {
+                result.add(LectureResponse.LecturePreview.builder()
+                        .title(l.getTitle())
+                        .teacher(l.getUser().getName())
+                        .lectureTime(stringToJsonArray(l.getLectureTime()))
+                        .lectureId(l.getLectureId())
+                        .build());
+            }
+        } else {
+            throw new UserNotFoundException();
+        }
+        return result;
     }
 
 

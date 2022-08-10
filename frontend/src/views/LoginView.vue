@@ -85,7 +85,6 @@ const login = async () => {
   })
 }
 
-
 const test_id_pw = (id,pw) => {
   if(id==="test@gmail.com"&&pw==="Test123@") return 1
   return 0
