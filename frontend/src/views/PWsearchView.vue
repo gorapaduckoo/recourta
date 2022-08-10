@@ -117,12 +117,10 @@ const onEmailClick = () => {
 }
 
 const modalOpen = () => {
-  // console.log('함수0')
   document.getElementById('emailSendModal').classList.replace('hidden', 'show')
 }
 
 const modalClose = () => {
-  // console.log('함수0')
   document.getElementById('emailSendModal').classList.replace('show', 'hidden')
   route.replace({path:'/'})
 }

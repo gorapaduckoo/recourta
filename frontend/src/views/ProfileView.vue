@@ -6,7 +6,7 @@
     <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
     <div class="mb-12 text-lg font-medium text-center">{{ state.email }}</div>
     <!-- 저장되어 있는 사진 -->
-    <img v-if="!state.isCamOpen" v-bind:src="state.imgurl+state.takenImg" alt="" class="my-2 ml-auto mr-auto w-[384px] h-[288px]">
+    <img v-if="!state.isCamOpen" :src="state.takenImg" alt="" class="my-2 ml-auto mr-auto w-[384px] h-[288px]">
     <!-- 카메라 로딩 -->
     <div v-show="state.isCamOpen && state.isLoad" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
       <svg aria-hidden="true" role="status" class="w-[80px] h-[80px] text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -135,7 +135,7 @@ const getProfile = async () => {
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = res.data.userImg
+    state.takenImg = 'http://localhost:8081/recourta/uploads/img/'+res.data.userImg
   })
   .catch(err => {
     console.log(err)
@@ -158,7 +158,6 @@ const state = reactive({
   name : "",
   email : "",
   takenImg : "",
-  imgurl : 'http://localhost:8081/recourta/uploads/img/',
 })
 
 let floating_current_password = ref("")
@@ -256,16 +255,10 @@ const changePhoto = async () => {
   })
   .then(res => {
     route.replace({path:'/profile'})
+    getProfile()
   })
   .catch(err => {
   })
-}
-
-const downloadImages = () => {
-  const download = document.getElementById("downloadPhoto");
-  const profileCanvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
-  .replace("image/jpeg", "image/octet-stream");
-  download.setAttribute("href", profileCanvas);
 }
 
 // 비밀번호 변경 함수
@@ -273,6 +266,9 @@ const sendChangetoServer = async () => {
   const res = await axios({
     url: rct.user.userpwmod(),
     method: 'put',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
     data: {
       userId : store.state.user.userId,
       nowPw : floating_current_password.value,
@@ -296,8 +292,10 @@ const pwChange = async () => {
   }
   if (state.new_pw_check&&state.new_repeat_check) {
     const res = await sendChangetoServer()
-    console.log(res.data)
-    if (res.data==="success") route.replace({path:'/profile'})
+    if (res.data==="success") {
+      route.replace({path:'/profile'})
+      getProfile()
+    }
     else if (res.data==="fail") {
       state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
       state.current_pw_check = false
@@ -317,6 +315,13 @@ const onNewRepeatClick = () => {
   state.new_repeat_check = true
 }
 
+const modalOpen = () => {
+  document.getElementById('pwChangeModal').classList.replace('hidden', 'show')
+}
+
+const modalClose = () => {
+  document.getElementById('pwChangeModal').classList.replace('show', 'hidden')
+}
 
 // 회원 탈퇴 함수
 const deleteUser = async () => {
