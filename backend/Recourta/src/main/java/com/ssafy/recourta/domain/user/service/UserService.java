@@ -9,6 +9,7 @@ import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
+import com.ssafy.recourta.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ssafy.recourta.global.util.UserUtil.uploadImage;
 
 
 @Service
@@ -41,6 +41,9 @@ public class UserService {
 
     @Autowired
     private final SessionRepository sessionRepository;
+
+    @Autowired
+    private final UserUtil userUtil;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -59,7 +62,7 @@ public class UserService {
         user.setPassword(encodedPassword);
 
         /////////////////// 이미지 처리 파트 ////////////////////
-        uploadImage(user, userImg);
+        userUtil.uploadImage(user, userImg);
 
         User savedUser = userRepository.save(user);
         return UserResponse.OnlyId.build(savedUser);
@@ -75,7 +78,7 @@ public class UserService {
 
     public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request, MultipartFile userImg) throws Exception {
         User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
-        uploadImage(user, userImg);
+        userUtil.uploadImage(user, userImg);
         User savedUser = userRepository.save(user);
         return UserResponse.isSuccess.build(true);
     }
