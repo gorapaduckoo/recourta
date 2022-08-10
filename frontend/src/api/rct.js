@@ -4,6 +4,9 @@ const USER = '/user'
 const LECTURE = '/lecture'
 const REGIST = '/registration'
 
+const openvidu_port = ":4443"
+const openvidu_server_secret = "MY_SECRET"
+
 export default {
     user: {
         signup: () => HOST + USER,
@@ -15,7 +18,7 @@ export default {
         
     },
     lecture: {
-        lecturecreate: () => HOST,
+        lecturecreate: () => HOST + LECTURE,
         lectureinfo: lectureid => HOST + LECTURE + '/' + lectureid,
     },
     regist: {
@@ -27,5 +30,9 @@ export default {
         pwsearch: () => HOST + '/reset',
         pwreset: () => HOST + '/reset/pw',
         logout: () => HOST + '/logout',
+    },
+    webrtc: {
+        openvd_url:() => "https://"+location.hostname+openvidu_port,
+        openvd_secret:() => openvidu_server_secret,
     }
 }

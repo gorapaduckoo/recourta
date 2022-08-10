@@ -33,8 +33,6 @@
       <div class="mx-4">|</div>
       <router-link class="w-20 text-left hover:text-gray-700 dark:hover:text-gray-300" to="/pwsearch">비밀번호 찾기</router-link>
     </div>
-    <!-- 임시 -->
-    <router-link to="/main">임시 링크</router-link>
   </div>
  
 </template>

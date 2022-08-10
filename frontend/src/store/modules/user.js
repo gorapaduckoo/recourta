@@ -4,7 +4,8 @@ import rct from '../../api/rct'
 
 export const user = {
   state: {
-		token: localStorage.getItem('token') || '' ,
+	  accessToken: localStorage.getItem('accessToken') || '' ,
+		refreshToken: localStorage.getItem('refreshToken') || '' ,
 		currentUser: {},
 		authError: null,
 		userId: null,
@@ -19,7 +20,8 @@ export const user = {
 	},
 
 	mutations: {
-		SET_TOKEN: (state, token) => state.token = token,
+		SET_ACCESS_TOKEN: (state, accessToken) => state.accessToken = accessToken,
+		SET_REFRESH_TOKEN: (state, refreshToken) => state.refreshToken = refreshToken,
 		SET_CURRENT_USER: (state, user) => state.currentUser = user,
 		SET_AUTH_ERROR: (state, error) => state.authError = error,
 		Set_userId: (state,userId) => state.userId = userId,
@@ -27,14 +29,24 @@ export const user = {
 	},
 
 	actions: {
-		saveToken({ commit }, token) {
-			commit('SET_TOKEN', token)
-			localStorage.setItem('token', token)
+		saveAccessToken({ commit }, accessToken) {
+			commit('SET_ACCESS_TOKEN', accessToken)
+			localStorage.setItem('accessToken', accessToken)
+		},
+		
+		saveRefreshToken({ commit }, refreshToken) {
+			commit('SET_REFRESH_TOKEN', refreshToken)
+			localStorage.setItem('refreshToken', refreshToken)
 		},
 
-		removeToken({ commit }) {
-			commit('SET_TOKEN', '')
-			localStorage.setItem('token', '')
+		removeAccessToken({ commit }) {
+			commit('SET_ACCESS_TOKEN', '')
+			localStorage.setItem('accessToken', '')
+		},
+
+		removeAccessToken({ commit }) {
+			commit('SET_REFRESH_TOKEN', '')
+			localStorage.setItem('refreshToken', '')
 		},
 
 		login({ commit, dispatch }, credentials) {
