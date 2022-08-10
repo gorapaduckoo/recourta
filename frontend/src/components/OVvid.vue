@@ -11,8 +11,6 @@ const props = defineProps({
 const el = ref("")
 
 onMounted(() => {
-  console.log('test')
-  console.log(props.streamManager)
   props.streamManager.addVideoElement(el.value)
 })
 
