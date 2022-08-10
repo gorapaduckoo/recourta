@@ -367,11 +367,6 @@ const UrltoBlob = async (dataURL) => {
 const signupdatatoserver = async () => {
   const camimgurl = document.getElementById("photoTaken").toDataURL("image/jpeg");
   let blob = await UrltoBlob(camimgurl)
-  console.log(blob)
-  // const img = new Image()
-  // img.src = URL.createObjectURL(blob)
-  // await img.decode()
-  // console.log(img)
   let fd = new FormData()
   const data = {
     name : floating_name.value,
@@ -389,6 +384,8 @@ const signupdatatoserver = async () => {
     }
   })
   .then(res => {
+    console.log(blob)
+    console.log(typeof(blob))
     route.replace({path:'/'})
   })
   .catch(err => {
