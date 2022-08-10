@@ -39,7 +39,9 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineEmits } from 'vue'
+
+const emit = defineEmits(["tryleave"])
 
 const state = reactive({
   isshare:false,
@@ -60,7 +62,7 @@ const togglemic = () => {
 }
 
 const leaveclass = () => {
-  return null
+  emit("tryleave",null)
 }
 
 </script>

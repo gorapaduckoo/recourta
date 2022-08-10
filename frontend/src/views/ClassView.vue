@@ -1,13 +1,17 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen pb-3 justify-between items-center font-bold text-4xl">
+  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar />
+    <ClassToolbar @tryleave="leaveClass"/>
   </div>
-  <ClassSidebar v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
-<button @click="toggleside" class="text-white absolute top-0 right-0">X</button>
+<button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
+  <svg v-if="!state.isside" class="h-14 w-14"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+  </svg>
+</button>
 </template>
 
 <script setup>
@@ -160,15 +164,19 @@ const updateMainVideoStreamManager = (stream) => {
 
 const leaveClass = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
-  // if (state.session) state.session.disconnect();
+  if (state.session) state.session.disconnect();
 
-  // state.session = undefined;
-  // state.mainStreamManager = undefined;
-  // state.publisher = undefined;
-  // state.subscribers = [];
-  // state.OV = undefined;
+  state.session = undefined;
+  state.mainStreamManager = undefined;
+  state.publisher = undefined;
+  state.subscribers = [];
+  state.OV = undefined;
+
+  store.commit("SET_MySessionId",'')
+  store.commit("SET_MyUserName",'')
 
   // window.removeEventListener('beforeunload', leaveClass);
+  location.href="/main"
 }
 
 joinSession()
