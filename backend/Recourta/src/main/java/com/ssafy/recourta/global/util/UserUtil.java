@@ -34,7 +34,7 @@ public class UserUtil {
         // 저장할 파일명 = UUID + 파일확장자
         String storedFileName = uuid+".png";
         // 파일 전체 경로 = uploadPath + storedFileName
-        File file = new File(uploadPath + storedFileName);
+        File file = new File(storedFileName);
         userImg.transferTo(file);
 
         user.setUserImg(storedFileName);
