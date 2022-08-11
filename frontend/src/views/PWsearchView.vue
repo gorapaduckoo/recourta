@@ -1,25 +1,26 @@
 <template>
   <DarkmodeButton />
-  <!-- <div modal-backdrop class="bg-[#444444] bg-opacity-50 fixed inset-0 z-40"></div> -->
-  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
-    <router-link to="/" class="absolute top-3">
+  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
+    <router-link to="/" class="absolute top-5">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
       </svg>
     </router-link>
     
     <router-link to="/">
-      <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
+      <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
+    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+
     <!-- 설명문장 -->
-    <div class="w-3/4 ml-auto mr-auto dark:text-gray-300">
+    <div class="w-3/4 ml-auto mr-auto dark:text-gray-300 mb-12">
       <h1 class="mt-10 mb-6 font-bold">비밀번호 재설정</h1>
       <p class="text-sm">계정의 이메일을 입력해주세요.</p>
       <p class="text-sm">비밀번호 재설정 링크가 포함된 메일이 발송됩니다.</p>
     </div>
     <!-- 이메일 입력 -->
     <form id="email_input" @submit.prevent="PWsearchSubmit">
-      <div class="mt-16 relative z-0 mb-10 mr-auto ml-auto w-3/4 group">
+      <div class="relative z-0 mb-10 mr-auto ml-auto w-3/4 group">
         <input type="text" v-model.trim="floating_email" id="floating_email" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.email_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.email_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @click="onEmailClick"/>
         <label for="floating_email" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.email_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.email_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">이메일</label>
         <label v-if="!state.email_check" for="floating_email" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.msg }}</label>
