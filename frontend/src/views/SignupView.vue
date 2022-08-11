@@ -1,22 +1,19 @@
 <template>
   <!-- 다크모드 -->
   <DarkmodeButton />
-  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
+  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
 
     <!-- 뒤로가기 -->
-    <router-link to="/" class="absolute top-3">
+    <router-link to="/" class="absolute top-5">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
       </svg>
     </router-link>
 
-    <!--  -->
-    <h1 class="my-10 text-center font-bold">회원가입 페이지</h1>
-
-    <!-- 로고 - 로그인페이지로 이동 -->
     <router-link to="/">
-      <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
+      <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
 
     <!-- 입력form -->
     <form class="pt-10" @submit.prevent="signupSubmit">
