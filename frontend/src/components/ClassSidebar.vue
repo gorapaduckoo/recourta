@@ -34,7 +34,10 @@
       </div>
     </div>
     <div id="msg" class="flex flex-col overflow-y-auto border-b-[1px] border-neutral-400">
-      지금까지메세지
+      <div v-for="(msg,index) in props.msglist" :key="index">
+        <div v-if="props.myID===props.fromID">내가{{props.myID}}:{{msg}}</div>
+        <div v-else>타인{{props.fromID}}:{{msg}}</div>
+      </div>
     </div>
     <div id="msginput">
         <div id="selectreceiver" class="flex items-center px-3 pt-2 space-x-3">
@@ -46,7 +49,7 @@
         </div>
         <div class="relative px-3 pt-2 mb-2">
           <textarea id="msgbox" rows="2" name="sendmsg" v-model.trim="state.sendmsg" class="block py-2 pl-2 pr-[36px] w-full text-sm resize-none rounded-lg bg-transparent border-2 appearance-none focus:outline-none focus:ring-0 focus:border-neutral-200 border-neutral-400" placeholder=" "/>
-          <button class="absolute top-[28px] right-[20px] hover:text-neutral-200 text-neutral-400">
+          <button @click="submitmsg" class="absolute top-[28px] right-[20px] hover:text-neutral-200 text-neutral-400">
             <svg class="h-6 w-6"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
               <polyline points="9 10 4 15 9 20" />
               <path d="M20 4v7a4 4 0 0 1-4 4H4" />
@@ -58,27 +61,46 @@
 </template>
 
 <script setup>
-import { reactive, defineEmits } from 'vue'
+import { reactive, defineEmits, defineProps, computed } from 'vue'
 
-const emit = defineEmits(["closeList"])
+const emit = defineEmits(["closeList","submitMsg"])
+const props = defineProps({
+  msglist:Array,
+  myID:String,
+  fromID:String,
+  publisher:Object,
+  subscribers:Array,
+})
 
 const state = reactive({
   isAtt:false,
   isattendlist:false,
   isabsenlist:false,
-  attendList:["이지완","김우석","김영준"],
+  attendList:computed(()=>getConnectionData()),
   absenList:["유지슬","남궁준","이지영"],
   receiver:"모두에게",
   sendmsg:"",
 })
 
+const getConnectionData = () => {
+  const conneclist = []
+  conneclist.push(JSON.parse(props.publisher.stream.connection.data).clientData);
+  for (let sub of props.subscribers) {
+    conneclist.push(JSON.parse(sub.stream.connection.data).clientData)
+  }
+  return conneclist
+}
+
 const togglelist = () => {
-  console.log(state.isAtt)
   state.isAtt=!state.isAtt
 }
 
 const closeListEmit = () => {
   emit('closeList',null)
+}
+
+const submitmsg = () => {
+  emit('submitMsg',state.sendmsg,state.receiver)
 }
 
 const toggleabsenlist = () => {
