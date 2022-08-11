@@ -5,7 +5,7 @@
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <ClassToolbar @tryleave="leaveClass"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :fromID="state.fromID" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
   <svg v-if="!state.isside" class="h-14 w-14"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,7 +41,6 @@ const state = reactive({
 
   isside:false,
   msgs:[],
-  fromID:"",
 })
 
 const toggleside = () => {
@@ -76,12 +75,7 @@ const joinSession = () => {
   });
 
   state.session.on('signal:my-chat', (event) => {
-    // console.log(event.data); // Message
-    const tmp = state.msgs.slice()
-    tmp.push(event.data)
-    state.msgs=tmp
-    // console.log(event.from); // Connection object of the sender
-    state.fromID=event.from.connectionId
+    state.msgs.push([event.data,event.from.connectionId])
   });
 
   // --- Connect to the session with a valid user token ---
@@ -190,11 +184,9 @@ const leaveClass = () => {
 }
 
 const sendMsg = (data,reciever) => {
-  const to = []
-  if(reciever!=="모두에게") to.push(reciever)
   state.session.signal({
     data: data,  // Any string (optional)
-      to: to,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+      to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: 'my-chat'             // The type of message (optional)
   })
   .then(() => {
