@@ -57,8 +57,21 @@ const sendresettoserver = async () => {
       newPw : floating_password.value,
     }
   })
-
-  return res
+  .then(res => {
+    if (res.data==="success") {
+      route.replace({path:'/'})
+    }
+    else if (res.data==="fail") {
+      state.pw_err_msg = '비밀번호 재설정을 실패하셨습니다'
+      state.pw_check = false
+    } else {
+      state.pw_err_msg = '재설정 유효시간이 만료되었습니다. 비밀번호찾기를 다시 시도해주세요'
+      state.pw_check = false
+    }
+  })
+  .catch(err => {
+    console.log(err)
+  })
 }
 const PWresetSubmit = async () => {
       
@@ -71,15 +84,7 @@ const PWresetSubmit = async () => {
   if(floating_password.value!==repeat_password.value) state.repeat_check = false
 
   if(state.pw_check&&state.repeat_check) {
-    const res = await sendresettoserver()
-    if(res.data==="success") route.replace({path:'/'})
-    else if(res.data==="fail"){
-      state.pw_err_msg = '비밀번호 재설정을 실패하셨습니다'
-      state.pw_check = false
-    }else{
-      state.pw_err_msg = '재설정 유효시간이 만료되었습니다. 비밀번호찾기를 다시 시도해주세요'
-      state.pw_check = false
-    }
+    sendresettoserver()
   }
 
 }

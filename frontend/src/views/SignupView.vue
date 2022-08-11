@@ -358,7 +358,6 @@ const checkverify = async () => {
 }
 
 const UrltoBlob = async (dataURL) => {
-  //console.log(dataURL)
   const res = await fetch(dataURL)
   const blob = await res.blob()
   return blob
@@ -367,11 +366,6 @@ const UrltoBlob = async (dataURL) => {
 const signupdatatoserver = async () => {
   const camimgurl = document.getElementById("photoTaken").toDataURL("image/jpeg");
   let blob = await UrltoBlob(camimgurl)
-  console.log(blob)
-  // const img = new Image()
-  // img.src = URL.createObjectURL(blob)
-  // await img.decode()
-  // console.log(img)
   let fd = new FormData()
   const data = {
     name : floating_name.value,
@@ -397,17 +391,9 @@ const signupdatatoserver = async () => {
 }
 
 const signupSubmit = () => {
-  // console.log(floating_name)
-  // console.log(floating_email.value)
-  // console.log(floating_verify.value)
-  // console.log(floating_password.value)
-  // console.log(floating_repeat_password.value)
-  // console.log(isStudent.value)
 
   if(floating_name.value==="") state.isname = false
-  // console.log(state.isname)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
-      // let pw_regex = new RegExp()
   if(!state.isemailverified) {
     state.wrongverify = '이메일이 인증되지 않았습니다'
     state.isverify=false

@@ -10,7 +10,6 @@ import com.ssafy.recourta.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationResponse.LectureList getLecturesOfUser(Integer userId) {
-        List<Registration> registrationList = registrationRepository.findByUserUserId(userId);
+        List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
         List<Lecture> lectureList = new ArrayList<>();
 
         for(Registration registration : registrationList) {
@@ -44,7 +43,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationResponse.UserList getUsersOfLecture(Integer lectureId) {
-        List<Registration> registrationList = registrationRepository.findByLectureLectureId(lectureId);
+        List<Registration> registrationList = registrationRepository.findAllByLectureLectureId(lectureId);
         List<User> userList = new ArrayList<>();
 
         for(Registration registration : registrationList) {
@@ -57,12 +56,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     @Override
     public RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) {
-        List<Registration> registrationList = registrationRepository.findByUserUserId(userId);
+        List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
         List<Lecture> currentLectureList = new ArrayList<>();
 
         SimpleDateFormat sdformat = new SimpleDateFormat("yyyyMMdd");
-        Date now = Date.valueOf(sdformat.format(new Date(System.currentTimeMillis())));
+//        Date now = Date.valueOf(sdformat.format(new Date(System.currentTimeMillis())));
         for(Registration registration : registrationList) {
+            System.out.println(registration.getLecture().getLectureId());
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
             LocalDate startDate = lecture.getStartDate();
             LocalDate endDate = lecture.getEndDate();

@@ -19,9 +19,10 @@
             <router-link to="/classsetting" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
               <button>강의 관리</button>
             </router-link>
-            <router-link to="/class" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
-              <button>강의 시작</button>
-            </router-link>
+            <button @click="enterClass" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
+              강의 시작
+            </button>
+            
           </div>
         </div>
       </div>
@@ -30,7 +31,26 @@
 
 </template>
 
-<script>
+<script setup>
+import { reactive } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const state = reactive({
+  // prop서 가져온 lectureid를 String()하여 이용
+  mySessionId: 'SessionA',
+  // store에 있는 이름 정보를 가져오기
+  myUserName: '김싸피'
+})
+
+const enterClass = () => {
+  
+  store.commit("SET_MySessionId",state.mySessionId)
+  store.commit("SET_MyUserName",state.myUserName)
+
+  location.href="/class"
+}
 
 </script>
 

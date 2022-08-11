@@ -6,8 +6,7 @@
     <div class="ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
     <div class="mb-12 text-lg font-medium text-center">{{ state.email }}</div>
     <!-- 저장되어 있는 사진 -->
-    <img :src="state.takenImg" alt="" class="w-[384px] h-[288px]">
-    <div v-if="!state.isCamOpen" class="my-2 w-[384px] h-[288px] ml-auto mr-auto bg-neutral-400"></div>
+    <img v-if="!state.isCamOpen" :src="state.takenImg" alt="" class="my-2 ml-auto mr-auto w-[384px] h-[288px]">
     <!-- 카메라 로딩 -->
     <div v-show="state.isCamOpen && state.isLoad" class="flex justify-center items-center mr-auto ml-auto w-[384px] h-[288px] bg-black mt-2">
       <svg aria-hidden="true" role="status" class="w-[80px] h-[80px] text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,9 +18,9 @@
     <div v-if="state.isCamOpen" v-show="!state.isLoad" class="my-2" :class="{ 'opacity-0' : state.isShot }">
       <div :class="{'opacity-0' : state.isShot}"></div>
       <!-- 웹캠 -->
-      <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="camera" autoplay></video>
+      <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="profileCamera" autoplay></video>
       <!-- 캡쳐 -->
-      <canvas width="384" height="288" class="mr-auto ml-auto" v-show="state.isPhotoTake" id="photoTaken" ref="canvas"></canvas>
+      <canvas width="384" height="288" class="mr-auto ml-auto" v-show="state.isPhotoTake" id="profilePhotoTaken" ref="profileCanvas"></canvas>
     </div>
     <!-- 웹캠 버튼 -->
     <div class="flex justify-center mb-8">
@@ -37,7 +36,7 @@
 
     <!-- 비밀번호 변경 Button -->
     <div class="text-center w-3/4 mr-auto ml-auto mb-8">
-      <button type="button" class="text-white text-lg font-semibold bg-[#faa405] hover:bg-[#fbb026] border-[#faa405] hover:border-[#fbb026] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center" data-bs-toggle="modal" data-bs-target="#pwChangeModal">비밀번호 변경</button>
+      <button type="button" class="text-white text-lg font-semibold bg-[#faa405] hover:bg-[#fbb026] border-[#faa405] hover:border-[#fbb026] focus:outline-none rounded-lg w-full px-5 py-2.5 text-center" @click="modalOpen">비밀번호 변경</button>
     </div>
 
     <!-- 회원 탈퇴 Button -->
@@ -47,11 +46,11 @@
   </div>
 
   <!-- 비밀번호 변경 Modal -->
-  <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="pwChangeModal" tabindex="-1" aria-labelledby="pwChangeModalLabel" aria-hidden="true">
+  <div class="modal fade bg-black bg-opacity-50 fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="pwChangeModal" tabindex="-1" aria-labelledby="pwChangeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered relative w-1/4 min-w-[360px] ml-auto mr-auto pointer-events-none">
       <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white dark:bg-[#4c4c4c] bg-clip-padding rounded-md outline-none text-current">
         <div class="modal-header flex flex-row-reverse flex-shrink-0 items-center justify-between px-4 pt-4 rounded-t-md">
-          <button type="button" data-bs-dismiss="modal" aria-label="Close">
+          <button type="button" data-bs-dismiss="modal" aria-label="Close" @click="modalClose">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -61,22 +60,23 @@
           <form id="pwChange_input" class="pt-10" @submit.prevent="pwChange">
             <!-- 현재 비밀번호 입력 -->
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
-              <input type="password" name="floating_current_password" id="floating_current_password" v-model.trim="floating_current_password" class="block py-0.5 px-1 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " @click="onCurrentPasswordClick" required />
-              <label for="floating_current_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-1 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">현재 비밀번호</label>
+              <input type="password" name="floating_current_password" id="floating_current_password" v-model.trim="floating_current_password" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:border-gray-600 dark:focus:border-[#6c9cc6] focus:outline-none focus:ring-0 focus:border-[#2c5172] peer" placeholder=" " @click="onCurrentPasswordClick" required />
+              <label for="floating_current_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-5 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">현재 비밀번호</label>
               <label v-if="!state.current_pw_check" for="floating_current_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
             <!-- 새 비밀번호 입력 -->
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
-              <input type="password" id="floating_new_password" name="floating_new_password" v-model.trim="floating_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onNewPasswordClick"/>
-              <label for="floating_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호</label>
+              <input type="password" id="floating_new_password" name="floating_new_password" v-model.trim="floating_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onNewPasswordClick"/>
+              <label for="floating_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호</label>
+              <label v-if="state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-gray-500 dark:text-gray-400 -bottom-3.5 right-0">영문, 숫자, 특수문자 포함 8자 이상</label>
               <label v-if="!state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
             <!-- 새 비밀번호 확인 -->
             <div class="relative z-0 mb-4 mr-auto ml-auto w-3/4 group">
               <input type="password" name="floating_repeat_new_password" v-model.trim="floating_repeat_new_password" id="floating_repeat_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_repeat_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_repeat_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none  focus:outline-none focus:ring-0 peer" placeholder=" " @Click="onNewRepeatClick"/>
-              <label for="floating_repeat_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_repeat_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_repeat_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호 확인</label>
+              <label for="floating_repeat_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_repeat_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_repeat_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호 확인</label>
               <label v-if="!state.new_repeat_check" for="floating_repeat_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호와 일치하지 않습니다</label>
             </div>
           </form>
@@ -128,18 +128,15 @@ const getProfile = async () => {
     url: rct.user.userinfo(store.state.user.userId),
     method: 'get',
     headers: {
-      Authorization: store.state.user.token,
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
     }
   })
   .then(res => {
-    console.log(res.data)
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = res.data.userImg
-    console.log(typeof(state.takenImg))
-    // state.takenImg = window.URL.createObjectURL(res.data.userImg)
-    console.log(state.takenImg)
+    state.takenImg = 'http://localhost:8081/recourta/uploads/img/'+res.data.userImg
   })
   .catch(err => {
     console.log(err)
@@ -168,8 +165,8 @@ let floating_current_password = ref("")
 let floating_new_password = ref("")
 let floating_repeat_new_password = ref("")
 
-const camera = ref(null)
-const canvas = ref(null)
+const profileCamera = ref(null)
+const profileCanvas = ref(null)
 
 const toggleCam = () => {
   if(state.isCamOpen) {
@@ -196,7 +193,7 @@ const createCamera = () => {
   .getUserMedia(constraints)
   .then(stream => {
     state.isLoad = false;
-    camera.value.srcObject = stream;
+    profileCamera.value.srcObject = stream;
   })
   .catch(error => {
     state.isLoad = false;
@@ -206,7 +203,7 @@ const createCamera = () => {
 }
 
 const stopCamStream = () => {
-  let tracks = camera.value.srcObject.getTracks();
+  let tracks = profileCamera.value.srcObject.getTracks();
   tracks.forEach(track => {
     track.stop();
   });
@@ -225,23 +222,44 @@ const takePhotoShot = () => {
   
   state.isPhotoTake = !state.isPhotoTake;
   
-  const context = canvas.value.getContext('2d');
-  context.drawImage(camera.value, 0, 0, 384, 288);
+  const context = profileCanvas.value.getContext('2d');
+  context.drawImage(profileCamera.value, 0, 0, 384, 288);
 }
 
-const changePhoto = () => {
+// 사진 변경 함수
+const UrltoBlob = async (dataURL) => {
+  const res = await fetch(dataURL)
+  const blob = await res.blob()
+  return blob
+}
+
+const changePhoto = async () => {
   state.isCamOpen = false;
   state.isPhotoTake = false;
-  sate.isShot = false;
+  state.isShot = false;
   stopCamStream();
-  // 새로운 사진으로 바꾸는 과정 필요
-}
-
-const downloadImages = () => {
-  const download = document.getElementById("downloadPhoto");
-  const canvas = document.getElementById("photoTaken").toDataURL("image/jpeg")
-  .replace("image/jpeg", "image/octet-stream");
-  download.setAttribute("href", canvas);
+  const procamimgurl = document.getElementById("profilePhotoTaken").toDataURL("image/jpeg");
+  let problob = await UrltoBlob(procamimgurl)
+  let profd = new FormData()
+  const data = {
+    userId : store.state.user.userId,
+  }
+  const json = JSON.stringify(data)
+  const datablob = new Blob([json],{type:"application/json"})
+  profd.append("userImg",problob)
+  profd.append("request",datablob)
+  await axios.put(rct.user.userimgmod(),profd,{
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    route.replace({path:'/profile'})
+    getProfile()
+  })
+  .catch(err => {
+  })
 }
 
 // 비밀번호 변경 함수
@@ -249,13 +267,28 @@ const sendChangetoServer = async () => {
   const res = await axios({
     url: rct.user.userpwmod(),
     method: 'put',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
     data: {
       userId : store.state.user.userId,
       nowPw : floating_current_password.value,
       newPw : floating_new_password.value,
     }
   })
-  return res
+  .then(res => {
+    if (res.data.success) {
+      modalClose()
+      getProfile()
+    }
+    else {
+      state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
+      state.current_pw_check = false
+    }
+  })
+  .catch(err => {
+    console.log(err)
+  })
 }
 
 const pwChange = async () => {
@@ -271,13 +304,7 @@ const pwChange = async () => {
     state.new_repeat_check = false
   }
   if (state.new_pw_check&&state.new_repeat_check) {
-    const res = await sendChangetoServer()
-    console.log(res.data)
-    if (res.data==="success") route.replace({path:'/profile'})
-    else if (res.data==="fail") {
-      state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
-      state.current_pw_check = false
-    }
+    sendChangetoServer()
   }
 }
 
@@ -293,6 +320,17 @@ const onNewRepeatClick = () => {
   state.new_repeat_check = true
 }
 
+const modalOpen = () => {
+  document.getElementById('pwChangeModal').classList.replace('hidden', 'show')
+  floating_current_password.value = ''
+  floating_new_password.value = ''
+  floating_repeat_new_password.value = ''
+}
+
+const modalClose = () => {
+  document.getElementById('pwChangeModal').classList.replace('show', 'hidden')
+  route.replace({path:'/profile'})
+}
 
 // 회원 탈퇴 함수
 const deleteUser = async () => {
@@ -300,7 +338,7 @@ const deleteUser = async () => {
     url: rct.user.userinfo(store.state.user.userId),
     method: 'delete',
     headers: {
-      Authorization: store.state.user.token,
+      Authorization: store.state.user.accessToken,
     }
   })
   .then(res => {

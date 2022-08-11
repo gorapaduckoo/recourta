@@ -7,6 +7,7 @@ import { lecture } from './modules/lecture'
 import { lectureinfo } from './modules/lectureinfo'
 import { login } from './modules/login'
 import { user } from './modules/user'
+import { classroom } from './modules/classroom'
 
 
 export default createStore({
@@ -22,11 +23,12 @@ export default createStore({
     lecture,
     lectureinfo,
     login,
-    user
+    user,
+    classroom,
   },
   plugins: [
     createPersistedState({
-      paths: ['lecture', 'lectureinfo', 'login', 'user'],
+      paths: ['lecture', 'lectureinfo', 'login', 'user','classroom'],
     }),
   ],
 })

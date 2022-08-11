@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -50,26 +51,29 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable String lectureId,@Valid @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
-        Integer id = Integer.parseInt(lectureId);
-        LectureResponse.LectureId result = lectureService.updateLecture(id, input);
+    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
+        LectureResponse.LectureId result = lectureService.updateLecture(lectureId, input);
 
         List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
-        sessionService.changeSession(newLectureTimes,id);
+        sessionService.changeSession(newLectureTimes,lectureId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> deleteLecture(@PathVariable String lectureId) throws Exception {
-        Integer id = Integer.parseInt(lectureId);
-        LectureResponse.LectureId result = lectureService.deleteLecture(id);
+    public ResponseEntity<LectureResponse.LectureId> deleteLecture(@PathVariable Integer lectureId) throws Exception {
+        LectureResponse.LectureId result = lectureService.deleteLecture(lectureId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/currentTeachingList")
-    public ResponseEntity<List<LectureResponse.LecturePreview>> searchMyCurrentTeachingLecture(@PathVariable String userId) throws Exception {
-        Integer id = Integer.parseInt(userId);
-        List<LectureResponse.LecturePreview> result = lectureService.searchMyCurrentTeachingLecture(id);
+    public ResponseEntity<List<LectureResponse.LecturePreview>> searchMyCurrentTeachingLecture(@PathVariable Integer userId) throws Exception {
+        List<LectureResponse.LecturePreview> result = lectureService.searchMyCurrentTeachingLecture(userId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/currentLectureList")
+    public ResponseEntity<List<LectureResponse.LecturePreview>> searchMyCurrentLecture(@PathVariable Integer userId) throws ParseException {
+        List<LectureResponse.LecturePreview> result = lectureService.searchMyLecture(userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
