@@ -57,6 +57,7 @@ public class LectureRequest {
                     .content(content)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .lectureTime(lectureTime.toString())
                     .build();
         }
 
