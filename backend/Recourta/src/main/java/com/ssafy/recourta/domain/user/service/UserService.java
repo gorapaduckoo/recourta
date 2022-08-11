@@ -83,16 +83,28 @@ public class UserService {
         return UserResponse.isSuccess.build(true);
     }
 
-    public UserResponse.isSuccess updatePw(UserRequest.UpdatePw request){
+//    public UserResponse.isSuccess updatePw(UserRequest.UpdatePw request){
+//        User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
+//
+//
+//        if(passwordEncoder.matches(request.getNowPw(), user.getPassword())){
+//            user.setPassword(passwordEncoder.encode(request.getNewPw()));
+//            userRepository.save(user);
+//            return UserResponse.isSuccess.build(true);
+//        }
+//        return UserResponse.isSuccess.build(false);
+//    }
+
+    public String updatePw(UserRequest.UpdatePw request){
         User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
 
 
         if(passwordEncoder.matches(request.getNowPw(), user.getPassword())){
             user.setPassword(passwordEncoder.encode(request.getNewPw()));
             userRepository.save(user);
-            return UserResponse.isSuccess.build(true);
+            return "success";
         }
-        return UserResponse.isSuccess.build(false);
+        return "fail";
     }
 
     @Transactional
@@ -104,9 +116,11 @@ public class UserService {
             Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
             if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
                 lectureRepository.deleteById(l.getLectureId());
+
             } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
                 // 강의 종강일 업데이트 & 강의자 null 처리
                 l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
+
                 lectureRepository.save(l);
                 // 현재 시간 이후 세션 삭제 처리
                 sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
@@ -117,6 +131,7 @@ public class UserService {
         lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
         for (Lecture l : lectures) {
             l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
+
             lectureRepository.save(l);
             sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
         }

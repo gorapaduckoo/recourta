@@ -54,17 +54,31 @@ public class UserController {
         return  ResponseEntity.ok().body(response);
     }
 
-   @PutMapping("/user/pw")
-   public ResponseEntity<UserResponse.isSuccess> updatePw(@Valid @RequestBody UserRequest.UpdatePw request){
-        UserResponse.isSuccess response = userService.updatePw(request);
-        if(response.isSuccess()){
-            System.out.println(response.isSuccess());
+//   @PutMapping("/user/pw")
+//   public ResponseEntity<UserResponse.isSuccess> updatePw(@Valid @RequestBody UserRequest.UpdatePw request){
+//        UserResponse.isSuccess response = userService.updatePw(request);
+//        if(response.isSuccess()){
+//            System.out.println("3"+response.isSuccess());
+//            System.out.println("4"+response);
+//            return ResponseEntity.ok().body(response);
+//        }
+//       System.out.println("1"+response.isSuccess());
+//       System.out.println("2"+response);
+//        return ResponseEntity.badRequest().body(response);
+//
+//   }
+
+    @PutMapping("/user/pw")
+    public ResponseEntity updatePw(@Valid @RequestBody UserRequest.UpdatePw request){
+        String response = userService.updatePw(request);
+        if(response.equals("success")){
+            System.out.println(response);
             return ResponseEntity.ok().body(response);
         }
-
+        System.out.println(response);
         return ResponseEntity.badRequest().body(response);
 
-   }
+    }
 
     @DeleteMapping(value = "/user/{userId}")
     public ResponseEntity<UserResponse.OnlyId> delete(@PathVariable int userId) {
