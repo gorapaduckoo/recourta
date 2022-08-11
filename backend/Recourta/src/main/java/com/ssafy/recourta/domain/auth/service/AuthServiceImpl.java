@@ -2,6 +2,7 @@ package com.ssafy.recourta.domain.auth.service;
 
 import com.ssafy.recourta.domain.auth.dto.TokenDto;
 import com.ssafy.recourta.domain.user.entity.User;
+import com.ssafy.recourta.global.exception.AuthException;
 import com.ssafy.recourta.global.util.JwtTokenUtil;
 import com.ssafy.recourta.global.util.RedisUtil;
 import io.jsonwebtoken.Claims;
@@ -49,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                                     .refreshToken(newRefreshToken)
                                     .build();
         } else {
-            throw new Exception();
+            throw new AuthException.RefreshTokenExpired();
         }
     }
 }
