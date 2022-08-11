@@ -24,7 +24,7 @@
         온라인({{ state.attendList.length }})
       </button>
       <div v-if="state.isattendlist" class="flex flex-col">
-        <div v-for="name in state.attendList" class="px-5">{{ name }}</div>
+        <div v-for="name in state.attendList" class="px-5">{{ name[0] }}</div>
       </div>
       <button @click="toggleabsenlist" class="w-3/4 mt-3 text-left border-b-[1px] border-neutral-400">
         오프라인({{ state.absenList.length }})
@@ -33,18 +33,19 @@
         <div v-for="name in state.absenList" class="px-5">{{ name }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] border-neutral-400">
+    <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] px-1 border-neutral-400">
       <div v-for="(msg,index) in props.msglist" :key="index">
-        <div v-if="props.myID===props.fromID">내가{{props.myID}}:{{msg}}</div>
-        <div v-else>타인{{props.fromID}}:{{msg}}</div>
+        <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
+        <div v-else>{{state.attendList.find(v=>v[1]===msg[1])[0]}}:{{msg[0]}}</div>
       </div>
+      <br />
     </div>
     <div id="msginput">
         <div id="selectreceiver" class="flex items-center px-3 pt-2 space-x-3">
           <div class="class-none">받는 사람</div>
           <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.receiver" name="receiver" id="receiver">
-            <option value="모두에게">모두에게</option>
-            <option v-for="rec in state.attendList" :key="rec" value="rec">{{ rec }}</option>
+            <option value="모두에게" selected>모두에게</option>
+            <option v-for="rec in state.attendList" :key="rec[1]" :value="rec[2]">{{ rec[0] }}</option>
           </select>
         </div>
         <div class="relative px-3 pt-2 mb-2">
@@ -69,7 +70,6 @@ const emit = defineEmits(["closeList","submitMsg"])
 const props = defineProps({
   msglist:Array,
   myID:String,
-  fromID:String,
   publisher:Object,
   subscribers:Array,
 })
@@ -86,9 +86,9 @@ const state = reactive({
 
 const getConnectionData = () => {
   const conneclist = []
-  conneclist.push(JSON.parse(props.publisher.stream.connection.data).clientData);
+  conneclist.push([JSON.parse(props.publisher.stream.connection.data).clientData,props.publisher.stream.connection.connectionId,props.publisher.stream.connection]);
   for (let sub of props.subscribers) {
-    conneclist.push(JSON.parse(sub.stream.connection.data).clientData)
+    conneclist.push([JSON.parse(sub.stream.connection.data).clientData,sub.stream.connection.connectionId,sub.stream.connection])
   }
   return conneclist
 }
@@ -102,9 +102,16 @@ const closeListEmit = () => {
 }
 
 const submitmsg = () => {
-  if(state.sendmsg!=="") emit('submitMsg',state.sendmsg,state.receiver)
+  const reclist = []
+  if(state.receiver!=="모두에게"){
+    reclist.push(state.receiver)
+    if(state.receiver.connectionId!==state.attendList[0][1])reclist.push(state.attendList[0][2])
+  }
+  if(state.sendmsg!=="") emit('submitMsg',state.sendmsg,reclist)
   state.sendmsg=""
-  document.getElementById("msg").scrollIntoView(false)
+  // console.log(state.msgheight)
+  
+  // msg.value.scrollTo(0,msg.value.scrollHeight)
 }
 
 const toggleabsenlist = () => {
@@ -115,12 +122,10 @@ const toggleattendlist = () => {
   state.isattendlist=!state.isattendlist
 }
 
-watch(()=>props.msglist,(newmsg,oldmsg)=>{
-  // console.log(newmsg)
-  // console.log(oldmsg)
-  console.log(msg.value)
-  msg.value.scrollTo(0,msg.value.scrollHeight)
+watch(()=>props.msglist,(newm,oldm)=>{
+  msg.value.scrollTop = msg.value.scrollHeight
 })
+
 
 </script>
 
