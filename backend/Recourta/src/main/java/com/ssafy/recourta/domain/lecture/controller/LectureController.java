@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.text.ParseException;
@@ -34,8 +35,8 @@ public class LectureController {
     private SessionService sessionService;
 
     @PostMapping
-    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestBody LectureRequest.LectureCreateForm lecture) throws Exception {
-        LectureResponse.LectureId result = lectureService.createLecture(lecture);
+    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart("lectureImg")MultipartFile lectureImg) throws Exception {
+        LectureResponse.LectureId result = lectureService.createLecture(lecture, lectureImg);
         Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
         if(sessionResult <=0 ){
             throw new LectureException.SessionSaveFail(result.getLectureId());
@@ -51,8 +52,8 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestBody LectureRequest.LectureUpdateForm input) throws Exception {
-        LectureResponse.LectureId result = lectureService.updateLecture(lectureId, input);
+    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestPart("request") LectureRequest.LectureUpdateForm input, @RequestPart("lectureImg") MultipartFile lectureImg) throws Exception {
+        LectureResponse.LectureId result = lectureService.updateLecture(lectureId, input, lectureImg);
 
         List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
         sessionService.changeSession(newLectureTimes,lectureId);
