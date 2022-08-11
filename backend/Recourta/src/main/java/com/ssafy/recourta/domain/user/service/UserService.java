@@ -123,6 +123,7 @@ public class UserService {
 
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        userUtil.deleteImage(user.getUserImg());
         userRepository.deleteById(userId);
 
 
