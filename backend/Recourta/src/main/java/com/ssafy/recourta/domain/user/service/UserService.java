@@ -9,25 +9,19 @@ import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
-import com.ssafy.recourta.global.util.UserUtil;
+import com.ssafy.recourta.global.util.ImgUtil;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
-
 
 
 @Service
@@ -43,7 +37,7 @@ public class UserService {
     private final SessionRepository sessionRepository;
 
     @Autowired
-    private final UserUtil userUtil;
+    private final ImgUtil imgUtil;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -62,7 +56,7 @@ public class UserService {
         user.setPassword(encodedPassword);
 
         /////////////////// 이미지 처리 파트 ////////////////////
-        userUtil.uploadImage(user, userImg);
+        imgUtil.uploadImage(user, userImg);
 
         User savedUser = userRepository.save(user);
         return UserResponse.OnlyId.build(savedUser);
@@ -78,7 +72,7 @@ public class UserService {
 
     public UserResponse.isSuccess updateImg(UserRequest.UpdateImg request, MultipartFile userImg) throws Exception {
         User user = userRepository.findById(request.getUserId()).orElseThrow(UserNotFoundException::new);
-        userUtil.uploadImage(user, userImg);
+        imgUtil.uploadImage(user, userImg);
         User savedUser = userRepository.save(user);
         return UserResponse.isSuccess.build(true);
     }
@@ -119,7 +113,7 @@ public class UserService {
 
             } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
                 // 강의 종강일 업데이트 & 강의자 null 처리
-                l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
+                l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
 
                 lectureRepository.save(l);
                 // 현재 시간 이후 세션 삭제 처리
@@ -130,7 +124,7 @@ public class UserService {
         // 개강일이 어제 이전이고, 종강일이 오늘 이후인 강의들
         lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
         for (Lecture l : lectures) {
-            l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureImg(), l.getLectureTime(), null);
+            l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
 
             lectureRepository.save(l);
             sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
@@ -138,7 +132,7 @@ public class UserService {
 
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        userUtil.deleteImage(user.getUserImg());
+        imgUtil.deleteImage(user.getUserImg(), "user");
         userRepository.deleteById(userId);
 
 
