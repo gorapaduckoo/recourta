@@ -28,7 +28,6 @@ public class Notice {
     private Lecture lecture; // 송신 강의
 
     @ManyToOne
-    @NotNull
     @JoinColumn(name = "userId")
     private User user; // 수신자
 

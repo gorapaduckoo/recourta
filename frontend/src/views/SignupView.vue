@@ -383,9 +383,6 @@ const signupdatatoserver = async () => {
   const datablob = new Blob([json],{type:"application/json"})
   fd.append("userImg",blob)
   fd.append("request",datablob)
-  for(let pair of fd.entries()){
-    console.log(pair[0] + ',' + pair[1])
-  }
   await axios.post(rct.user.signup(),fd,{
     header:{
       'Context-Type' : 'multipart/form-data',

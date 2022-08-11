@@ -56,7 +56,6 @@
       </div>
     </div>    
   </div>
-  <router-link class="mx-3" to="/reset">비밀번호 재설정</router-link>
 </template>
 
 <script setup>

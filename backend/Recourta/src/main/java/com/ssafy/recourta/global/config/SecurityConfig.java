@@ -49,7 +49,7 @@ public class SecurityConfig{
                     .antMatchers("/user").permitAll()
                     .antMatchers("/user/**").authenticated()
                     .antMatchers("/css/**", "/images/**",
-                        "/js/**", "/h2-console/**", "/profile").permitAll()
+                        "/js/**", "/h2-console/**", "/profile", "/reset/**").permitAll()
 //                    .anyRequest().authenticated()
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenUtil), UsernamePasswordAuthenticationFilter.class)
@@ -74,6 +74,7 @@ public class SecurityConfig{
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/reset/**", configuration);
         return source;
     }
 }
