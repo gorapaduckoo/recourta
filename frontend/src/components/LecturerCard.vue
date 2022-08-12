@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="flex flex-col items-end justify-end space-y-5">
-            <router-link to="/classsetting" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
+            <router-link :to="{ name: 'classsetting', params: { lecId: props.lecture.lectureId } }" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
               <button>강의 관리</button>
             </router-link>
             <button @click="enterClass" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
@@ -44,8 +44,10 @@ const lectime = [...props.lecture.lectureTime].reverse()
 const lectureThumbnail = 'http://localhost:8081/recourta/uploads/img/lecture/'+props.lecture.lectureImg
 
 const enterClass = () => {
-  store.commit("SET_MySessionId",props.lecture.lectureId)
-  store.commit("SET_MyUserName",props.lecture.teacher)
+  store.commit("SET_MySessionId", 'SessionA')
+  store.commit("SET_MyUserName", '김싸피')
+  // store.commit("SET_MySessionId",String(props.lecture.lectureId))
+  // store.commit("SET_MyUserName",props.lecture.teacher)
   location.href="/class"
 }
 

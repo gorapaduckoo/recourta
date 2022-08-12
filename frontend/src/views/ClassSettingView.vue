@@ -80,7 +80,7 @@
     </button>
   </div>
 
-  <div class="pt-[115px] text-justify mx-auto lg:hidden" >강의 제목</div>
+  <div class="pt-[115px] text-justify mx-auto lg:hidden" >강의 제목 {{ $route.params.lecId }}</div>
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
     <ClassSetInfo v-if="state.isinfo"/>
@@ -99,6 +99,9 @@ import ClassSetAtt from '../components/ClassSetAtt.vue'
 import ClassSetRegi from '../components/ClassSetRegi.vue'
 import ClassSetDM from '../components/ClassSetDM.vue'
 import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const route = useRouter()
 
 const state = reactive({
   isinfo:true,

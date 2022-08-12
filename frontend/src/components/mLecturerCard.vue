@@ -5,7 +5,7 @@
       <div class="flex justify-between mt-5">
         <div class="text-xl font-semibold text-end">{{ props.lecture.teacher }}</div>
         <div class="space-x-5">
-          <router-link to="/classsetting">
+          <router-link :to="{ name: 'classsetting', params: { lecId: props.lecture.lectureId } }">
             <button class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]">강의 관리</button>
           </router-link>
           <button type="button" @click="enterClass" class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]">강의 시작</button>
@@ -28,8 +28,10 @@ const props = defineProps({
 })
 
 const enterClass = () => {
-  store.commit("SET_MySessionId",props.lecture.lectureId)
-  store.commit("SET_MyUserName",props.lecture.teacher)
+  store.commit("SET_MySessionId", 'SessionA')
+  store.commit("SET_MyUserName", '김싸피')
+  // store.commit("SET_MySessionId",String(props.lecture.lectureId))
+  // store.commit("SET_MyUserName",props.lecture.teacher)
   location.href="/class"
 }
 </script>
