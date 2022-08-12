@@ -41,7 +41,7 @@ const props = defineProps({
 })
 
 const lectime = [...props.lecture.lectureTime].reverse()
-const lectureThumbnail = 'http://localhost:8081/recourta/uploads/img/lecture/'+props.lecture.lectureImg
+const lectureThumbnail = store.state.lecture.lectureImgFirstUrl+props.lecture.lectureImg
 
 const enterClass = () => {
   store.commit("SET_MySessionId", 'SessionA')

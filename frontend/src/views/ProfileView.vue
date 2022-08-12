@@ -135,7 +135,7 @@ const getProfile = async () => {
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = 'http://localhost:8081/recourta/uploads/img/user/'+res.data.userImg
+    state.takenImg = store.state.user.userImgFirstUrl+res.data.userImg
   })
   .catch(err => {
     console.log(err)
