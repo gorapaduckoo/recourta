@@ -51,6 +51,8 @@ const state = reactive({
 
 const toggleshare = () => {
   state.isshare=!state.isshare
+  if(state.isshare) emit("startshare",null)
+  else emit("stopshare",null)
 }
 
 const togglecam = () => {

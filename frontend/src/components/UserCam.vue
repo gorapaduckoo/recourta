@@ -1,7 +1,6 @@
 <template>
-  <div v-if="props.streamManager">
-    <OVvid :streamManager="props.streamManager"/>
-    <p>{{ state.clientData }}</p>
+  <div v-if="props.mainStreamManager">
+    <OVvid :mainStreamManager="props.mainStreamManager"/>
   </div>
 </template>
 
@@ -10,18 +9,11 @@ import { reactive, ref, computed, onMounted } from 'vue'
 import OVvid from './OVvid.vue'
 
 const props = defineProps({
-  streamManager: Object,
-})
-
-const state = reactive({
-  clientData : computed(()=>{
-    const { cD } = getConnectoinData()
-    return cD
-  })
+  mainStreamManager: Object,
 })
 
 const getConnectoinData = () => {
-  const { connection } = props.streamManager.stream
+  const { connection } = props.mainStreamManager.stream
   return JSON.parse(connection.data)
 }
 
