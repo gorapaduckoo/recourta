@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @Data
-@Table(name="registration")
 public class Registration extends BaseEntity {
 
     @ManyToOne
