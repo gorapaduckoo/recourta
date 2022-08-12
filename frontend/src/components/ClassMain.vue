@@ -1,5 +1,5 @@
 <template>
-  <UserCam class="w-[1000px] h-[750px]" :streamManager="props.mainStreamManager"/>
+  <UserCam class="w-[1000px] h-[750px]" :mainStreamManager="props.mainStreamManager"/>
 </template>
 
 <script setup>

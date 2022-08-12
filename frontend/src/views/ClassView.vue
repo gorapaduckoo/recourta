@@ -3,7 +3,7 @@
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar @tryleave="leaveClass"/>
+    <ClassToolbar @tryleave="leaveClass" @startshare="startsharing" @stopshare="stopsharing"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
@@ -34,11 +34,14 @@ const state = reactive({
   session: undefined,
   mainStreamManager: undefined,
   publisher: undefined,
+  temppublisher: undefined,
   subscribers: [],
 
   mySessionId: computed(()=>store.getters.currentMySessionId),
   myUserName: computed(()=>store.getters.currentMyUserName),
 
+  isscreenshared:false,
+  streamId:"",
   isside:false,
   msgs:[],
 })
@@ -59,6 +62,8 @@ const joinSession = () => {
   state.session.on('streamCreated', ({ stream }) => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
+    // state.mainStreamManager=subscriber
+    // updateMainVideoStreamManager(subscriber)
   });
 
   // On every Stream destroyed...
@@ -77,6 +82,18 @@ const joinSession = () => {
   state.session.on('signal:my-chat', (event) => {
     state.msgs.push([event.data,event.from.connectionId])
   });
+
+  state.session.on('signal:screenshare',(event) => {
+    if(event.data==="ON"){
+      state.isscreenshared=true
+      state.streamId = event.from.connectionId
+    }
+    else{
+      state.isscreenshared=false
+      state.streamId = ""
+      state.mainStreamManager = state.publisher
+    }
+  })
 
   // --- Connect to the session with a valid user token ---
 
@@ -162,19 +179,23 @@ const createToken = (sessionId) => {
 }
 
 const updateMainVideoStreamManager = (stream) => {
-  if (this.mainStreamManager === stream) return;
-  this.mainStreamManager = stream;
+  if (state.mainStreamManager === stream) return;
+  state.mainStreamManager = stream;
 }
 
 const leaveClass = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
-  state.session = undefined;
-  state.mainStreamManager = undefined;
-  state.publisher = undefined;
-  state.subscribers = [];
-  state.OV = undefined;
+  state.session = undefined
+  state.mainStreamManager = undefined
+  state.publisher = undefined
+  state.temppublisher = undefined
+  state.subscribers = []
+  state.OV = undefined
+
+  state.isside=false
+  msgs=[]
 
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
@@ -186,15 +207,97 @@ const leaveClass = () => {
 const sendMsg = (data,reciever) => {
   state.session.signal({
     data: data,  // Any string (optional)
-      to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: 'my-chat'             // The type of message (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'my-chat'             // The type of message (optional)
   })
   .then(() => {
-    console.log('Message successfully sent');
+    // console.log('Message successfully sent')
   })
   .catch(error => {
-    console.error(error);
-  });
+    console.error(error)
+  })
+}
+
+const startsharing = () => {
+  
+  let newPublisher = state.OV.initPublisher(
+    undefined,
+    {
+      audioSource: undefined, // The source of audio. If undefined default microphone
+      videoSource: "screen",
+      publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+      publishVideo: true, // Whether you want to start publishing with your video enabled or not
+      resolution: "1920x1080", // The resolution of your video
+      frameRate: 30, // The frame rate of your video
+      insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
+      mirror: false // Whether to mirror your local video or not
+    },
+    error => {
+      // Function to be executed when the method finishes
+      if (error) {
+        console.error(
+          "Error while initializing publisher: =====================================뉴퍼블리셔 게시하는도중에 에러가 발생했다",
+          error
+        );
+        state.publisher = state.temppublisher;
+        state.session.publish(state.publisher);
+      } else {
+        console.log("Publisher successfully initialized");
+      }
+    }
+  );
+  // newPublisher.once("accessAllowed", event => {
+  //   newPublisher.stream
+  //     .getMediaStream()
+  //     .getVideoTracks()[0]
+  //     .addEventListener("ended", () => {
+  //       stopsharing();
+  //     });
+  // });
+  // newPublisher.once("accessAllowed", () => {
+  //   try {
+  //     newPublisher.stream
+  //       .getMediaStream()
+  //       .getVideoTracks()[0]
+  //       .applyConstraints({
+  //         width: '1920',
+  //         height: '1080',
+  //       });
+  //   } catch (error) {
+  //     console.error("Error applying constraints: ", error);
+  //   }
+  // });
+  state.session.unpublish(state.publisher)
+  // console.log(state.publisher)
+  state.temppublisher = state.publisher
+  state.publisher = newPublisher
+  // console.log(state.publisher)
+  state.session.publish(state.publisher)
+  sss('ON')
+  state.mainStreamManager=state.publisher
+}
+
+const stopsharing = () => {
+  state.session.unpublish(state.publisher);
+  state.publisher = state.temppublisher;
+  state.session.publish(state.publisher);
+  sss('OFF')
+}
+
+// sendscreenshare => sss
+const sss = (data) => {
+  console.log("sharing:",data)
+  state.session.signal({
+    data: data,  // Any string (optional)
+    to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'screenshare'             // The type of message (optional)
+  })
+  .then(() => {
+    // console.log('Message successfully sent')
+  })
+  .catch(error => {
+    console.error(error)
+  })
 }
 
 joinSession()

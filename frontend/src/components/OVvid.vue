@@ -5,13 +5,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 const props = defineProps({
-  streamManager: Object,
+  mainStreamManager: Object,
 })
 
 const el = ref("")
 
 onMounted(() => {
-  props.streamManager.addVideoElement(el.value)
+  props.mainStreamManager.addVideoElement(el.value)
 })
 
 </script>
