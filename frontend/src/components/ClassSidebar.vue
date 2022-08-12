@@ -19,6 +19,7 @@
     <div id="attabslist" class="flex-1 overflow-y-auto flex flex-col items-start p-2 border-b-[1px] border-neutral-400" v-if="state.isAtt">
       <div class="mb-3">
         참가자({{ state.attendList.length+state.absenList.length }})
+        
       </div>
       <button @click="toggleattendlist" class="w-3/4 text-left border-b-[1px] border-neutral-400">
         온라인({{ state.attendList.length }})
