@@ -68,7 +68,7 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin("http://127.0.0.1:5173");
+        configuration.addAllowedOrigin("https://recourta.ga");
 //        configuration.addAllowedHeader("*");
 //        configuration.addAllowedMethod("*");
         configuration.addAllowedHeader(CorsConfiguration.ALL);
