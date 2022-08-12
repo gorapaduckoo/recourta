@@ -36,12 +36,18 @@ public class LectureController {
 
     @PostMapping
     public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart("lectureImg")MultipartFile lectureImg) throws Exception {
-        LectureResponse.LectureId result = lectureService.createLecture(lecture, lectureImg);
-        Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
-        if(sessionResult <=0 ){
-            throw new LectureException.SessionSaveFail(result.getLectureId());
+        LectureResponse.LectureId result = LectureResponse.LectureId.builder().build();
+        try {
+            result = lectureService.createLecture(lecture, lectureImg);
+            Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
+            if (sessionResult <= 0) {
+                throw new LectureException.SessionSaveFail(result.getLectureId());
+            }
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch(Exception e) {
+            lectureService.deleteLecture(result.getLectureId());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{lectureId}")

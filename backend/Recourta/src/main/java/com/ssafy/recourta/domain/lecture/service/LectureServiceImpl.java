@@ -50,6 +50,7 @@ public class LectureServiceImpl implements LectureService {
         Integer result = lectureRepository.save(lecture).getLectureId();
         if(result!=null){
             return LectureResponse.LectureId.builder().lectureId(result).build();
+
         } else {
             throw new LectureException.LectureSaveFail();
         }
