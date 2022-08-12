@@ -2,11 +2,7 @@ HELP.md
 
 build/
 
-src/main/java/**/RecourtaApplication.java
 src/main/resources/application.properties
-src/main/java/com/ssafy/recourta/global/config/MailConfig.java
-
-src/main/java/**/global/config/WebSecurityConfig.java
 
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
