@@ -6,6 +6,11 @@ plugins {
 	id 'java'
 }
 
+jar {
+	// prevent ~-plain.jar
+	enabled = false
+}
+
 group 'com.example'
 version '0.0.1-SNAPSHOT' + new Date().format("yyyyMMddHHmmss")
 sourceCompatibility = 1.8
