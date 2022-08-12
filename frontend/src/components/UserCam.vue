@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed, onMounted } from 'vue'
+import { reactive, ref, computed, onMounted, defineProps } from 'vue'
 import OVvid from './OVvid.vue'
 
 const props = defineProps({

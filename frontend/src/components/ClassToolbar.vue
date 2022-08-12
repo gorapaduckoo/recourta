@@ -41,7 +41,7 @@
 <script setup>
 import { reactive, defineEmits } from 'vue'
 
-const emit = defineEmits(["tryleave"])
+const emit = defineEmits(["tryleave","startshare","mainstreamview"])
 
 const state = reactive({
   isshare:false,
@@ -56,6 +56,7 @@ const toggleshare = () => {
 }
 
 const togglecam = () => {
+  emit("mainstreamview",null)
   state.iscam = !state.iscam
 }
 

@@ -3,7 +3,7 @@
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar @tryleave="leaveClass" @startshare="startsharing" @stopshare="stopsharing"/>
+    <ClassToolbar @tryleave="leaveClass" @startshare="startsharing" @mainstreamview="mainstreamview" @stopshare="stopsharing"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
@@ -22,7 +22,7 @@ import ClassSidebar from '../components/ClassSidebar.vue'
 import axios from 'axios'
 import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
-import { reactive, computed } from 'vue'
+import { reactive, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -46,6 +46,26 @@ const state = reactive({
   msgs:[],
 })
 
+// watch(()=>state.streamId,(newId,oldId)=>{
+//   console.log("change streamId")
+//   const main = state.subscribers.find(sub=>sub.stream.connection.connectionId!==state.streamId)
+//   console.log(main)
+//   if(main) state.mainStreamManager = main
+//   state.mainStreamManager = state.publisher
+// })
+
+const mainstreamview = () => {
+  console.log(state.isscreenshared)
+  console.log(state.mainStreamManager)
+  console.log(state.publisher)
+  console.log(state.publisher===state.mainStreamManager)
+  console.log("-----")
+  for(let sub of state.subscribers) {
+    console.log(sub)
+    console.log(sub===state.mainStreamManager)
+  }
+}
+
 const toggleside = () => {
   state.isside=!state.isside
 }
@@ -62,6 +82,8 @@ const joinSession = () => {
   state.session.on('streamCreated', ({ stream }) => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
+    console.log(subscriber.stream.typeOfVideo)
+    if(state.isscreenshared&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
   });
@@ -86,11 +108,9 @@ const joinSession = () => {
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
       state.isscreenshared=true
-      state.streamId = event.from.connectionId
     }
     else{
       state.isscreenshared=false
-      state.streamId = ""
       state.mainStreamManager = state.publisher
     }
   })
@@ -117,7 +137,8 @@ const joinSession = () => {
         });
 
         state.mainStreamManager = publisher;
-        state.publisher = publisher;
+        // state.streamId = publisher.stream.connection.connectionId
+        state.publisher = publisher
 
         // --- Publish your stream ---
         state.session.publish(state.publisher);
@@ -188,12 +209,14 @@ const leaveClass = () => {
   if (state.session) state.session.disconnect();
 
   state.session = undefined
+  state.streamId = ""
   state.mainStreamManager = undefined
   state.publisher = undefined
   state.temppublisher = undefined
   state.subscribers = []
   state.OV = undefined
-
+  
+  state.isscreenshared=false
   state.isside=false
   msgs=[]
 
@@ -274,6 +297,7 @@ const startsharing = () => {
   // console.log(state.publisher)
   state.session.publish(state.publisher)
   sss('ON')
+  // state.streamId = state.publisher.stream.connection.connectionId
   state.mainStreamManager=state.publisher
 }
 
@@ -282,6 +306,7 @@ const stopsharing = () => {
   state.publisher = state.temppublisher;
   state.session.publish(state.publisher);
   sss('OFF')
+  state.mainStreamManager = state.publisher
 }
 
 // sendscreenshare => sss
