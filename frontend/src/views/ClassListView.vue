@@ -70,7 +70,7 @@
                 <input type="time" step="900" v-model.trim="floating_lecture_start_time" id="floating_lecture_start_time" class="timepicker block w-1/3  px-3 py-1.5 text-xs text-center font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                 <div class="flex flex-col justify-center">-</div>
                 <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
-                <button type="button" @click="addLectureTime">
+                <button type="button" @click="addLectureTime" :disabled="store.state.lecture.lectureTimeList.length > 4">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0066eb] dark:text-[#1a7dff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>

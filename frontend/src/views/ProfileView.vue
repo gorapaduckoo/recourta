@@ -68,7 +68,7 @@
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
               <input type="password" id="floating_new_password" name="floating_new_password" v-model.trim="floating_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onNewPasswordClick"/>
               <label for="floating_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호</label>
-              <label v-if="state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-gray-500 dark:text-gray-400 -bottom-3.5 right-0">영문, 숫자, 특수문자 포함 8자 이상</label>
+              <label v-if="state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-gray-500 dark:text-gray-400 -bottom-3.5 right-0">영문, 숫자, 특수문자 포함 8 - 20자</label>
               <label v-if="!state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
@@ -135,7 +135,7 @@ const getProfile = async () => {
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = 'http://localhost:8081/recourta/uploads/img/'+res.data.userImg
+    state.takenImg = 'http://localhost:8081/recourta/uploads/img/user/'+res.data.userImg
   })
   .catch(err => {
     console.log(err)
@@ -280,13 +280,10 @@ const sendChangetoServer = async () => {
       modalClose()
       getProfile()
     }
-    else {
-      state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
-      state.current_pw_check = false
-    }
   })
   .catch(err => {
-    console.log(err)
+    state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
+    state.current_pw_check = false
   })
 }
 
@@ -295,7 +292,7 @@ const pwChange = async () => {
   let pw_reg = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
 
   if(!pw_reg.test(floating_new_password.value)) {
-    state.new_pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다'
+    state.new_pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상 20자 이하이어야 합니다'
     state.new_pw_check = false
   }
   if (floating_new_password.value!==floating_repeat_new_password.value) {
