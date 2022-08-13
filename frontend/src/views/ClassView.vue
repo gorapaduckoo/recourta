@@ -3,7 +3,7 @@
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar @tryleave="leaveClass" @startshare="startsharing" @mainstreamview="mainstreamview" @stopshare="stopsharing"/>
+    <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
@@ -40,10 +40,12 @@ const state = reactive({
   mySessionId: computed(()=>store.getters.currentMySessionId),
   myUserName: computed(()=>store.getters.currentMyUserName),
 
-  isscreenshared:false,
+  isshare:false,
   streamId:"",
   isside:false,
   msgs:[],
+  iscam:true,
+  ismic:false,
 })
 
 // watch(()=>state.streamId,(newId,oldId)=>{
@@ -54,20 +56,26 @@ const state = reactive({
 //   state.mainStreamManager = state.publisher
 // })
 
-const mainstreamview = () => {
-  console.log(state.isscreenshared)
-  console.log(state.mainStreamManager)
-  console.log(state.publisher)
-  console.log(state.publisher===state.mainStreamManager)
-  console.log("-----")
-  for(let sub of state.subscribers) {
-    console.log(sub)
-    console.log(sub===state.mainStreamManager)
-  }
-}
-
 const toggleside = () => {
   state.isside=!state.isside
+}
+
+const toggleshare = () => {
+  state.isshare=!state.isshare
+  if(state.isshare)startsharing()
+  else stopsharing()
+}
+
+const togglecam = () => {
+  state.iscam=!state.iscam
+  if(state.iscam) state.publisher.publishVideo(true)
+  else state.publisher.publishVideo(false)
+}
+
+const togglemic = () => {
+  state.ismic=!state.ismic
+  if(state.iscam) state.publisher.publishAudio(true)
+  else state.publisher.publishAudio(false)
 }
 
 const joinSession = () => {
@@ -83,7 +91,7 @@ const joinSession = () => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
     console.log(subscriber.stream.typeOfVideo)
-    if(state.isscreenshared&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
+    if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
   });
@@ -107,10 +115,10 @@ const joinSession = () => {
 
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
-      state.isscreenshared=true
+      state.isshare=true
     }
     else{
-      state.isscreenshared=false
+      state.isshare=false
       state.mainStreamManager = state.publisher
     }
   })
@@ -128,7 +136,7 @@ const joinSession = () => {
         let publisher = state.OV.initPublisher(undefined, {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+          publishAudio: false,	// Whether you want to start publishing with your audio unmuted or not
           publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
           resolution: '640x480',  // The resolution of your video
           frameRate: 30,			// The frame rate of your video
@@ -216,7 +224,9 @@ const leaveClass = () => {
   state.subscribers = []
   state.OV = undefined
   
-  state.isscreenshared=false
+  state.ismic=false
+  state.iscam=false
+  state.isshare=false
   state.isside=false
   msgs=[]
 
@@ -269,27 +279,27 @@ const startsharing = () => {
       }
     }
   );
-  // newPublisher.once("accessAllowed", event => {
-  //   newPublisher.stream
-  //     .getMediaStream()
-  //     .getVideoTracks()[0]
-  //     .addEventListener("ended", () => {
-  //       stopsharing();
-  //     });
-  // });
-  // newPublisher.once("accessAllowed", () => {
-  //   try {
-  //     newPublisher.stream
-  //       .getMediaStream()
-  //       .getVideoTracks()[0]
-  //       .applyConstraints({
-  //         width: '1920',
-  //         height: '1080',
-  //       });
-  //   } catch (error) {
-  //     console.error("Error applying constraints: ", error);
-  //   }
-  // });
+  newPublisher.once("accessAllowed", event => {
+    newPublisher.stream
+      .getMediaStream()
+      .getVideoTracks()[0]
+      .addEventListener("ended", () => {
+        stopsharing();
+      });
+  });
+  newPublisher.once("accessAllowed", () => {
+    try {
+      newPublisher.stream
+        .getMediaStream()
+        .getVideoTracks()[0]
+        .applyConstraints({
+          width: '1920',
+          height: '1080',
+        });
+    } catch (error) {
+      console.error("Error applying constraints: ", error);
+    }
+  });
   state.session.unpublish(state.publisher)
   // console.log(state.publisher)
   state.temppublisher = state.publisher

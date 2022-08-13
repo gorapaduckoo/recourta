@@ -10,7 +10,7 @@
 		<!-- The right line -->
 		<div class="flex-grow h-px bg-neutral-400 lg:w-3/4"></div>
 	</div>
-
+	
 	<!-- Reactive Desktop -->
 	<div class="hidden lg:grid lg:pt-8 lg:grid-cols-2 xl:grid-cols-3">
     <LecturerCard
