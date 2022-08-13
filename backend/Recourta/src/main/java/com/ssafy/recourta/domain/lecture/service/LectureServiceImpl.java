@@ -140,5 +140,18 @@ public class LectureServiceImpl implements LectureService {
         return result;
     }
 
+    @Override
+    public List<LectureResponse.LecturePreview> searchAvailableLecture() throws Exception {
+
+        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
+
+        // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
+        for (Lecture l : lectures) {
+            result.add(l.toLecturePreview());
+        }
+        return result;
+    }
+
 
 }

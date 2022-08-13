@@ -133,7 +133,11 @@ public class UserService {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         imgUtil.deleteImage(user.getUserImg(), "user");
-        userRepository.deleteById(userId);
+        user.setPassword("");
+        user.setUserImg("");
+        user.setEmail("");
+        user.setIsStudent(-1);
+        userRepository.save(user);
 
 
         return UserResponse.OnlyId.build(user);
