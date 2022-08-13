@@ -84,7 +84,7 @@
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
     <div>{{state.lecInfo}}</div>
-    <ClassSetInfo v-if="state.isinfo"/>
+    <ClassSetInfo v-if="state.isinfo" :lecInfo="state.lecInfo"/>
     <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
     <ClassSetDM v-if="state.isdm"/>

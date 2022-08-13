@@ -120,11 +120,11 @@ import SearchList from '../components/SearchList.vue'
 import SearchForm from '../components/SearchForm.vue'
 import LectureTime from '../components/LectureTime.vue'
 
-import { ref,reactive } from 'vue'
-import {useRouter} from 'vue-router'
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
-import {useStore} from 'vuex'
+import { useStore } from 'vuex'
 
 const store = useStore()
 const route = useRouter()
@@ -132,8 +132,6 @@ const route = useRouter()
 const state = reactive({
   curpage : "classList",
   image : '',
-  preview: '',
-  saveFile: null,
 })
 
 let floating_lecture_name = ref("")
