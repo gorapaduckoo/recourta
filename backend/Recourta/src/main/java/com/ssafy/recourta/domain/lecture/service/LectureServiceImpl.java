@@ -51,6 +51,7 @@ public class LectureServiceImpl implements LectureService {
         Integer result = lectureRepository.save(lecture).getLectureId();
         if(result!=null){
             return LectureResponse.LectureId.builder().lectureId(result).build();
+
         } else {
             throw new LectureException.LectureSaveFail();
         }
@@ -110,7 +111,8 @@ public class LectureServiceImpl implements LectureService {
     public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
         if(userRepository.existsById(userId)) {
-            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
+            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now().minusDays(1));
+//            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
             if(searchResult.size() == 0) {
                 throw new LectureException.NullLecture();
             } else {
@@ -136,6 +138,19 @@ public class LectureServiceImpl implements LectureService {
             }
         } else {
             throw new UserNotFoundException();
+        }
+        return result;
+    }
+
+    @Override
+    public List<LectureResponse.LecturePreview> searchAvailableLecture() throws Exception {
+
+        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
+
+        // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
+        for (Lecture l : lectures) {
+            result.add(l.toLecturePreview());
         }
         return result;
     }

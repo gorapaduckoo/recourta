@@ -12,6 +12,7 @@ import com.ssafy.recourta.global.exception.LectureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class SessionServiceImpl implements SessionService{
     @Autowired
     private LectureRepository lectureRepository;
 
+    @Transactional
     @Override
     public Integer createSession(@Valid List<SessionRequest.SessionCreateForm> sessions, Integer lectureId, boolean isUpdate) {
 
