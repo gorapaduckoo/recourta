@@ -110,7 +110,8 @@ public class LectureServiceImpl implements LectureService {
     public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
         if(userRepository.existsById(userId)) {
-            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
+            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now().minusDays(1));
+//            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
             if(searchResult.size() == 0) {
                 throw new LectureException.NullLecture();
             } else {
