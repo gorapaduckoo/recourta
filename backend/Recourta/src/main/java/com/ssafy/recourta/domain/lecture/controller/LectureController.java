@@ -58,7 +58,7 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestPart() LectureRequest.LectureUpdateForm input, @RequestPart(value="lectureImg", required = false) MultipartFile lectureImg) throws Exception {
+    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestPart("request") LectureRequest.LectureUpdateForm input, @RequestPart(value="lectureImg", required = false) MultipartFile lectureImg) throws Exception {
         LectureResponse.LectureId result = lectureService.updateLecture(lectureId, input, lectureImg);
 
         List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
