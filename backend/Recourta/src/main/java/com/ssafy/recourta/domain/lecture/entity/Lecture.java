@@ -1,6 +1,7 @@
 package com.ssafy.recourta.domain.lecture.entity;
 
 
+import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import lombok.*;
 
@@ -8,6 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.time.LocalDate;
+
+import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,21 +50,46 @@ public class Lecture {
         this.lectureTime = lectureTime;
     }
 
-    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime) {
+    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureTime) {
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.lectureImg = lectureImg;
         this.lectureTime = lectureTime;
     }
 
-    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime, User user) {
+    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureTime, User user) {
         this.content = content;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.lectureImg = lectureImg;
         this.lectureTime = lectureTime;
         this.user = user;
+    }
+
+    public void update(String lectureImg) {
+        this.lectureImg = lectureImg;
+    }
+
+    public LectureResponse.LectureDetail toLectureDetail() {
+        return LectureResponse.LectureDetail.builder()
+                .lectureId(this.getLectureId())
+                .userId(this.getUser().getUserId())
+                .title(this.getTitle())
+                .content(this.getContent())
+                .startDate(this.getStartDate())
+                .endDate(this.getEndDate())
+                .lectureImg(this.getLectureImg())
+                .lectureTime(stringToJsonArray(this.getLectureTime()))
+                .build();
+    }
+
+    public LectureResponse.LecturePreview toLecturePreview() {
+        return LectureResponse.LecturePreview.builder()
+                .lectureId(this.getLectureId())
+                .teacher(this.getUser().getName())
+                .title(this.getTitle())
+                .lectureImg(this.getLectureImg())
+                .lectureTime(stringToJsonArray(this.getLectureTime()))
+                .build();
     }
 
 }

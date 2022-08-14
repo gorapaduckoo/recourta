@@ -4,8 +4,7 @@
     <div class="flex items-center">
       <!-- 메인페이지, 로고 및 사이트명 -->
       <router-link to="/main" class="flex items-center">
-        <img src="../assets/placeholder.png" class="mr-3 h-9" alt="Flowbite Logo">
-        <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">ReCourTa</span>
+        <img src="../assets/logo.png" class="h-6" alt="Flowbite Logo">
       </router-link>
       <!-- 메뉴 -->
       <div class="hidden ml-8 items-center w-full lg:flex lg:w-auto lg:order-1">

@@ -3,7 +3,7 @@
   <CustomNavbar :curpage="state.curpage"/>
   
   <div class="flex justify-end pt-[80px] mr-16 lg:mr-20 2xl:mr-32">
-    <button v-if="!store.state.user.isStudent" type="submit" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" data-bs-toggle="modal" data-bs-target="#classMakeModalLabel">
+    <button v-if="!store.state.user.isStudent" type="button" class="text-white font-bold w-1/8 bg-[#4fb054] border border-[#4fb054] hover:bg-[#66bb6a] focus:outline-none rounded-lg px-6 py-1.5 text-center" @click="modalOpen">
       강의 생성
     </button>
   </div>
@@ -24,11 +24,11 @@
   <SearchList />
 
   <!-- 강의 만들기 Modal -->
-  <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="classMakeModalLabel" tabindex="-1" aria-labelledby="classMakeModalLabel" aria-hidden="true">
+  <div class="modal fade bg-black bg-opacity-50 fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="classMakeModal" tabindex="-1" aria-labelledby="classMakeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg relative w-[600px] ml-auto mr-auto pointer-events-none">
       <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white dark:bg-[#4c4c4c] bg-clip-padding rounded-md outline-none text-current">
         <div class="modal-header flex flex-row-reverse flex-shrink-0 items-center justify-between px-6 pt-4 rounded-t-md">
-          <button type="button" data-bs-dismiss="modal" aria-label="Close">
+          <button type="button" data-bs-dismiss="modal" aria-label="Close" @click="modalClose">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -70,7 +70,7 @@
                 <input type="time" step="900" v-model.trim="floating_lecture_start_time" id="floating_lecture_start_time" class="timepicker block w-1/3  px-3 py-1.5 text-xs text-center font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                 <div class="flex flex-col justify-center">-</div>
                 <input type="time" v-model.trim="floating_lecture_end_time" id="floating_lecture_end_time" class="form-control block w-1/3  px-3 py-1.5 text-xs text-center tracking-widest font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
-                <button type="button" @click="addLectureTime">
+                <button type="button" class="disabled:cursor-not-allowed" @click="addLectureTime" :disabled="store.state.lecture.lectureTimeList.length > 4">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0066eb] dark:text-[#1a7dff]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -120,11 +120,11 @@ import SearchList from '../components/SearchList.vue'
 import SearchForm from '../components/SearchForm.vue'
 import LectureTime from '../components/LectureTime.vue'
 
-import { ref,reactive } from 'vue'
-import {useRouter} from 'vue-router'
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
-import {useStore} from 'vuex'
+import { useStore } from 'vuex'
 
 const store = useStore()
 const route = useRouter()
@@ -132,8 +132,6 @@ const route = useRouter()
 const state = reactive({
   curpage : "classList",
   image : '',
-  preview: '',
-  saveFile: null,
 })
 
 let floating_lecture_name = ref("")
@@ -155,54 +153,68 @@ const addLectureTime = () => {
   lectureTime['endMinute'] = endTime[1]
   store.state.lecture.lectureTimeList.push(lectureTime)
   store.state.lecture.lectureTimeList.sort(function(a, b) {
-    return a["weekDay"] - b["weekDay"];
+    return a["weekDay"] - b["weekDay"]
   })
 }
 
-// const fileCheck = (file) => {
-//   const pathpoint = file.value.lastIndexOf('.');
-//   const filepoint = file.value.substring(pathpoint + 1, file.length);
-//   const filetype = filepoint.toLowerCase();
-
-//   if (filetype=='jpg' || filetype=='jpeg' || filetype=='png' || filetype=='gif') {
-//     // 정상적인 이미지 확장자 파일인 경우
-//   } else {
-//     alert('이미지 파일만 선택할 수 있습니다.');
-//     const parentObj = file.parentNode
-//     const node = parentObj.replaceChild(file.cloneNoded(true), file);
-//     return false;
-//   }
-// }
-
 const makeClassSubmit = async () => {
-  console.log(floating_lecture_image.value.files[0])
-  await axios({
-      url: rct.lecture.lecturecreate(),
-      method: 'post',
-      data: {
-        userId : store.state.user.userId,
-        title : floating_lecture_name.value,
-        content : floating_lecture_info.value,
-        startDate : floating_lecture_duration_start.value,
-        endDate : floating_lecture_duration_end.value,
-        lectureImg : state.image,
-        lectureTime : store.state.lecture.lectureTimeList,
-      }
-    })
-    .then(res => {
-      store.state.lecture.lectureTimeList = []
-      // 모달 닫히는 방법 해야 함
-      // location.reload()
-    })
-    .catch(error => {
-      console.log(store.state.lecture.lectureTimeList)
-      // location.reload()
-    })
+  let classblob = await UrltoBlob(state.image)
+  let classfd = new FormData()
+  const data = {
+    userId : store.state.user.userId,
+    title : floating_lecture_name.value,
+    content : floating_lecture_info.value,
+    startDate : floating_lecture_duration_start.value,
+    endDate : floating_lecture_duration_end.value,
+    lectureTime : store.state.lecture.lectureTimeList,
+  }
+  const json = JSON.stringify(data)
+  const datablob = new Blob([json],{type:"application/json"})
+  classfd.append("lectureImg",classblob)
+  classfd.append("request",datablob)
+  await axios.post(rct.lecture.lecturecreate(),classfd,{
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    console.log('성공')
+    console.log(res.data)
+    modalClose()
+  })
+  .catch(err => {
+    console.log('실패')
+    console.log(err)
+  })
 }
 
 const onInputImage = () => {
   state.image = window.URL.createObjectURL(floating_lecture_image.value.files[0])
-  console.log(state.image)
+}
+
+const UrltoBlob = async (dataURL) => {
+  const res = await fetch(dataURL)
+  const blob = await res.blob()
+  return blob
+}
+
+
+const modalOpen = () => {
+  document.getElementById('classMakeModal').classList.replace('hidden', 'show')
+  floating_lecture_name.value = ""
+  floating_lecture_start_time.value = "00:00"
+  floating_lecture_end_time.value = "00:00"
+  floating_lecture_duration_start.value = new Date().toISOString().substring(0, 10)
+  floating_lecture_duration_end.value = new Date().toISOString().substring(0, 10)
+  floating_lecture_info.value = ""
+  floating_lecture_image.value = ""
+  store.state.lecture.lectureTimeList = []
+}
+
+const modalClose = () => {
+  document.getElementById('classMakeModal').classList.replace('show', 'hidden')
+  route.replace({path:'/classlist'})
 }
 
 

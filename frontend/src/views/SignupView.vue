@@ -1,22 +1,19 @@
 <template>
   <!-- 다크모드 -->
   <DarkmodeButton />
-  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto border">
+  <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
 
     <!-- 뒤로가기 -->
-    <router-link to="/" class="absolute top-3">
+    <router-link to="/" class="absolute top-5">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
       </svg>
     </router-link>
 
-    <!--  -->
-    <h1 class="my-10 text-center font-bold">회원가입 페이지</h1>
-
-    <!-- 로고 - 로그인페이지로 이동 -->
     <router-link to="/">
-      <img class="ml-auto mr-auto" src="../assets/placeholder.png" alt="">
+      <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
 
     <!-- 입력form -->
     <form class="pt-10" @submit.prevent="signupSubmit">
@@ -56,9 +53,9 @@
 
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100 placeholder-gray-500 dark:placeholder-gray-400" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onPasswordClick"/>
+        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100 placeholder-gray-500 dark:placeholder-gray-400" placeholder="영문, 숫자, 특수문자 포함 8 - 20자" @click="onPasswordClick"/>
         <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.ispassword,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.ispassword,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
-        <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다</label>
+        <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상 20자 이하이어야 합니다</label>
       </div>
 
       <!-- 비밀번호 확인 -->
@@ -261,38 +258,33 @@ const takePhoto = () => {
   context.drawImage(camera.value, 0, 0, 384, 288);
 }
 
-const sendemailtoserver = async () => {
-  const res = await axios({
-    url: rct.user.userauth(),
-    method: 'post',
-    data: {
-      email : email,
-    }
-  })
-
-  return res
-}
-
 const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = await sendemailtoserver()
-
-  if(res.data.success) {
-    state.isemailsend = true
-    state.isemailverified = false
-    state.isverify = true
-    if(state.Timer!==null) verifytimerStop(state.Timer)
+    await axios({
+      url: rct.user.userauth(),
+      method: 'post',
+      data: {
+        email : email,
+      }
+    }).then(res=>{
+      state.isemailsend = true
+      state.isemailverified = false
+      state.isverify = true
+      if(state.Timer!==null) verifytimerStop(state.Timer)
       state.emailsendbtnmsg='재발송'
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
       verifytimer()
-    }
-    else{
-      state.wrongemail='이미 가입된 이메일입니다'
-      state.isemail=false
-    }
+    })
+    .catch(err=>{
+      if(err.response.status===400){
+        state.wrongemail='이미 가입된 이메일입니다'
+        state.isemail=false
+      }
+      else console.log(err)
+    }) 
   }
   else {
     state.wrongemail='올바른 이메일을 입력하세요'
@@ -358,7 +350,6 @@ const checkverify = async () => {
 }
 
 const UrltoBlob = async (dataURL) => {
-  //console.log(dataURL)
   const res = await fetch(dataURL)
   const blob = await res.blob()
   return blob
@@ -384,8 +375,6 @@ const signupdatatoserver = async () => {
     }
   })
   .then(res => {
-    console.log(blob)
-    console.log(typeof(blob))
     route.replace({path:'/'})
   })
   .catch(err => {
@@ -394,17 +383,9 @@ const signupdatatoserver = async () => {
 }
 
 const signupSubmit = () => {
-  // console.log(floating_name)
-  // console.log(floating_email.value)
-  // console.log(floating_verify.value)
-  // console.log(floating_password.value)
-  // console.log(floating_repeat_password.value)
-  // console.log(isStudent.value)
 
   if(floating_name.value==="") state.isname = false
-  // console.log(state.isname)
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
-      // let pw_regex = new RegExp()
   if(!state.isemailverified) {
     state.wrongverify = '이메일이 인증되지 않았습니다'
     state.isverify=false

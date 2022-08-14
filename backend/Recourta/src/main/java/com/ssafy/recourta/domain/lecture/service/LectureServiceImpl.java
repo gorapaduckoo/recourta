@@ -10,9 +10,10 @@ import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
-import net.bytebuddy.asm.Advice;
+import com.ssafy.recourta.global.util.ImgUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.text.ParseException;
@@ -33,26 +34,24 @@ public class LectureServiceImpl implements LectureService {
     @Autowired
     private RegistrationService registrationService;
 
+    @Autowired
+    private ImgUtil imgUtil;
+
     @Override
-    public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input) {
+    public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input, MultipartFile lectureImg) throws Exception {
         // RequestDto에 담긴 userId로 user 객체 조회
         User user = userRepository.findById(input.getUserId()).orElseThrow(UserNotFoundException::new);
 
         // 조회한 user 객체는 저장할 lecture 객체에 담아줌
-        Lecture lecture = Lecture.builder()
-                .user(user)
-                .title(input.getTitle())
-                .content(input.getContent())
-                .startDate(input.getStartDate())
-                .endDate(input.getEndDate())
-                .lectureImg(input.getLectureImg())
-                .lectureTime(input.getLectureTime().toString())
-                .build();
+        Lecture lecture = input.toEntity(user);
+        imgUtil.uploadImage(lecture, lectureImg);
 
         // DB 저장 후 저장한 lecture의 lectureId를 결과값으로 반환
+        System.out.println(lecture.getLectureTime());
         Integer result = lectureRepository.save(lecture).getLectureId();
         if(result!=null){
             return LectureResponse.LectureId.builder().lectureId(result).build();
+
         } else {
             throw new LectureException.LectureSaveFail();
         }
@@ -65,18 +64,7 @@ public class LectureServiceImpl implements LectureService {
         Lecture result = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
         if (result != null) {
-
-            return LectureResponse.LectureDetail.builder()
-                    .lectureId(result.getLectureId())
-                    .userId(result.getUser().getUserId())
-                    .title(result.getTitle())
-                    .content(result.getContent())
-                    .startDate(result.getStartDate())
-                    .endDate(result.getEndDate())
-                    .lectureImg(result.getLectureImg())
-                    .lectureTime(stringToJsonArray(result.getLectureTime()))
-                    .build();
-
+            return result.toLectureDetail();
         }
         else {
             throw new LectureException.NullLecture();
@@ -85,10 +73,11 @@ public class LectureServiceImpl implements LectureService {
 
 
     @Override
-    public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture) throws Exception {
+    public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture, MultipartFile lectureImg) throws Exception {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
-        updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureImg(), lecture.getLectureTime().toString());
+        updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString());
+        imgUtil.uploadImage(updatedLecture, lectureImg);
         Integer result = lectureRepository.save(updatedLecture).getLectureId();
 
 
@@ -103,8 +92,14 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
+
         if(lectureRepository.existsById(lectureId)) {
+
+            Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
+                    ()-> new LectureException.UnvalidLectureId(lectureId));
+            imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
             lectureRepository.deleteById(lectureId);
+
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
         else {
@@ -123,11 +118,7 @@ public class LectureServiceImpl implements LectureService {
             } else {
                 List<LectureResponse.LecturePreview> result = new ArrayList<>();
                 for (Lecture l: searchResult){
-                    result.add(LectureResponse.LecturePreview.builder()
-                            .lectureId(l.getLectureId())
-                            .title(l.getTitle())
-                            .lectureTime(stringToJsonArray(l.getLectureTime()))
-                            .build());
+                    result.add(l.toLecturePreview());
                 }
                 return result;
             }
@@ -143,15 +134,23 @@ public class LectureServiceImpl implements LectureService {
         if(userRepository.existsById(userId)) {
             List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
             for (Lecture l : lectures) {
-                result.add(LectureResponse.LecturePreview.builder()
-                        .title(l.getTitle())
-                        .teacher(l.getUser().getName())
-                        .lectureTime(stringToJsonArray(l.getLectureTime()))
-                        .lectureId(l.getLectureId())
-                        .build());
+                result.add(l.toLecturePreview());
             }
         } else {
             throw new UserNotFoundException();
+        }
+        return result;
+    }
+
+    @Override
+    public List<LectureResponse.LecturePreview> searchAvailableLecture() throws Exception {
+
+        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
+
+        // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
+        for (Lecture l : lectures) {
+            result.add(l.toLecturePreview());
         }
         return result;
     }

@@ -2,8 +2,8 @@
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
   <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[68px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
-    <img class="rounded-md w-[224px] h-[126px] mb-[4px]" src="https://mdbootstrap.com/img/new/standard/nature/184.jpg" alt=""/>
-    <div class="text-xl text-justify overflow-hidden px-2 w-full font-bold dark:font-semibold h-[56px]">데이터로 표현한 세상</div>
+    <img class="rounded-md w-[224px] h-[126px] mb-[4px]" :src="state.lecImgUrl" alt=""/>
+    <div class="text-xl text-justify overflow-hidden px-2 w-full font-bold dark:font-semibold h-[56px]">{{ state.lecInfo.title }}</div>
     
     <button @click="onClickInfo" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isinfo,'bg-[#ffffff] dark:bg-[#444444]':!state.isinfo}" class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f]">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -37,7 +37,7 @@
       
     <div class="my-[3px] w-full h-[1px] bg-neutral-300 dark:bg-neutral-500"></div>
     
-    <button class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded text-[#fe5358] hover:text-white hover:bg-[#fe5358]">
+    <button class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded text-[#fe5358] hover:text-white hover:bg-[#fe5358]" data-bs-toggle="modal" data-bs-target="#closeLectureModal">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
@@ -83,10 +83,33 @@
   <div class="pt-[115px] text-justify mx-auto lg:hidden" >강의 제목</div>
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
-    <ClassSetInfo v-if="state.isinfo"/>
+    <div>{{state.lecInfo}}</div>
+    <ClassSetInfo v-if="state.isinfo" :lecInfo="state.lecInfo"/>
     <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
     <ClassSetDM v-if="state.isdm"/>
+  </div>
+
+  <!-- 강의 폐쇄 Modal -->
+  <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="closeLectureModal" tabindex="-1" aria-labelledby="closeLectureModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered relative w-1/4 min-w-[360px] ml-auto mr-auto pointer-events-none">
+      <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white dark:bg-[#4c4c4c] bg-clip-padding rounded-md outline-none text-current">
+        <div class="modal-header flex flex-row-reverse flex-shrink-0 items-center justify-between px-4 pt-4 rounded-t-md">
+          <button type="button" data-bs-dismiss="modal" aria-label="Close">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body pt-0 pb-4 text-center">
+          <p class="font-medium">해당 강의를 폐쇄시키겠습니까?<br/>(폐쇄 시, 해당 강의 관련 모든 정보가 삭제됩니다.)</p>
+        </div>
+        <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end px-4 pb-4 rounded-b-md space-x-3">
+          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" @click="deleteLecture" data-bs-dismiss="modal">예</button>
+          <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
+        </div>
+      </div>
+    </div> 
   </div>
   
 </template>
@@ -99,15 +122,63 @@ import ClassSetAtt from '../components/ClassSetAtt.vue'
 import ClassSetRegi from '../components/ClassSetRegi.vue'
 import ClassSetDM from '../components/ClassSetDM.vue'
 import { ref, reactive } from 'vue'
+import { useStore } from "vuex"
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
+
+const store = useStore()
+const route = useRouter()
+const rout = useRoute()
+
+// 강의 정보 조회
+const getClassInfo = async () => {
+  await axios({
+    url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    state.lecInfo = res.data
+    state.lecImgUrl = store.state.lecture.lectureImgFirstUrl+res.data.lectureImg
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+getClassInfo()
 
 const state = reactive({
-  isinfo:true,
-  isatten:false,
-  isregi:false,
-  isdm:false,
-  isham:false,
+  lecInfo: {},
+  lecImgUrl: "",
+  isinfo: true,
+  isatten: false,
+  isregi: false,
+  isdm: false,
+  isham: false,
   curpage:"main",
 })
+
+// 강의 폐쇠 함수
+const deleteLecture = async () => {
+  await axios({
+    url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
+    method: 'delete',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    }
+  })
+  .then(res => {
+    route.replace({path:'/main'})
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
 
 const setfalse = () => {
   state.isinfo = false

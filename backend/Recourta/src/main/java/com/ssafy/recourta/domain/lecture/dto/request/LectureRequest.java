@@ -3,6 +3,7 @@ package com.ssafy.recourta.domain.lecture.dto.request;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
 import com.ssafy.recourta.domain.session.entity.Session;
+import com.ssafy.recourta.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -36,30 +37,30 @@ public class LectureRequest {
         private LocalDate startDate;
         @NotNull
         private LocalDate endDate;
-        private String lectureImg;
         @NotNull
         private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
-        public LectureCreateForm(Integer userId, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
+        public LectureCreateForm(Integer userId, String title, String content, LocalDate startDate, LocalDate endDate, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
             this.userId = userId;
             this.title = title;
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;
-            this.lectureImg = lectureImg;
             this.lectureTime = lectureTime;
         }
 
-        public Lecture toEntity(){
+        public Lecture toEntity(User user){
             return Lecture.builder()
+                    .user(user)
                     .title(title)
                     .content(content)
                     .startDate(startDate)
                     .endDate(endDate)
-                    .lectureImg(lectureImg)
+                    .lectureTime(lectureTime.toString())
                     .build();
         }
+
     }
 
     @Data
@@ -72,16 +73,14 @@ public class LectureRequest {
         private LocalDate startDate;
         @NotNull
         private LocalDate endDate;
-        private String lectureImg;
         @NotNull
         private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
-        public LectureUpdateForm(String content, LocalDate startDate, LocalDate endDate, String lectureImg, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
+        public LectureUpdateForm(String content, LocalDate startDate, LocalDate endDate, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
             this.content = content;
             this.startDate = startDate;
             this.endDate = endDate;
-            this.lectureImg = lectureImg;
             this.lectureTime = lectureTime;
         }
 

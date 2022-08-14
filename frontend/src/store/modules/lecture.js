@@ -1,6 +1,7 @@
 export const lecture = {
     state: {
-      lectureTimeList : [],
+      lectureTimeList: [],
+      lectureImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/lecture/',
     },
     getters: {
     },

@@ -49,7 +49,7 @@ export default createRouter({
       component: () => import('./views/ClassView.vue'),
     },
     {
-      path: '/classsetting',
+      path: '/classsetting/:lecId',
       name: 'classsetting',
       component: () => import('./views/ClassSettingView.vue'),
     },

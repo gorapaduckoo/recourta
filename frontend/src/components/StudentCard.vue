@@ -24,9 +24,7 @@
         <div class="text-3xl text-justify font-bold text-white">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
       </div>
       <div class="h-[275px] flex flex-col justify-around items-center py-4">
-        <router-link to="/class" class="w-[175px]">
-          <button class="w-full py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]">강의실 입장</button>
-        </router-link>
+        <button @click="enterClass" class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]">강의실 입장</button>
         <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]" data-bs-toggle="modal" data-bs-target="#attendanceModal">출결 확인</button>
         <button class="w-[175px] py-2.5 text-white rounded-md cursor-pointer bg-black hover:bg-neutral-700 border-gray-300 border-[3px]" data-bs-toggle="modal" data-bs-target="#classoutModal">수강 철회</button>
       </div>
@@ -110,22 +108,25 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { reactive } from 'vue'
+import { useStore } from 'vuex'
 
-export default {
-  setup(){
-    const state = reactive({
-      isMouseIn : false
-    })
-    const cardToggle = () => {
-      state.isMouseIn = !state.isMouseIn
-    }
-    return {
-      state,
-      cardToggle,
-    }
-  },
+const store = useStore()
+
+const state = reactive({
+  isMouseIn : false
+})
+const cardToggle = () => {
+  state.isMouseIn = !state.isMouseIn
+}
+
+const enterClass = () => {
+  store.commit("SET_MySessionId", 'SessionA')
+  store.commit("SET_MyUserName", '김싸피')
+  // store.commit("SET_MySessionId",String(props.lecture.lectureId))
+  // store.commit("SET_MyUserName",props.lecture.teacher)
+  location.href="/class"
 }
 </script>
 
