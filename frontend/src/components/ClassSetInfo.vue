@@ -1,15 +1,15 @@
 <template>
   <div class="px-3">class information</div>
-  <div>{{props.lecInfo}}</div>
-  <form class="pt-10 w-3/4 ml-auto mr-auto" @submit.prevent="editClassSubmit">
+  <div>{{store.state.lecture.lecInfo}}</div>
+  <form class="pt-10 w-4/5 lg:w-3/4 min-w-[450px] ml-auto mr-auto" @submit.prevent="editClassSubmit">
 
     <!-- 강의 기간 -->
     <div class="form-group mb-6 flex justify-between">
       <div class="flex flex-col justify-center">강의기간</div>
       <div class="flex justify-between w-4/5">
-        <input type="date" :value="props.lecInfo.startDate" id="editing_lecture_duration_start" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
+        <input type="date" :value="store.state.lecture.lecInfo.startDate" id="editing_lecture_duration_start" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
         <div class="flex flex-col justify-center">-</div>
-        <input type="date" :value="props.lecInfo.endDate" id="editing_lecture_duration_end" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
+        <input type="date" :value="store.state.lecture.lecInfo.endDate" id="editing_lecture_duration_end" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
       </div>
     </div>
 
@@ -51,7 +51,7 @@
     <!-- 강의 설명 -->
     <div class="form-group mb-6 flex justify-between">
       <div >강의 설명</div>
-      <textarea rows="3" :value="props.lecInfo.content" id="editing_lecture_info" name="editing_lecture_info" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required></textarea>
+      <textarea rows="3" :value="store.state.lecture.lecInfo.content" id="editing_lecture_info" name="editing_lecture_info" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required></textarea>
     </div>
 
     <!-- 강의 썸네일 -->
@@ -80,10 +80,11 @@ const store = useStore()
 const route = useRouter()
 
 const props = defineProps({
-  lecInfo : {
-    type: Object,
+  lecturetime : {
+    type: Array,
   }
 })
+
 
 const state = reactive({
   image: '',
@@ -92,7 +93,7 @@ const state = reactive({
 
 const firstLectimeList = () => {
   store.state.lecture.lectureTimeList = []
-  for (let lecTime of props.lecInfo.lectureTime) {
+  for (let lecTime of props.lecturetime) {
     let lectimeObj = {}
     const splitLectime = lecTime.split(' ')
     const splitStarttime = splitLectime[1].split(':')

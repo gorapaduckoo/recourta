@@ -3,7 +3,7 @@
   <CustomNavbar :curpage="state.curpage"/>
   <div class="hidden w-60 lg:flex lg:flex-col items-center h-full pt-[68px] absolute border-r-[1px] border-neutral-300 dark:border-neutral-500">
     <img class="rounded-md w-[224px] h-[126px] mb-[4px]" :src="state.lecImgUrl" alt=""/>
-    <div class="text-xl text-justify overflow-hidden px-2 w-full font-bold dark:font-semibold h-[56px]">{{ state.lecInfo.title }}</div>
+    <div class="text-xl text-justify overflow-hidden px-2 w-full font-bold dark:font-semibold h-[56px]">{{ store.state.lecture.lecInfo.title }}</div>
     
     <button @click="onClickInfo" :class="{'bg-[#ededed] dark:bg-[#545454]':state.isinfo,'bg-[#ffffff] dark:bg-[#444444]':!state.isinfo}" class="flex items-center w-[14.5rem] text-sm my-[3px] py-4 px-4 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded hover:bg-neutral-200 dark:hover:bg-[#5f5f5f]">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -73,18 +73,17 @@
       </svg>
     </button>
     
-    <button class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded text-[#fe5358] hover:text-white hover:bg-[#fe5358] border border-neutral-300 dark:border-neutral-500">
+    <button class="flex justify-center items-center text-sm my-[3px] py-2 px-6 h-10 overflow-hidden text-ellipsis whitespace-nowrap rounded text-[#fe5358] hover:text-white hover:bg-[#fe5358] border border-neutral-300 dark:border-neutral-500" data-bs-toggle="modal" data-bs-target="#closeLectureModal">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     </button>
   </div>
 
-  <div class="pt-[115px] text-justify mx-auto lg:hidden" >강의 제목</div>
+  <div class="pt-[115px] text-justify mx-auto lg:hidden" >{{ store.state.lecture.lecInfo.title }}</div>
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
-    <div>{{state.lecInfo}}</div>
-    <ClassSetInfo v-if="state.isinfo" :lecInfo="state.lecInfo"/>
+    <ClassSetInfo v-if="state.isinfo" :lecturetime="state.lecturetime"/>
     <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
     <ClassSetDM v-if="state.isdm"/>
@@ -142,7 +141,9 @@ const getClassInfo = async () => {
     }
   })
   .then(res => {
-    state.lecInfo = res.data
+    store.state.lecture.lecInfo = res.data
+    // 페이지 벗어날 때 lecInfo 초기화를 해줘야 할까...?
+    state.lecturetime = res.data.lectureTime
     state.lecImgUrl = store.state.lecture.lectureImgFirstUrl+res.data.lectureImg
   })
   .catch(err => {
@@ -153,7 +154,7 @@ const getClassInfo = async () => {
 getClassInfo()
 
 const state = reactive({
-  lecInfo: {},
+  lecturetime: [],
   lecImgUrl: "",
   isinfo: true,
   isatten: false,
