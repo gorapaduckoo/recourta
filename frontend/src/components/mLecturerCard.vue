@@ -28,10 +28,12 @@ const props = defineProps({
 })
 
 const enterClass = () => {
-  store.commit("SET_MySessionId", 'SessionA')
-  store.commit("SET_MyUserName", '김싸피')
-  // store.commit("SET_MySessionId",String(props.lecture.lectureId))
-  // store.commit("SET_MyUserName",props.lecture.teacher)
+  // store.commit("SET_MySessionId", 'SessionA')
+  // store.commit("SET_MyUserName", '김싸피')
+  store.commit("SET_MySessionId",String(props.lecture.lectureId))
+  store.commit("SET_LecturerName",props.lecture.teacher)
+  store.commit("SET_SidebarTitle", props.lecture.title)
+  store.commit("SET_IsLecturer", true)
   location.href="/class"
 }
 </script>
