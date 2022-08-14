@@ -7,8 +7,8 @@
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
-<div>
-  <ClassSubtitle v-if="state.issubtitle" :texts="state.texts"/>
+ <div class="text-center">
+  {{state.texts}}
 </div>
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
   <svg v-if="!state.isside" class="h-14 w-14"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,8 @@ const state = reactive({
   msgs:[],
   iscam:true,
   ismic:false,
-  issubtitle:false,
+  issubtitle:true,
+  texts:"",
 })
 
 // watch(()=>state.streamId,(newId,oldId)=>{
@@ -90,6 +91,7 @@ const togglemic = () => {
     recognition.start()
   } else {
     recognition.stop()
+    cnt=0
   }
 }
 
@@ -231,6 +233,16 @@ const leaveClass = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
+  // Select whether to save the lecture script
+  let issave = confirm("강의록을 저장하시겠습니까?")
+
+  if(issave) {
+    let blob = new Blob([scripts], {type: 'text/plain'})
+    link.href = window.URL.createObjectURL(blob)
+    link.download = 'lecturescript.txt'
+    link.click()
+  }
+
   state.session = undefined
   state.streamId = ""
   state.mainStreamManager = undefined
@@ -365,21 +377,28 @@ joinSession()
   
 
   // Create <p> element to insert on view
-  let texts = "";
   let p = document.createElement('p');
+  let link = document.createElement('a');
+  let scripts = ""; // lecture script text
+
 
   let cnt = 0;
   // When the Speech Recognition Server returns the result, concat '.' on result
   // if you want concat current result and results to be returned later, chain .join('') after map() function
   recognition.onresult = function(e) {
+    console.log(e);
     console.log(e.results[cnt])
-    texts = e.results[cnt][0].transcript;
+    state.texts = e.results[cnt][0].transcript;
     // texts = Array.from(e.results).map(result => result[0])
     // .map(result => (result.transcript));
+    scripts += state.texts;
+    scripts +='\n';
     cnt++;
 
+    console.log(state.texts)
+    console.log(scripts)
+
   // print {texts} on console
-    console.log(texts);
   }
 
 
