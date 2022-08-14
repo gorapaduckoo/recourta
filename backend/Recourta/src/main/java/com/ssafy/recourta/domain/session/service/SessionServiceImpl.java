@@ -44,13 +44,15 @@ public class SessionServiceImpl implements SessionService{
             );
             LocalDate startDate;
 
-
             if (!isUpdate) { // 새로 생성된 강의인 경우 개강일부터 세션 생성
                 startDate = lecture.getStartDate();
             } else { // 강의정보가 업데이트된 경우 내일부터 세션 생성
                 startDate = LocalDate.now().plusDays(1);
             }
             LocalDate endDate = lecture.getEndDate();
+
+            System.out.println(startDate + " " + endDate);
+            System.out.println(s.getEndHour() + " " + s.getEndMinute());
             LocalDate targetDate = startDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(s.getWeekDay())));
             while(targetDate.isBefore(endDate.plusDays(1))){
                 Session session = Session.builder()
