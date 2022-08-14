@@ -157,19 +157,21 @@ const editClassSubmit = async () => {
       console.log(err)
     })
   } else {
-    await axios({
-      url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
-      method: 'put',
+    let editfd = new FormData()
+    const data = {
+      content : document.getElementById('editing_lecture_info').value,
+      startDate : document.getElementById('editing_lecture_duration_start').value,
+      endDate : document.getElementById('editing_lecture_duration_end').value,
+      lectureTime : store.state.lecture.lectureTimeList,
+    }
+    const json = JSON.stringify(data)
+    const datablob = new Blob([json],{type:"application/json"})
+    editfd.append("request",datablob)
+    await axios.put(rct.lecture.lectureinfo(Number(rout.params.lecId)),editfd,{
       headers: {
         Authorization: store.state.user.accessToken,
-      },
-      data: {
-        content : document.getElementById('editing_lecture_info').value,
-        startDate : document.getElementById('editing_lecture_duration_start').value,
-        endDate : document.getElementById('editing_lecture_duration_end').value,
-        lectureTime : store.state.lecture.lectureTimeList,
-        lectureImg : store.state.lecture.lecInfo.lectureImg,
-      },
+        'Context-Type' : 'multipart/form-data',
+      }
     })
     .then(res => {
       console.log('이미지 안 보내는 거 성공')
