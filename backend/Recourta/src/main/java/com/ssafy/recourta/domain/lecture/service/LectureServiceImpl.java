@@ -112,15 +112,14 @@ public class LectureServiceImpl implements LectureService {
         if(userRepository.existsById(userId)) {
             List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now().minusDays(1));
 //            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
-            if(searchResult.size() == 0) {
-                throw new LectureException.NullLecture();
-            } else {
-                List<LectureResponse.LecturePreview> result = new ArrayList<>();
-                for (Lecture l: searchResult){
-                    result.add(l.toLecturePreview());
-                }
-                return result;
+
+            // 개설중인 강의가 없는 경우, 빈 리스트 반환
+            List<LectureResponse.LecturePreview> result = new ArrayList<>();
+            for (Lecture l: searchResult){
+                result.add(l.toLecturePreview());
             }
+            return result;
+
         // 존재하지 않는 회원인 경우
         } else {
             throw new UserNotFoundException();
