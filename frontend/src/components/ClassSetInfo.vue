@@ -1,7 +1,7 @@
 <template>
   <div class="px-3">class information</div>
   <div>{{props.lecInfo}}</div>
-  <form class="pt-10 w-4/5 ml-auto mr-auto" @submit.prevent="editClassSubmit">
+  <form class="pt-10 w-3/4 ml-auto mr-auto" @submit.prevent="editClassSubmit">
 
     <!-- 강의 기간 -->
     <div class="form-group mb-6 flex justify-between">
@@ -41,9 +41,9 @@
     <div class="flex justify-end mb-6">
       <div class="w-4/5">
         <LectureTime
-          v-for="lecTime in store.state.lecture.lectureTimeList"
-          :key="lecTime"
-          :lecTime="lecTime"
+          v-for="editLecTime in store.state.lecture.lectureTimeList"
+          :key="editLecTime"
+          :lecTime="editLecTime"
         />
       </div>
     </div>
@@ -68,6 +68,8 @@
 </template>
 
 <script setup>
+import LectureTime from '../components/LectureTime.vue'
+
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -84,12 +86,32 @@ const props = defineProps({
 })
 
 const state = reactive({
-  image : '',
+  image: '',
+  weekDays : ['', '월', '화', '수', '목', '금', '토', '일'],
 })
+
+const firstLectimeList = () => {
+  store.state.lecture.lectureTimeList = []
+  for (let lecTime of props.lecInfo.lectureTime) {
+    let lectimeObj = {}
+    const splitLectime = lecTime.split(' ')
+    const splitStarttime = splitLectime[1].split(':')
+    const splitEndtime = splitLectime[3].split(':')
+    lectimeObj['weekDay'] = state.weekDays.indexOf(splitLectime[0])
+    lectimeObj['startHour'] = splitStarttime[0]
+    lectimeObj['startMinute'] = splitStarttime[1]
+    lectimeObj['endHour'] = splitEndtime[0]
+    lectimeObj['endMinute'] = splitEndtime[1]
+    store.state.lecture.lectureTimeList.push(lectimeObj)
+  }
+}
+
+firstLectimeList()
 
 let editing_lecture_start_time = ref("00:00")
 let editing_lecture_end_time = ref("00:00")
 let editing_lecture_image = ref("")
+// document.getElementById('name').value
 
 const addLectureTime = () => {
   let lectureTime = {}

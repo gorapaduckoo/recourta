@@ -163,7 +163,7 @@ const state = reactive({
   curpage:"main",
 })
 
-// 강의 폐쇠 함수
+// 강의 폐쇄 함수
 const deleteLecture = async () => {
   await axios({
     url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
