@@ -9,7 +9,7 @@
           <line x1="15" y1="8" x2="19" y2="12" />
         </svg>
       </button>
-      <div class="text-xl text-justify">데이터로 표현한 세상과 아름다운 바다</div>
+      <div class="text-xl text-justify">{{ store.state.lecture.sidebarTitle }}</div>
       <button @click="togglelist" class="hover:text-neutral-200 text-neutral-400">
         <svg class="h-10 w-10"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -24,13 +24,13 @@
         온라인({{ state.attendList.length }})
       </button>
       <div v-if="state.isattendlist" class="flex flex-col">
-        <div v-for="name in state.attendList" class="px-5">{{ name[0] }}</div>
+        <div v-for="name in state.attendList" :key="name" class="px-5">{{ name[0] }}</div>
       </div>
       <button @click="toggleabsenlist" class="w-3/4 mt-3 text-left border-b-[1px] border-neutral-400">
         오프라인({{ state.absenList.length }})
       </button>
       <div v-if="state.isabsenlist">
-        <div v-for="name in state.absenList" class="px-5">{{ name }}</div>
+        <div v-for="name in state.absenList" :key="name" class="px-5">{{ name }}</div>
       </div>
     </div>
     <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] px-1 border-neutral-400">
@@ -63,6 +63,9 @@
 
 <script setup>
 import { reactive, defineEmits, defineProps, computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const msg = ref("")
 
@@ -125,7 +128,6 @@ const toggleattendlist = () => {
 watch(()=>props.msglist,(newm,oldm)=>{
   msg.value.scrollTop = msg.value.scrollHeight
 })
-
 
 </script>
 

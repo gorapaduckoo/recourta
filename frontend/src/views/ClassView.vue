@@ -1,6 +1,6 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
+  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
