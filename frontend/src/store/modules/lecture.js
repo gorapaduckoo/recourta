@@ -3,7 +3,6 @@ export const lecture = {
       lectureTimeList: [],
       lectureImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/lecture/',
       lecInfo: {},
-      sidebarTitle: "",
     },
     getters: {
     },
