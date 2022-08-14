@@ -258,38 +258,33 @@ const takePhoto = () => {
   context.drawImage(camera.value, 0, 0, 384, 288);
 }
 
-const sendemailtoserver = async () => {
-  const res = await axios({
-    url: rct.user.userauth(),
-    method: 'post',
-    data: {
-      email : email,
-    }
-  })
-
-  return res
-}
-
 const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = await sendemailtoserver()
-
-  if(res.data.success) {
-    state.isemailsend = true
-    state.isemailverified = false
-    state.isverify = true
-    if(state.Timer!==null) verifytimerStop(state.Timer)
+    await axios({
+      url: rct.user.userauth(),
+      method: 'post',
+      data: {
+        email : email,
+      }
+    }).then(res=>{
+      state.isemailsend = true
+      state.isemailverified = false
+      state.isverify = true
+      if(state.Timer!==null) verifytimerStop(state.Timer)
       state.emailsendbtnmsg='재발송'
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
       verifytimer()
-    }
-    else{
-      state.wrongemail='이미 가입된 이메일입니다'
-      state.isemail=false
-    }
+    })
+    .catch(err=>{
+      if(err.response.status===400){
+        state.wrongemail='이미 가입된 이메일입니다'
+        state.isemail=false
+      }
+      else console.log(err)
+    }) 
   }
   else {
     state.wrongemail='올바른 이메일을 입력하세요'
