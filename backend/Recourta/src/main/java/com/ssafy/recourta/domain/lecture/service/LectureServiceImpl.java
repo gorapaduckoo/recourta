@@ -77,7 +77,9 @@ public class LectureServiceImpl implements LectureService {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
         updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString());
-        imgUtil.uploadImage(updatedLecture, lectureImg);
+        if(lectureImg!=null) {
+            imgUtil.uploadImage(updatedLecture, lectureImg);
+        }
         Integer result = lectureRepository.save(updatedLecture).getLectureId();
 
 
