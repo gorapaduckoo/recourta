@@ -71,13 +71,14 @@
 import LectureTime from '../components/LectureTime.vue'
 
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from 'vuex'
 
 const store = useStore()
 const route = useRouter()
+const rout = useRoute()
 
 const props = defineProps({
   lecturetime : {
@@ -130,19 +131,19 @@ const addLectureTime = () => {
 }
 
 const editClassSubmit = async () => {
-  let classblob = await UrltoBlob(state.image)
-  let classfd = new FormData()
+  let editblob = await UrltoBlob(state.image)
+  let editfd = new FormData()
   const data = {
-    content : editing_lecture_info.value,
-    startDate : editing_lecture_duration_start.value,
-    endDate : editing_lecture_duration_end.value,
+    content : document.getElementById('editing_lecture_info').value,
+    startDate : document.getElementById('editing_lecture_duration_start').value,
+    endDate : document.getElementById('editing_lecture_duration_end').value,
     lectureTime : store.state.lecture.lectureTimeList,
   }
   const json = JSON.stringify(data)
   const datablob = new Blob([json],{type:"application/json"})
-  classfd.append("lectureImg",classblob)
-  classfd.append("request",datablob)
-  await axios.post(rct.lecture.lecturecreate(),classfd,{
+  editfd.append("lectureImg",editblob)
+  editfd.append("request",datablob)
+  await axios.put(rct.lecture.lectureinfo(Number(rout.params.lecId)),editfd,{
     headers: {
       Authorization: store.state.user.accessToken,
       'Context-Type' : 'multipart/form-data',
@@ -151,7 +152,6 @@ const editClassSubmit = async () => {
   .then(res => {
     console.log('성공')
     console.log(res.data)
-    modalClose()
   })
   .catch(err => {
     console.log('실패')
