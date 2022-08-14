@@ -1,11 +1,11 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
+  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  <div class="text-center">
   {{state.texts}}
@@ -42,8 +42,13 @@ const state = reactive({
   temppublisher: undefined,
   subscribers: [],
 
-  mySessionId: computed(()=>store.getters.currentMySessionId),
-  myUserName: computed(()=>store.getters.currentMyUserName),
+  mySessionId: store.getters.currentMySessionId,
+  myUserId: store.state.user.userId,
+  sidebarTitle: store.getters.currentSidebarTitle,
+
+  classRegiList: [['lecturer',store.getters.currentLecturerName]],
+  classAttList: [],
+  classAbsList: [],
 
   isshare:false,
   streamId:"",
@@ -51,8 +56,11 @@ const state = reactive({
   msgs:[],
   iscam:true,
   ismic:false,
-  issubtitle:true,
+  issubtitle:false,
   texts:"",
+  
+  isLecturer:store.getters.currentIsLecturer,
+  isAuth:false,
 })
 
 // watch(()=>state.streamId,(newId,oldId)=>{
@@ -81,22 +89,88 @@ const togglecam = () => {
 
 const togglemic = () => {
   state.ismic=!state.ismic
-  if(state.iscam)
-    state.publisher.publishAudio(true)
-  else
-    state.publisher.publishAudio(false)
-
-  // speech recognition
-  if(state.ismic) {
-    recognition.start()
-  } else {
-    recognition.stop()
-    cnt=0
-  }
+  if(state.iscam) state.publisher.publishAudio(true)
+  else state.publisher.publishAudio(false)
 }
 
+const reactiveAttList = () => {
+  console.log('start')
+  const tmpAttList = []
+  const tmpAbsList = []
+
+  // for (let usr of state.classRegiList) {
+  //   if(state.publisher && JSON.parse(state.publisher.stream.connection.data).clientData === usr[0]) {
+  //     tmpAttList.push([usr[0], usr[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection])
+  //   }
+    
+  //   else {
+  //     const sub = state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === usr[0])
+  //     if(sub) {
+  //       tmpAttList.push([usr[0], usr[1], sub.stream.connection.connectionId, sub.stream.connection])
+  //     } else {
+  //       tmpAbsList.push([usr[0], usr[1]])
+  //     }
+  //   }
+  // }
+
+  if (state.publisher) {
+    const tmpUserId = state.isLecturer? 'lecturer': state.myUserId
+    const tmpId = state.classRegiList.find(student => student[0] === tmpUserId)
+    tmpAttList.push([tmpId[0], tmpId[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection])
+  }
+
+  for (let sub of state.subscribers) {
+    const tmpId = state.classRegiList.find(student => student[0] === JSON.parse(sub.stream.connection.data).clientData)
+    tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection])
+  }
+
+  for (let student of state.classRegiList) {
+    const tmpId = state.classAttList.find(att => att[0] === student[0])
+    if (!tmpId && student[0] !== 'lecturer') tmpAbsList.push(student)
+  }
+
+  state.classAttList = tmpAttList
+  state.classAbsList = tmpAbsList
+}
+
+// const getConnectionData = () => {
+//   const conneclist = []
+//   conneclist.push([JSON.parse(props.publisher.stream.connection.data).clientData,props.publisher.stream.connection.connectionId,props.publisher.stream.connection]);
+//   for (let sub of props.subscribers) {
+//     conneclist.push([JSON.parse(sub.stream.connection.data).clientData,sub.stream.connection.connectionId,sub.stream.connection])
+//   }
+//   return conneclist
+// }
+
+const getRegiList = async () => {
+  await axios({
+    url: rct.regist.currentstudentlist(state.mySessionId),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  }).then(res=>{
+
+    for(let usr of res.data.userList){
+      state.classRegiList.push([usr.userId,usr.name])
+    }
+    console.log(res)
+    const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
+
+    for(let usr of tmpRegiList) {
+      state.classRegiList.push([usr[0], usr[1]])
+    }
+  })
+}
+
+
 const joinSession = () => {
+  console.log()
+  getRegiList()
+  
   state.OV = new OpenVidu();
+
 
   // --- Init a session ---
   state.session = state.OV.initSession();
@@ -107,7 +181,8 @@ const joinSession = () => {
   state.session.on('streamCreated', ({ stream }) => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
-    console.log(subscriber.stream.typeOfVideo)
+    reactiveAttList()
+    // console.log(subscriber.stream.typeOfVideo)
     if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
@@ -119,6 +194,7 @@ const joinSession = () => {
     if (index >= 0) {
       state.subscribers.splice(index, 1);
     }
+    reactiveAttList()
   });
 
   // On every asynchronous exception...
@@ -145,7 +221,8 @@ const joinSession = () => {
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
   getToken(state.mySessionId).then(token => {
-    state.session.connect(token, { clientData: state.myUserName })
+    const tmpClientData = state.isLecturer? 'lecturer': state.myUserId
+    state.session.connect(token, { clientData: tmpClientData })
       .then(() => {
 
         // --- Get your own camera stream with the desired properties ---
@@ -167,6 +244,7 @@ const joinSession = () => {
 
         // --- Publish your stream ---
         state.session.publish(state.publisher);
+        reactiveAttList()
       })
       .catch(error => {
         console.log('There was an error connecting to the session:', error.code, error.message);
@@ -400,8 +478,6 @@ joinSession()
 
   // print {texts} on console
   }
-
-
 
 </script>
 

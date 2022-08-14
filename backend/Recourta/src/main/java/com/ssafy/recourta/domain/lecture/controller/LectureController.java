@@ -37,16 +37,17 @@ public class LectureController {
     @PostMapping
     public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart("lectureImg")MultipartFile lectureImg) throws Exception {
         LectureResponse.LectureId result = LectureResponse.LectureId.builder().build();
+        try {
             result = lectureService.createLecture(lecture, lectureImg);
-            System.out.println(">>>>>>> " + result + " <<<<<<<<");
-            System.out.println(lecture.getLectureTime());
             Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
             if (sessionResult <= 0) {
-                System.out.println("생성된 세션 개수 0 이하!");
-                lectureService.deleteLecture(result.getLectureId());
                 throw new LectureException.SessionSaveFail(result.getLectureId());
             }
             return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch(Exception e) {
+            lectureService.deleteLecture(result.getLectureId());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{lectureId}")

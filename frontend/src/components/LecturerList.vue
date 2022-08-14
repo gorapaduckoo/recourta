@@ -10,6 +10,9 @@
 		<!-- The right line -->
 		<div class="flex-grow h-px bg-neutral-400 lg:w-3/4"></div>
 	</div>
+
+	<!-- 강의중인 강의가 없을 때 -->
+	<div v-if="!props.currentTeaching.length" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">현재 강의중인 강의가 없습니다.</div>
 	
 	<!-- Reactive Desktop -->
 	<div class="hidden lg:grid lg:pt-8 lg:grid-cols-2 xl:grid-cols-3">

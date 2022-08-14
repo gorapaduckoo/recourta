@@ -159,6 +159,9 @@ const addLectureTime = () => {
 
 const makeClassSubmit = async () => {
   let classblob = await UrltoBlob(state.image)
+  console.log(floating_lecture_image.value.files[0])
+  console.log(state.image)
+  console.log(classblob)
   let classfd = new FormData()
   const data = {
     userId : store.state.user.userId,

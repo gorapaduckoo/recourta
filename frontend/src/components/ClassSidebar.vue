@@ -9,7 +9,7 @@
           <line x1="15" y1="8" x2="19" y2="12" />
         </svg>
       </button>
-      <div class="text-xl text-justify">데이터로 표현한 세상과 아름다운 바다</div>
+      <div class="text-xl text-justify">{{ props.sidebarTitle }}</div>
       <button @click="togglelist" class="hover:text-neutral-200 text-neutral-400">
         <svg class="h-10 w-10"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -18,25 +18,25 @@
     </div>
     <div id="attabslist" class="flex-1 overflow-y-auto flex flex-col items-start p-2 border-b-[1px] border-neutral-400" v-if="state.isAtt">
       <div class="mb-3">
-        참가자({{ state.attendList.length+state.absenList.length }})
+        참가자({{ props.classAttList.length + props.classAbsList.length }})
       </div>
       <button @click="toggleattendlist" class="w-3/4 text-left border-b-[1px] border-neutral-400">
-        온라인({{ state.attendList.length }})
+        온라인({{ props.classAttList.length }})
       </button>
       <div v-if="state.isattendlist" class="flex flex-col">
-        <div v-for="name in state.attendList" class="px-5">{{ name[0] }}</div>
+        <div v-for="name in props.classAttList" :key="name" class="px-5">{{ name[1] }}</div>
       </div>
       <button @click="toggleabsenlist" class="w-3/4 mt-3 text-left border-b-[1px] border-neutral-400">
-        오프라인({{ state.absenList.length }})
+        오프라인({{ props.classAbsList.length }})
       </button>
       <div v-if="state.isabsenlist">
-        <div v-for="name in state.absenList" class="px-5">{{ name }}</div>
+        <div v-for="name in props.classAbsList" :key="name" class="px-5">{{ name[1] }}</div>
       </div>
     </div>
     <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] px-1 border-neutral-400">
       <div v-for="(msg,index) in props.msglist" :key="index">
         <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
-        <div v-else>{{state.attendList.find(v=>v[1]===msg[1])[0]}}:{{msg[0]}}</div>
+        <div v-else>{{props.classAttList.find(v => v[2]===msg[1])[1]}}:{{msg[0]}}</div>
       </div>
       <br />
     </div>
@@ -45,7 +45,7 @@
           <div class="class-none">받는 사람</div>
           <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.receiver" name="receiver" id="receiver">
             <option value="모두에게" selected>모두에게</option>
-            <option v-for="rec in state.attendList" :key="rec[1]" :value="rec[2]">{{ rec[0] }}</option>
+            <option v-for="rec in props.classAttList" :key="rec[0]" :value="rec[3]">{{ rec[1] }}</option>
           </select>
         </div>
         <div class="relative px-3 pt-2 mb-2">
@@ -63,6 +63,9 @@
 
 <script setup>
 import { reactive, defineEmits, defineProps, computed, ref, watch } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 const msg = ref("")
 
@@ -72,14 +75,15 @@ const props = defineProps({
   myID:String,
   publisher:Object,
   subscribers:Array,
+  sidebarTitle:String,
+  classAttList: Array,
+  classAbsList: Array,
 })
 
 const state = reactive({
   isAtt:false,
-  isattendlist:false,
+  isattendlist:true,
   isabsenlist:false,
-  attendList:computed(()=>getConnectionData()),
-  absenList:["유지슬","남궁준","이지영"],
   receiver:"모두에게",
   sendmsg:"",
 })
@@ -105,8 +109,9 @@ const submitmsg = () => {
   const reclist = []
   if(state.receiver!=="모두에게"){
     reclist.push(state.receiver)
-    if(state.receiver.connectionId!==state.attendList[0][1])reclist.push(state.attendList[0][2])
+    if(state.receiver.connectionId!==props.publisher.stream.connection.connectionId)reclist.push(props.publisher.stream.connection)
   }
+  console.log(reclist)
   if(state.sendmsg!=="") emit('submitMsg',state.sendmsg,reclist)
   state.sendmsg=""
   // console.log(state.msgheight)
@@ -126,7 +131,18 @@ watch(()=>props.msglist,(newm,oldm)=>{
   msg.value.scrollTop = msg.value.scrollHeight
 })
 
+const toggleattendlist = () => {
+  state.isattendlist=!state.isattendlist
+}
 
+watch(()=>props.msglist,(newm,oldm)=>{
+  msg.value.scrollTop = msg.value.scrollHeight
+})
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> 1ab93193465f8b040ccc0447da1a5c4e49ab6b3c
 </script>
 
 <style scoped>
