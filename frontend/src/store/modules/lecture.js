@@ -3,10 +3,16 @@ export const lecture = {
       lectureTimeList: [],
       lectureImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/lecture/',
       lecInfo: {},
+      searchList: [],
+      classification: 1,
+      searchText: "",
     },
     getters: {
     },
     mutations: {
+      UpdateSearchList:(state,searchList) => state.searchList = searchList,
+      UpdateClassification:(state,classification) => state.classification = classification,
+      UpdateSearchText:(state,searchText) => state.searchText = searchText,
     },
     actions: {
     },

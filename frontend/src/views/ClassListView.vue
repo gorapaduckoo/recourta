@@ -13,7 +13,7 @@
 		<div class="flex-grow h-px bg-neutral-400"></div> 
 
 		<!-- Your text here -->
-		<div class="flex-shrink text-2xl font-bold px-4">강의 목록</div>
+		<div class="flex-shrink text-2xl font-bold px-4">신청 가능한 강의</div>
 
 		<!-- The right line -->
 		<div class="flex-grow h-px bg-neutral-400 lg:w-3/4"></div>
@@ -21,7 +21,7 @@
 
   <SearchForm />
 
-  <SearchList />
+  <AllClassList :allClassList="state.allClassList"/>
 
   <!-- 강의 만들기 Modal -->
   <div class="modal fade bg-black bg-opacity-50 fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="classMakeModal" tabindex="-1" aria-labelledby="classMakeModalLabel" aria-hidden="true">
@@ -116,7 +116,7 @@
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
-import SearchList from '../components/SearchList.vue'
+import AllClassList from '../components/AllClassList.vue'
 import SearchForm from '../components/SearchForm.vue'
 import LectureTime from '../components/LectureTime.vue'
 
@@ -129,9 +129,28 @@ import { useStore } from 'vuex'
 const store = useStore()
 const route = useRouter()
 
+const getClassList = async () => {
+  await axios({
+    url: rct.lecture.lecturecreate(),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    }
+  })
+  .then(res => {
+    state.allClassList = res.data
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+getClassList()
+
 const state = reactive({
   curpage : "classList",
   image : '',
+  allClassList : [],
 })
 
 let floating_lecture_name = ref("")
@@ -159,9 +178,6 @@ const addLectureTime = () => {
 
 const makeClassSubmit = async () => {
   let classblob = await UrltoBlob(state.image)
-  console.log(floating_lecture_image.value.files[0])
-  console.log(state.image)
-  console.log(classblob)
   let classfd = new FormData()
   const data = {
     userId : store.state.user.userId,
@@ -182,12 +198,9 @@ const makeClassSubmit = async () => {
     }
   })
   .then(res => {
-    console.log('성공')
-    console.log(res.data)
     modalClose()
   })
   .catch(err => {
-    console.log('실패')
     console.log(err)
   })
 }
@@ -219,7 +232,6 @@ const modalClose = () => {
   document.getElementById('classMakeModal').classList.replace('show', 'hidden')
   route.replace({path:'/classlist'})
 }
-
 
 </script>
 
