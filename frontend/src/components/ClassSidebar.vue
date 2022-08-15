@@ -131,6 +131,14 @@ watch(()=>props.msglist,(newm,oldm)=>{
   msg.value.scrollTop = msg.value.scrollHeight
 })
 
+const toggleattendlist = () => {
+  state.isattendlist=!state.isattendlist
+}
+
+watch(()=>props.msglist,(newm,oldm)=>{
+  msg.value.scrollTop = msg.value.scrollHeight
+})
+
 </script>
 
 <style scoped>
