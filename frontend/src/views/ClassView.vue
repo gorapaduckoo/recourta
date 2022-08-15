@@ -479,6 +479,8 @@ joinSession()
   // print {texts} on console
   }
 
+
+
 </script>
 
 <style>
