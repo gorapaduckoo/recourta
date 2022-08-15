@@ -22,8 +22,7 @@ public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -8380158647791144627L;
 
     public static final long ACCESS_TOKEN_VALIDITY = 30 * 60L;              // 초 단위(=30분)
-//    public static final long REFRESH_TOKEN_VALIDITY = 3 * 24 * 60 * 60L;    // 초 단위(= 3일)
-    public static final long REFRESH_TOKEN_VALIDITY = 1L;
+    public static final long REFRESH_TOKEN_VALIDITY = 3 * 24 * 60 * 60L;    // 초 단위(= 3일)
 
     @Value("${jwt.secret}")                   // application.properties 에 저장된 값
     private String secretKey;

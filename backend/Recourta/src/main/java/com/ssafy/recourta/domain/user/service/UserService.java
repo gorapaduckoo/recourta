@@ -146,8 +146,8 @@ public class UserService {
     public User doLogin(UserRequest.Dologin request){
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);
 
-        if(!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-//        if(!passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(request.getPassword()))) {
+//        if(!passwordEncoder.matches(request.getPassword(),user.getPassword())) {
+        if(!passwordEncoder.matches(user.getPassword(), passwordEncoder.encode(request.getPassword()))) {
             throw new UserNotFoundException();
         }
 
