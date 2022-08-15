@@ -1,4 +1,5 @@
 <template>
+  <div>{{lecpreview}}</div>
   <div @mouseenter="cardToggle" @mouseleave="cardToggle" class="relative ml-auto mr-auto mb-10">
     <!-- 보이는 부분 -->
     <div class="w-[400px] h-[500px] z-0 border-2 rounded-lg border-[#2c5172] dark:border-neutral-500 bg-[#fffbf8] dark:bg-[#4c4c4c]">
@@ -42,15 +43,19 @@
           <!-- 본문 -->
           <div class="flex flex-wrap w-full mb-6">
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의명</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{  }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의자</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">김우석</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{  }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 기간</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">2022-09-01 ~ 2022-09-30</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{  }} ~ {{  }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 시간</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">월 13:00 ~ 15:00<br/>목 10:00 ~ 12:00<br/>금 09:00 ~ 12:00</div>
+            <div class="w-[260px] mb-6 flex flex-col">
+              <div class="text-start text-lg font-medium" v-for="lecturetime in lecpreview.lectureTime" :key="lecturetime">
+                <p>{{lecturetime}}</p>
+              </div>
+            </div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 설명</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">집가고싶다</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{  }}</div>
           </div>
 
           <p class="mb-4 font-bold dark:font-semibold text-2xl">해당 강의를 신청 하시겠습니까?</p>
@@ -70,7 +75,6 @@ import { useStore } from 'vuex'
 
 const store = useStore()
 
-// { "lectureId": 18, "title": "ggg", "teacher": "유지슬", "lectureImg": "b785ba11-e5ee-468a-b2cd-b2cf16684201.png", "lectureTime": [ "월 0:00 ~ 4:00", "토 0:00 ~ 4:00", "일 0:00 ~ 4:00" ] }
 const props = defineProps({
   lecpreview : {
     type: Object,
@@ -78,7 +82,7 @@ const props = defineProps({
 })
 
 const state = reactive({
-  isMouseIn : false
+  isMouseIn: false,
 })
 
 const lecpreviewThumbnail = store.state.lecture.lectureImgFirstUrl+props.lecpreview.lectureImg
