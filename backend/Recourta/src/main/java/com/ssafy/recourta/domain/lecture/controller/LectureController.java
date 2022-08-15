@@ -35,7 +35,7 @@ public class LectureController {
     private SessionService sessionService;
 
     @PostMapping
-    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart("lectureImg")MultipartFile lectureImg) throws Exception {
+    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart(value="lectureImg", required = false)MultipartFile lectureImg) throws Exception {
         LectureResponse.LectureId result = LectureResponse.LectureId.builder().build();
         try {
             result = lectureService.createLecture(lecture, lectureImg);
