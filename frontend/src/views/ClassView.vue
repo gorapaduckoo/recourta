@@ -10,9 +10,9 @@
       {{state.texts}}
     </div>
     <div v-else class="h-[44px]"></div>
-  <ClassToolbar class="flex-none" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+  <ClassToolbar class="flex-none" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
@@ -59,7 +59,7 @@ const state = reactive({
   isside:false,
   msgs:[],
   iscam:true,
-  ismic:true,
+  ismic:false,
   issubtitle:false,
   issublist:true,
   texts:"",
@@ -86,17 +86,15 @@ const togglecam = () => {
 
 const togglemic = () => {
   state.ismic=!state.ismic
-  if(state.iscam) state.publisher.publishAudio(true)
-  else state.publisher.publishAudio(false)
-  
-  // speech recognition
   if(state.ismic) {
-      recognition.start()
-    }
-    else {
-      recognition.stop()
-      cnt=0
-    }
+    state.publisher.publishAudio(true)
+    recognition.start()
+  }
+  else {
+    state.publisher.publishAudio(false)
+    recognition.stop()
+    cnt=0
+  }
 }
 
 const toggleSubtitle = () => {
@@ -129,12 +127,12 @@ const reactiveAttList = () => {
   if (state.publisher) {
     const tmpUserId = state.isLecturer? 'lecturer': state.myUserId
     const tmpId = state.classRegiList.find(student => student[0] === tmpUserId)
-    tmpAttList.push([tmpId[0], tmpId[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection])
+    tmpAttList.push([tmpId[0], tmpId[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection,state.publisher])
   }
 
   for (let sub of state.subscribers) {
     const tmpId = state.classRegiList.find(student => student[0] === JSON.parse(sub.stream.connection.data).clientData)
-    tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection])
+    tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection,sub])
   }
 
   for (let student of state.classRegiList) {
@@ -210,7 +208,7 @@ const joinSession = () => {
 
   // On every asynchronous exception...
   state.session.on('exception', ({ exception }) => {
-    console.warn(exception);
+    // console.warn(exception);
   });
 
   state.session.on('signal:my-chat', (event) => {
@@ -226,6 +224,34 @@ const joinSession = () => {
       state.mainStreamManager = state.publisher
     }
   })
+
+  state.session.on('signal:Auth',(event) => {
+    state.isAuth=!state.isAuth
+    if(state.isshare){
+      stopsharing()
+      state.isshare=false
+    }
+  })
+
+  state.session.on('signal:Cam',(event) => {
+    if(iscam) togglecam()
+  })
+
+  state.session.on('signal:Mic',(event) => {
+    if(ismic) togglemic()
+  })
+
+  state.session.on('signal:Ban',(event) => {
+    leaveClass()
+  })
+
+  state.session.on('publisherStartSpeaking', (event) => {
+    console.log('User ' + event.connection.connectionId + ' start speaking');
+  });
+
+  state.session.on('publisherStopSpeaking', (event) => {
+    console.log('User ' + event.connection.connectionId + ' stop speaking');
+  });
 
   // --- Connect to the session with a valid user token ---
 
@@ -382,7 +408,7 @@ const startsharing = () => {
       // Function to be executed when the method finishes
       if (error) {
         console.error(
-          "Error while initializing publisher: =====================================뉴퍼블리셔 게시하는도중에 에러가 발생했다",
+          "Error while initializing publisher",
           error
         );
         state.publisher = state.temppublisher;
@@ -476,8 +502,6 @@ joinSession()
 
   // print {texts} on console
   }
-
-  recognition.start()
 
 </script>
 

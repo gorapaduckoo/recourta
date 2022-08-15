@@ -20,17 +20,59 @@
       <div class="mb-3">
         참가자({{ props.classAttList.length + props.classAbsList.length }})
       </div>
-      <button @click="toggleattendlist" class="w-3/4 text-left border-b-[1px] border-neutral-400">
+      <button @click="toggleattendlist" class="w-full text-left border-b-[1px] mb-1 border-neutral-400">
         온라인({{ props.classAttList.length }})
       </button>
-      <div v-if="state.isattendlist" class="flex flex-col">
-        <div v-for="name in props.classAttList" :key="name" class="px-5">{{ name[1] }}</div>
+      <div v-if="state.isattendlist" class="flex w-full flex-col">
+        <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
+          <div>
+            {{ name[1] }}
+          </div>
+          <div v-if="index" class="flex items-center space-x-2">
+            <button @click="onClickAuth(name[4])" class="hover:text-neutral-200 text-neutral-400">
+              <svg v-if="props.isLecturer" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+            </button>
+            <button @click="onClickCam(name[4])" class="hover:text-neutral-200 text-neutral-400">
+              <svg v-if="!state.camBanList.find(connectionid => connectionid === name[2])" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+              <svg v-else class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+                <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+            </button>
+            <button @click="onClickMic(name[4])" class="hover:text-neutral-200 text-neutral-400">
+              <svg v-if="!state.micBanList.find(connectionid => connectionid === name[2])" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+              <svg v-else class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <line x1="1" y1="1" x2="23" y2="23" />  <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6" />
+                <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+            <button @click="onClickBan(name[4])">
+              <svg v-if="props.isLecturer" class="h-5 w-5 mr-auto ml-auto text-[#fe5358]"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>
+                <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                <path d="M7 12h14l-3 -3m0 6l3 -3" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
-      <button @click="toggleabsenlist" class="w-3/4 mt-3 text-left border-b-[1px] border-neutral-400">
+      <button @click="toggleabsenlist" class="w-full mt-3 mb-1 text-left border-b-[1px] border-neutral-400">
         오프라인({{ props.classAbsList.length }})
       </button>
       <div v-if="state.isabsenlist">
-        <div v-for="name in props.classAbsList" :key="name" class="px-5">{{ name[1] }}</div>
+        <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
     <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] px-1 border-neutral-400">
@@ -78,6 +120,7 @@ const props = defineProps({
   sidebarTitle:String,
   classAttList: Array,
   classAbsList: Array,
+  isLecturer: Boolean,
 })
 
 const state = reactive({
@@ -86,16 +129,9 @@ const state = reactive({
   isabsenlist:false,
   receiver:"모두에게",
   sendmsg:"",
+  camBanList:[],
+  micBanList:[],
 })
-
-const getConnectionData = () => {
-  const conneclist = []
-  conneclist.push([JSON.parse(props.publisher.stream.connection.data).clientData,props.publisher.stream.connection.connectionId,props.publisher.stream.connection]);
-  for (let sub of props.subscribers) {
-    conneclist.push([JSON.parse(sub.stream.connection.data).clientData,sub.stream.connection.connectionId,sub.stream.connection])
-  }
-  return conneclist
-}
 
 const togglelist = () => {
   state.isAtt=!state.isAtt
@@ -125,6 +161,39 @@ const toggleabsenlist = () => {
 
 const toggleattendlist = () => {
   state.isattendlist=!state.isattendlist
+}
+
+
+const onClickAuth = (sub) => {
+
+}
+
+const onClickCam = (sub) => {
+  if(state.camBanList.find(connectionid => connectionid === sub.stream.connection.connectionId)){
+    sub.subscribeToVideo(true)
+    const tmpcamBanList = state.camBanList.filter(conid=>conid!==sub.stream.connection.connectionId)
+    state.camBanList = tmpcamBanList
+  }
+  else {
+    sub.subscribeToVideo(false)
+    state.camBanList.push(sub.stream.connection.connectionId)
+  }
+}
+
+const onClickMic = (sub) => {
+  if(state.micBanList.find(connectionid => connectionid === sub.stream.connection.connectionId)){
+    sub.subscribeToAudio(true)
+    const tmpmicBanList = state.micBanList.filter(conid=>conid!==sub.stream.connection.connectionId)
+    state.micBanList = tmpmicBanList
+  }
+  else {
+    sub.subscribeToAudio(false)
+    state.micBanList.push(sub.stream.connection.connectionId)
+  }
+}
+
+const onClickBan = (sub) => {
+  
 }
 
 watch(()=>props.msglist,(newm,oldm)=>{
