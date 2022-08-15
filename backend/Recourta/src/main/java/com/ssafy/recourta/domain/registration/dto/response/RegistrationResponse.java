@@ -1,6 +1,7 @@
 package com.ssafy.recourta.domain.registration.dto.response;
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
+import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import lombok.*;
 
@@ -23,10 +24,10 @@ public class RegistrationResponse {
 
     @Getter
     public static class UserList {
-        private List<User> userList;
+        private List<UserResponse.Search> userList;
 
         @Builder
-        public UserList(List<User> userList) {
+        public UserList(List<UserResponse.Search> userList) {
             this.userList = userList;
         }
     }
@@ -37,6 +38,24 @@ public class RegistrationResponse {
 
         @Builder CurrentLectureList(List<Lecture> lectureList) {
             this.lectureList = lectureList;
+        }
+    }
+
+    @Getter
+    public static class PreviousLectureList {
+        private List<Lecture> lectureList;
+
+        @Builder PreviousLectureList(List<Lecture> lectureList) {
+            this.lectureList = lectureList;
+        }
+    }
+
+    @Getter
+    public static class RegistrationId {
+        private long registrationId;
+
+        @Builder RegistrationId(long registrationId) {
+            this.registrationId = registrationId;
         }
     }
 }

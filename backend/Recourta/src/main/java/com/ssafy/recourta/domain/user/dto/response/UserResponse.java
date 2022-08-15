@@ -3,6 +3,8 @@ package com.ssafy.recourta.domain.user.dto.response;
 import com.ssafy.recourta.domain.user.entity.User;
 import lombok.*;
 
+import java.util.List;
+
 public class UserResponse {
 
 
@@ -54,5 +56,15 @@ public class UserResponse {
         }
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class UserInfoList {
+        private List<Search> userInfoList;
 
+        @Builder
+        UserInfoList(List<Search> userInfoList) {
+            this.userInfoList = userInfoList;
+        }
+    }
 }
