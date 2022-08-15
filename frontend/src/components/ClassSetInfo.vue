@@ -89,29 +89,6 @@ const state = reactive({
   image: '',
   weekDays : ['', '월', '화', '수', '목', '금', '토', '일'],
 })
-import LectureTime from '../components/LectureTime.vue'
-
-import { ref, reactive } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
-import rct from '../api/rct'
-import { useStore } from 'vuex'
-
-const store = useStore()
-const route = useRouter()
-const rout = useRoute()
-
-const props = defineProps({
-  lecturetime : {
-    type: Array,
-  }
-})
-
-
-const state = reactive({
-  image: '',
-  weekDays : ['', '월', '화', '수', '목', '금', '토', '일'],
-})
 
 const firstLectimeList = () => {
   store.state.lecture.lectureTimeList = []
@@ -185,13 +162,13 @@ const editClassSubmit = async () => {
       method: 'put',
       headers: {
         Authorization: store.state.user.accessToken,
+        'Context-Type' : 'multipart/form-data',
       },
       data: {
         content : document.getElementById('editing_lecture_info').value,
         startDate : document.getElementById('editing_lecture_duration_start').value,
         endDate : document.getElementById('editing_lecture_duration_end').value,
         lectureTime : store.state.lecture.lectureTimeList,
-        lectureImg : store.state.lecture.lecInfo.lectureImg,
       },
     })
     .then(res => {
