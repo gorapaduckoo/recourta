@@ -30,7 +30,7 @@ import ClassSidebar from '../components/ClassSidebar.vue'
 import axios from 'axios'
 import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
-import { reactive, computed, watch } from 'vue'
+import { reactive } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()

@@ -20,11 +20,13 @@ export default {
   lecture: {
     lecturecreate: () => HOST + LECTURE,
     lectureinfo: lectureid => HOST + LECTURE + '/' + lectureid,
-    currentteaching: userid => HOST + LECTURE + '/' + userid + '/currentTeachingList'
+    currentteaching: userid => HOST + LECTURE + '/' + userid + '/currentTeachingList',
+    currentlearning: userid => HOST + LECTURE + '/' + userid + '/currentLectureList'
   },
   regist: {
     regist: () => HOST + REGIST,
     registinfo: regiid => HOST + REGIST + '/' + regiid,
+    registlearning: userid => HOST + REGIST + USER + '/current/' + userid,
     currentstudentlist: lectureid => HOST + REGIST + '/lecture/' + lectureid,
   },
   login: {
