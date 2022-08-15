@@ -1,7 +1,10 @@
 <template>
 <div class="bg-[#444444] text-white">
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers" class="mb-8 flex-1"/>
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" class="flex-1"/>
+    <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
+      <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
+    </button>
     <ClassMain id="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <div v-if="state.issubtitle" class="w-[800px] text-center my-2 text-lg">
       {{state.texts}}
@@ -49,6 +52,7 @@ const state = reactive({
   classRegiList: [['lecturer',store.getters.currentLecturerName]],
   classAttList: [],
   classAbsList: [],
+  userAll: [],
 
   isshare:false,
   streamId:"",
@@ -57,6 +61,7 @@ const state = reactive({
   iscam:true,
   ismic:true,
   issubtitle:false,
+  issublist:true,
   texts:"",
   
   isLecturer:store.getters.currentIsLecturer,
@@ -98,8 +103,11 @@ const toggleSubtitle = () => {
   state.issubtitle=!state.issubtitle
 }
 
+const toggleSublist = () => {
+  state.issublist=!state.issublist
+}
+
 const reactiveAttList = () => {
-  console.log('start')
   const tmpAttList = []
   const tmpAbsList = []
 
@@ -136,16 +144,16 @@ const reactiveAttList = () => {
 
   state.classAttList = tmpAttList
   state.classAbsList = tmpAbsList
+
+  const tmpUser = []
+
+  if (state.publisher) tmpUser.push(state.publisher)
+
+  tmpUser.push(...state.subscribers)
+
+  state.userAll = tmpUser
 }
 
-// const getConnectionData = () => {
-//   const conneclist = []
-//   conneclist.push([JSON.parse(props.publisher.stream.connection.data).clientData,props.publisher.stream.connection.connectionId,props.publisher.stream.connection]);
-//   for (let sub of props.subscribers) {
-//     conneclist.push([JSON.parse(sub.stream.connection.data).clientData,sub.stream.connection.connectionId,sub.stream.connection])
-//   }
-//   return conneclist
-// }
 
 const getRegiList = async () => {
   await axios({
@@ -160,7 +168,6 @@ const getRegiList = async () => {
     for(let usr of res.data.userList){
       state.classRegiList.push([usr.userId,usr.name])
     }
-    console.log(res)
     const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
 
     for(let usr of tmpRegiList) {
@@ -168,6 +175,7 @@ const getRegiList = async () => {
     }
   })
 }
+
 
 
 const joinSession = () => {
@@ -186,7 +194,6 @@ const joinSession = () => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
     reactiveAttList()
-    // console.log(subscriber.stream.typeOfVideo)
     if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
@@ -251,7 +258,6 @@ const joinSession = () => {
         reactiveAttList()
       })
       .catch(error => {
-        console.log('There was an error connecting to the session:', error.code, error.message);
       });
   });
 
@@ -277,7 +283,6 @@ const createSession = (sessionId) => {
       .then(data => resolve(data.id))
       .catch(error => {
         if (error.response.status === 409) {
-          console.log(error)
           resolve(sessionId);
         } else {
           console.warn(`No connection to OpenVidu Server. This may be a certificate error at ${rct.webrtc.openvd_url()}`);
@@ -353,7 +358,6 @@ const sendMsg = (data,reciever) => {
     type: 'my-chat'             // The type of message (optional)
   })
   .then(() => {
-    // console.log('Message successfully sent')
   })
   .catch(error => {
     console.error(error)
@@ -384,7 +388,6 @@ const startsharing = () => {
         state.publisher = state.temppublisher;
         state.session.publish(state.publisher);
       } else {
-        console.log("Publisher successfully initialized");
       }
     }
   );
@@ -410,10 +413,8 @@ const startsharing = () => {
     }
   });
   state.session.unpublish(state.publisher)
-  // console.log(state.publisher)
   state.temppublisher = state.publisher
   state.publisher = newPublisher
-  // console.log(state.publisher)
   state.session.publish(state.publisher)
   sss('ON')
   // state.streamId = state.publisher.stream.connection.connectionId
@@ -430,14 +431,12 @@ const stopsharing = () => {
 
 // sendscreenshare => sss
 const sss = (data) => {
-  console.log("sharing:",data)
   state.session.signal({
     data: data,  // Any string (optional)
     to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
     type: 'screenshare'             // The type of message (optional)
   })
   .then(() => {
-    // console.log('Message successfully sent')
   })
   .catch(error => {
     console.error(error)
@@ -468,17 +467,12 @@ joinSession()
   // When the Speech Recognition Server returns the result, concat '.' on result
   // if you want concat current result and results to be returned later, chain .join('') after map() function
   recognition.onresult = function(e) {
-    console.log(e);
-    console.log(e.results[cnt])
     state.texts = e.results[cnt][0].transcript;
     // texts = Array.from(e.results).map(result => result[0])
     // .map(result => (result.transcript));
     scripts += state.texts;
     scripts +='\n';
     cnt++;
-
-    console.log(state.texts)
-    console.log(scripts)
 
   // print {texts} on console
   }
