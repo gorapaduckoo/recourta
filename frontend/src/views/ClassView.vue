@@ -1,13 +1,13 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers" class="mb-8"/>
-    <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
+  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-screen py-2 justify-between items-center font-bold text-4xl">
+    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers" class="mb-8 flex-1"/>
+    <ClassMain id="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <div v-if="state.issubtitle" class="w-[800px] text-center my-2 text-lg">
       {{state.texts}}
     </div>
     <div v-else class="h-[44px]"></div>
-  <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+  <ClassToolbar class="flex-none" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
@@ -487,6 +487,8 @@ joinSession()
 
 </script>
 
-<style>
-
+<style scoped>
+#mainscreen{
+  flex:5 1 0%;
+}
 </style>
