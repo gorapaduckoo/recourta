@@ -7,8 +7,6 @@ import com.ssafy.recourta.domain.registration.service.RegistrationService;
 import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.RegistrationException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +17,6 @@ import java.text.ParseException;
 @RestController
 @RequestMapping("/registration")
 public class RegistrationController {
-    private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
     @Autowired
     private RegistrationService registrationService;

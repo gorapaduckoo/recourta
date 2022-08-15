@@ -133,10 +133,11 @@ public class LectureServiceImpl implements LectureService {
     public List<LectureResponse.LectureDetail> searchMyLecture(Integer userId) throws ParseException {
         List<LectureResponse.LectureDetail> result  = new ArrayList<>();
         if(userRepository.existsById(userId)) {
-            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
-            for (Lecture l : lectures) {
-                result.add(l.toLecturePreview());
-            }
+//            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
+//            for (Lecture l : lectures) {
+//                result.add(l.toLecturePreview());
+//            }
+            result = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
         } else {
             throw new UserNotFoundException();
         }

@@ -1,6 +1,5 @@
 package com.ssafy.recourta.domain.registration.service;
 
-import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
 import com.ssafy.recourta.domain.registration.dto.request.RegistrationRequest;
 import com.ssafy.recourta.domain.registration.dto.response.RegistrationResponse;
 
