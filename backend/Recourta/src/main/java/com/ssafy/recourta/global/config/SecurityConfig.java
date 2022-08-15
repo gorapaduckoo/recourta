@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
@@ -44,6 +45,7 @@ public class SecurityConfig{
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                     .antMatchers("/user").permitAll()
                     .antMatchers("/user/**").authenticated()
                     .antMatchers("/css/**", "/images/**",

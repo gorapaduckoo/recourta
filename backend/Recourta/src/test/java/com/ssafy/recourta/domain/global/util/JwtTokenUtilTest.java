@@ -18,7 +18,7 @@ class JwtTokenUtilTest {
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
-    @Test
+//    @Test
     public void validateTokenTest() {
         User user = User.builder()
                 .userId(1)
