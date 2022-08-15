@@ -12,7 +12,7 @@
     <div v-else class="h-[44px]"></div>
   <ClassToolbar class="flex-none" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
@@ -234,11 +234,11 @@ const joinSession = () => {
   })
 
   state.session.on('signal:Cam',(event) => {
-    if(iscam) togglecam()
+    if(state.iscam) togglecam()
   })
 
   state.session.on('signal:Mic',(event) => {
-    if(ismic) togglemic()
+    if(state.ismic) togglemic()
   })
 
   state.session.on('signal:Ban',(event) => {
@@ -382,6 +382,58 @@ const sendMsg = (data,reciever) => {
     data: data,  // Any string (optional)
     to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
     type: 'my-chat'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendauth = (reciever) => {
+  state.session.signal({
+    data: "auth",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Auth'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendcam = (reciever) => {
+  state.session.signal({
+    data: "cam",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Cam'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendmic = (reciever) => {
+  state.session.signal({
+    data: "mic",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Mic'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendban = (reciever) => {
+  state.session.signal({
+    data: "ban",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Ban'             // The type of message (optional)
   })
   .then(() => {
   })
