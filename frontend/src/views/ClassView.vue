@@ -1,15 +1,17 @@
 <template>
 <div class="bg-[#444444] text-white">
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
+    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers" class="mb-8"/>
     <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
+    <div v-if="state.issubtitle" class="w-[800px] text-center my-2 text-lg">
+      {{state.texts}}
+    </div>
+    <div v-else class="h-[44px]"></div>
+  <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
- <div class="text-center">
-  {{state.texts}}
-</div>
+ 
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
   <svg v-if="!state.isside" class="h-14 w-14"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
@@ -53,7 +55,7 @@ const state = reactive({
   isside:false,
   msgs:[],
   iscam:true,
-  ismic:false,
+  ismic:true,
   issubtitle:false,
   texts:"",
   
@@ -81,6 +83,19 @@ const togglemic = () => {
   state.ismic=!state.ismic
   if(state.iscam) state.publisher.publishAudio(true)
   else state.publisher.publishAudio(false)
+  
+  // speech recognition
+  if(state.ismic) {
+      recognition.start()
+    }
+    else {
+      recognition.stop()
+      cnt=0
+    }
+}
+
+const toggleSubtitle = () => {
+  state.issubtitle=!state.issubtitle
 }
 
 const reactiveAttList = () => {
@@ -156,7 +171,6 @@ const getRegiList = async () => {
 
 
 const joinSession = () => {
-  console.log()
   getRegiList()
   
   state.OV = new OpenVidu();
@@ -301,6 +315,16 @@ const leaveClass = () => {
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
+  // Select whether to save the lecture script
+  let issave = confirm("강의록을 저장하시겠습니까?")
+
+  if(issave) {
+    let blob = new Blob([scripts], {type: 'text/plain'})
+    link.href = window.URL.createObjectURL(blob)
+    link.download = state.sidebarTitle + '_강의록.txt'
+    link.click()
+  }
+
   state.session = undefined
   state.streamId = ""
   state.mainStreamManager = undefined
@@ -313,7 +337,7 @@ const leaveClass = () => {
   state.iscam=false
   state.isshare=false
   state.isside=false
-  msgs=[]
+  state.msgs=[]
 
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
@@ -458,6 +482,8 @@ joinSession()
 
   // print {texts} on console
   }
+
+  recognition.start()
 
 </script>
 
