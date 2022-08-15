@@ -23,10 +23,9 @@ onMounted(() => {
 
   const video = document.querySelector('video')
 
-  setInterval(async() => {
-    const detections = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withAgeAndGender()
+  console.log(">>>>>>>>>>>.here!<<<<<<<<<<<<<")
+  const detections = faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions()).withAgeAndGender()
   console.log(detections)
-  })
 })
 
 
