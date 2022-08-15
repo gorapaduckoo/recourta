@@ -110,14 +110,14 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
+    public List<LectureResponse.LectureDetail> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
         if(userRepository.existsById(userId)) {
             List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now().minusDays(1));
 //            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
 
             // 개설중인 강의가 없는 경우, 빈 리스트 반환
-            List<LectureResponse.LecturePreview> result = new ArrayList<>();
+            List<LectureResponse.LectureDetail> result = new ArrayList<>();
             for (Lecture l: searchResult){
                 result.add(l.toLecturePreview());
             }
@@ -130,8 +130,8 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
-        List<LectureResponse.LecturePreview> result  = new ArrayList<>();
+    public List<LectureResponse.LectureDetail> searchMyLecture(Integer userId) throws ParseException {
+        List<LectureResponse.LectureDetail> result  = new ArrayList<>();
         if(userRepository.existsById(userId)) {
             List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
             for (Lecture l : lectures) {
@@ -144,14 +144,14 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public List<LectureResponse.LecturePreview> searchAvailableLecture() throws Exception {
+    public List<LectureResponse.LectureDetail> searchAvailableLecture() throws Exception {
 
-        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<LectureResponse.LectureDetail> result = new ArrayList<>();
         List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
 
         // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
         for (Lecture l : lectures) {
-            result.add(l.toLecturePreview());
+            result.add(l.toLectureDetail());
         }
         return result;
     }
