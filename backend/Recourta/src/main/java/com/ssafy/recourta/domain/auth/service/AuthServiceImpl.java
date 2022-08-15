@@ -2,6 +2,7 @@ package com.ssafy.recourta.domain.auth.service;
 
 import com.ssafy.recourta.domain.auth.dto.TokenDto;
 import com.ssafy.recourta.domain.user.entity.User;
+import com.ssafy.recourta.global.exception.AuthException;
 import com.ssafy.recourta.global.util.JwtTokenUtil;
 import com.ssafy.recourta.global.util.RedisUtil;
 import io.jsonwebtoken.Claims;
@@ -25,7 +26,7 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtTokenUtil.generateRefreshToken();
 
         String userId = String.valueOf(user.getUserId());
-        redisUtil.setDataExpire(userId, refreshToken, 3 * 24 * 60 * 60L);
+        redisUtil.setDataExpire(userId, refreshToken, JwtTokenUtil.REFRESH_TOKEN_VALIDITY);
 
         return TokenDto.Refresh.builder()
                                 .accessToken(accessToken)
@@ -34,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public TokenDto.Refresh refreshTokens(String accessToken, String refreshToken) throws Exception {
+    public TokenDto.Refresh refreshTokens(String accessToken, String refreshToken) {
         String userId = jwtTokenUtil.getUserIdFromToken(accessToken);
 
         if(jwtTokenUtil.validateToken(refreshToken) && refreshToken.equals(redisUtil.getData(userId))) {
@@ -42,14 +43,14 @@ public class AuthServiceImpl implements AuthService {
             Claims claims = jwtTokenUtil.getClaims(user);
             String newAccessToken = jwtTokenUtil.generateAccessToken(claims);
             String newRefreshToken = jwtTokenUtil.generateRefreshToken();
-            redisUtil.setDataExpire(userId, newRefreshToken, 3 * 24 * 60 * 60L);    // JwtTokenUtil과 똑같이 설정
+            redisUtil.setDataExpire(userId, newRefreshToken, JwtTokenUtil.REFRESH_TOKEN_VALIDITY);    // JwtTokenUtil과 똑같이 설정
 
             return TokenDto.Refresh.builder()
                                     .accessToken(newAccessToken)
                                     .refreshToken(newRefreshToken)
                                     .build();
         } else {
-            throw new Exception();
+            throw new AuthException.RefreshTokenExpired();
         }
     }
 }
