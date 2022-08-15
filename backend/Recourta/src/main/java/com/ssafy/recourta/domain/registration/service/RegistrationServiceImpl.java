@@ -1,5 +1,6 @@
 package com.ssafy.recourta.domain.registration.service;
 
+import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.registration.dto.request.RegistrationRequest;
@@ -12,13 +13,10 @@ import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.RegistrationException;
 import com.ssafy.recourta.global.exception.UserNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -26,8 +24,6 @@ import java.util.List;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService {
-
-    Logger logger = LoggerFactory.getLogger(RegistrationServiceImpl.class);
 
     @Autowired
     RegistrationRepository registrationRepository;
@@ -41,11 +37,11 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public RegistrationResponse.LectureList getLecturesOfUser(Integer userId) {
         List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
-        List<Lecture> lectureList = new ArrayList<>();
+        List<LectureResponse.LecturePreview> lectureList = new ArrayList<>();
 
         for(Registration registration : registrationList) {
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
-            lectureList.add(lecture);
+            lectureList.add(lecture.toLecturePreview());
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(lectureList).build();
@@ -67,7 +63,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) {
         List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
-        List<Lecture> currentLectureList = new ArrayList<>();
+        List<LectureResponse.LecturePreview> currentLectureList = new ArrayList<>();
 
 //        SimpleDateFormat sdformat = new SimpleDateFormat("yyyyMMdd");
 //        Date now = Date.valueOf(sdformat.format(new Date(System.currentTimeMillis())));
@@ -76,7 +72,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
             LocalDate startDate = lecture.getStartDate();
             LocalDate endDate = lecture.getEndDate();
-            if((startDate.isBefore(LocalDate.now()) || startDate.equals(LocalDate.now())) && (endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now()))) currentLectureList.add(lecture);
+            if((startDate.isBefore(LocalDate.now()) || startDate.equals(LocalDate.now())) && (endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now()))) currentLectureList.add(lecture.toLecturePreview());
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(currentLectureList).build();
@@ -85,14 +81,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public RegistrationResponse.LectureList getPreviousLecturesOfUser(Integer userId) {
         List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
-        List<Lecture> previousLectureList = new ArrayList<>();
+        List<LectureResponse.LecturePreview> previousLectureList = new ArrayList<>();
 
         for(Registration registration : registrationList) {
             System.out.println(registration.getLecture().getLectureId());
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
             LocalDate startDate = lecture.getStartDate();
             LocalDate endDate = lecture.getEndDate();
-            if(startDate.isBefore(LocalDate.now()) && endDate.isBefore(LocalDate.now())) previousLectureList.add(lecture);
+            if(startDate.isBefore(LocalDate.now()) && endDate.isBefore(LocalDate.now())) previousLectureList.add(lecture.toLecturePreview());
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(previousLectureList).build();
@@ -121,10 +117,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         Lecture lecture = lectureRepository.findById(registrationInfo.getLectureId()).orElseThrow(() -> new LectureException.UnvalidLectureId(registrationInfo.getLectureId()));
         Registration registration = registrationRepository.findByUserUserIdAndLectureLectureId(user.getUserId(), lecture.getLectureId()).orElseThrow(() -> new RegistrationException.RegistrationDoesNotExist());
 
-        logger.info("" + registration.getId());
         try {
-            logger.info("" + registration.getUser().getUserId());
-            logger.info("" + registration.getLecture().getLectureId());
             registrationRepository.deleteByUserUserIdAndLectureLectureId(registration.getUser().getUserId(), registration.getLecture().getLectureId());
             return RegistrationResponse.RegistrationId.builder().registrationId(registration.getId()).build();
         } catch(Exception e) {

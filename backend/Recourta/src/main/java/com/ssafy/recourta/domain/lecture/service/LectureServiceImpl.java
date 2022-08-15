@@ -133,10 +133,11 @@ public class LectureServiceImpl implements LectureService {
     public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
         List<LectureResponse.LecturePreview> result  = new ArrayList<>();
         if(userRepository.existsById(userId)) {
-            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
-            for (Lecture l : lectures) {
-                result.add(l.toLecturePreview());
-            }
+//            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
+//            for (Lecture l : lectures) {
+//                result.add(l.toLecturePreview());
+//            }
+            result = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
         } else {
             throw new UserNotFoundException();
         }
@@ -144,14 +145,14 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public List<LectureResponse.LecturePreview> searchAvailableLecture() throws Exception {
+    public List<LectureResponse.LectureDetail> searchAvailableLecture() throws Exception {
 
-        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<LectureResponse.LectureDetail> result = new ArrayList<>();
         List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
 
         // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
         for (Lecture l : lectures) {
-            result.add(l.toLecturePreview());
+            result.add(l.toLectureDetail());
         }
         return result;
     }
