@@ -1,5 +1,5 @@
 <template>
-  <UserCam class="w-full lg:w-auto" :mainStreamManager="props.mainStreamManager"/>
+  <UserCam class="max-w-[1050px] w-full lg:w-auto" :mainStreamManager="props.mainStreamManager"/>
 </template>
 
 <script setup>

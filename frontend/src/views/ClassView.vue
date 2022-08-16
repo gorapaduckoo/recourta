@@ -135,11 +135,9 @@ const reactiveAttList = () => {
 
   for (let sub of state.subscribers) {
     const tmpId = state.classRegiList.find(student => student[0] === JSON.parse(sub.stream.connection.data).clientData)
-    console.log(state.classRegiList)
     tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection,sub])
   }
 
-  console.log(tmpAttList)
   for (let student of state.classRegiList) {
     const tmpId = tmpAttList.find(att => att[0] === student[0])
     if (!tmpId && student[0] !== 'lecturer') tmpAbsList.push(student)
@@ -167,7 +165,6 @@ const getRegiList = async () => {
       'Context-Type' : 'multipart/form-data',
     }
   }).then(res=>{
-    console.log(state.isLecturer)
     for(let usr of res.data.userList){
       state.classRegiList.push([String(usr.userId),usr.name])
     }
@@ -182,7 +179,6 @@ const getRegiList = async () => {
 
 
 const joinSession = async () => {
-  console.log(store.getters.currentMySessionId)
   await axios({
     url: rct.webrtc.checkin(),
     method: 'post',
@@ -274,11 +270,11 @@ const joinSession = async () => {
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
-    console.log('User ' + event.connection.connectionId + ' start speaking');
+    // console.log('User ' + event.connection.connectionId + ' start speaking');
   });
 
   state.session.on('publisherStopSpeaking', (event) => {
-    console.log('User ' + event.connection.connectionId + ' stop speaking');
+    // console.log('User ' + event.connection.connectionId + ' stop speaking');
   });
 
   // --- Connect to the session with a valid user token ---
@@ -314,11 +310,21 @@ const joinSession = async () => {
     });
 
     reactiveAttList()
-    window.addEventListener('beforeunload', function(){leaveClass(true)})
+
+    window.addEventListener('beforeunload', (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leaveClass(true)
+    })
+
+    window.addEventListener("hashchange", (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leaveClass(true)
+    })
 
     if (!state.isLecturer) {
       setTimeout(function() {
-        console.log(state.subscribers)
         if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
           leaveClass(false)
         }
@@ -407,7 +413,6 @@ const leaveClass = async (x) => {
     }
   })
   .then(res => {
-    console.log(res.data)
   })
   .catch(err => {
     console.log(err)
@@ -467,7 +472,18 @@ const leaveClass = async (x) => {
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
 
-  window.removeEventListener('beforeunload', function(){leaveClass(true)});
+  window.removeEventListener('beforeunload', (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+    leaveClass(true)
+  });
+
+  window.removeEventListener("hashchange", (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leaveClass(true)
+  });
+  
   location.href="/main"
 }
 
@@ -543,7 +559,7 @@ const startsharing = () => {
     {
       audioSource: undefined, // The source of audio. If undefined default microphone
       videoSource: "screen",
-      publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+      publishAudio: state.ismic, // Whether you want to start publishing with your audio unmuted or not
       publishVideo: true, // Whether you want to start publishing with your video enabled or not
       resolution: "1920x1080", // The resolution of your video
       frameRate: 30, // The frame rate of your video
@@ -584,6 +600,9 @@ const startsharing = () => {
       console.error("Error applying constraints: ", error);
     }
   });
+  
+  console.log(state.publisher)
+
   state.session.unpublish(state.publisher)
   state.temppublisher = state.publisher
   state.publisher = newPublisher
@@ -616,6 +635,7 @@ const sss = (data) => {
 
 joinSession()
 
+
 ///////////////////////////// Speech Recognition Part ////////////////////////////
 
  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -626,13 +646,10 @@ joinSession()
   recognition.continuous = true;
   recognition.lang = 'ko-KR';
 
-  
-
   // Create <p> element to insert on view
-  let p = document.createElement('p');
+  // let p = document.createElement('p');
   let link = document.createElement('a');
-  let scripts = ""; // lecture script text
-
+  // let scripts = ""; // lecture script text
 
   let cnt = 0;
   // When the Speech Recognition Server returns the result, concat '.' on result
