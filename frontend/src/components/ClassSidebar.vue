@@ -205,7 +205,6 @@ const onClickBan = (connection) => {
 }
 
 onUpdated(()=>{
-  console.log(msg.value.scrollTop,msg.value.scrollHeight)
   msg.value.scrollTop = msg.value.scrollHeight
 })
 

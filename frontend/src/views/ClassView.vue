@@ -7,10 +7,9 @@
     </button>
     <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
-      {{state.texts}}
+      {{state.subtitles[-1]}}
     </div>
-    <div v-else class="h-[44px]"></div>
-    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
     <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
@@ -63,9 +62,12 @@ const state = reactive({
   issubtitle:false,
   issublist:true,
   texts:"",
+  subtitles: [],
   
   isLecturer:store.getters.currentIsLecturer,
   isAuth:false,
+
+  checkId: 0
 })
 
 const toggleside = () => {
@@ -176,7 +178,26 @@ const getRegiList = async () => {
 
 
 
-const joinSession = () => {
+const joinSession = async () => {
+  console.log(store.state.user.userId, store.getters.currentMySessionId)
+  await axios({
+    url: rct.webrtc.checkin(),
+    method: 'post',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId: store.state.user.userId,
+      sessionId: store.getters.currentMySessionId,
+    }
+  })
+  .then(res => {
+    state.checkId = res.data.checkId
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
   getRegiList()
   
   state.OV = new OpenVidu();
@@ -242,7 +263,12 @@ const joinSession = () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    leaveClass()
+    if (!state.isLecturer) leaveClass(true)
+  })
+
+  state.session.on('signal:Subtitle', (event) => {
+    console.log(state.userAll)
+    state.subtitles.push(state.userAll.find(usr => usr[2] === event.from.connectionId)[1] + " : " + event.data)
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
@@ -284,7 +310,14 @@ const joinSession = () => {
     })
     .catch(error => {
     });
-    window.addEventListener('beforeunload', leaveClass);
+
+    if (!state.isLecturer) {
+      if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
+        leaveClass(false)
+      }
+    }
+
+    window.addEventListener('beforeunload', function(){leaveClass(true)})
   });
 
   
@@ -342,20 +375,43 @@ const updateMainVideoStreamManager = (stream) => {
   state.mainStreamManager = stream;
 }
 
-const leaveClass = () => {
+const leaveClass = async (x) => {
+  await axios({
+    url: rct.webrtc.checkout(),
+    method: 'post',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId: store.state.user.userId,
+      sessionId: store.getters.currentMySessionId,
+      checkId: state.checkId,
+    }
+  })
+  .then(res => {
+    console.log(res.data)
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
+  if (state.isLecturer) sendban([]);
+
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
-  // Select whether to save the lecture script
-  let issave = confirm("강의록을 저장하시겠습니까?")
+  if (x) {
+    // Select whether to save the lecture script
+    let issave = confirm("강의록을 저장하시겠습니까?")
 
-  if(issave) {
-    let blob = new Blob([scripts], {type: 'text/plain'})
-    link.href = window.URL.createObjectURL(blob)
-    link.download = state.sidebarTitle + '_강의록.txt'
-    link.click()
+    if(issave) {
+      let blob = new Blob([scripts], {type: 'text/plain'})
+      link.href = window.URL.createObjectURL(blob)
+      link.download = state.sidebarTitle + '_강의록.txt'
+      link.click()
+    }
   }
-
+  
   state.session = undefined
   state.mainStreamManager = undefined
   state.publisher = undefined
@@ -383,13 +439,13 @@ const leaveClass = () => {
   state.texts=""
   state.isAuth=false
 
-  state.isLecturer = false
-  
+  // state.isLecturer = false
+  state.checkId = 0
 
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
 
-  window.removeEventListener('beforeunload', leaveClass);
+  window.removeEventListener('beforeunload', function(){leaveClass(true)});
   location.href="/main"
 }
 
@@ -563,8 +619,19 @@ joinSession()
     state.texts = e.results[cnt][0].transcript;
     // texts = Array.from(e.results).map(result => result[0])
     // .map(result => (result.transcript));
-    scripts += state.texts;
-    scripts +='\n';
+    // scripts += state.texts;
+
+    state.session.signal({
+      data: state.texts,  // Any string (optional)
+      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'Subtitle'             // The type of message (optional)
+    })
+    .then(() => {
+    })
+    .catch(error => {
+      console.error(error)
+    })
+    // scripts +='\n';
     cnt++;
 
   // print {texts} on console

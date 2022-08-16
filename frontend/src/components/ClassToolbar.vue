@@ -35,7 +35,7 @@
         <path d="M7 12h14l-3 -3m0 6l3 -3" />
       </svg>
     </button>
-    <button @click="toggleSubtitle" class="rounded-full h-15 w-15 p-1 border-2 hover:bg-[#4e4e4e] hover:border-[#b8b8b8] border-neutral-400">
+    <button @click="toggleSubtitle" :class="{'hover:text-neutral-100 text-neutral-200':props.issubtitle,'hover:text-[#b8b8b8] text-neutral-400':!props.issubtitle}" class="rounded-full h-15 w-15 p-1 border-2 hover:bg-[#4e4e4e] hover:border-[#b8b8b8] border-neutral-400">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-auto ml-auto" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
       </svg>
@@ -52,6 +52,7 @@ const props = defineProps({
   ismic:Boolean,
   isLecturer:Boolean,
   isAuth:Boolean,
+  issubtitle:Boolean,
 })
 const emit = defineEmits(["tryleave","toggleshare","togglecam","togglemic", "toggleSubtitle"])
 
