@@ -2,7 +2,7 @@
 <div class="bg-[#444444] text-white">
   <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
     <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
-    <ClassMain v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
+    <ClassMain id="user-video" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
@@ -29,6 +29,8 @@ import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
 import { reactive, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import * as faceapi from 'face-api.js'
+import { FaceMatch, FaceMatcher } from 'face-api.js'
 
 
 const store = useStore()
@@ -239,6 +241,9 @@ const joinSession = () => {
           mirror: false       	// Whether to mirror your local video or not
         });
 
+        let video = document.createElement('video')
+        video.setAttribute('id', 'myVideo')
+        publisher.addVideoElement(video);
         state.mainStreamManager = publisher;
         // state.streamId = publisher.stream.connection.connectionId
         state.publisher = publisher
@@ -246,6 +251,29 @@ const joinSession = () => {
         // --- Publish your stream ---
         state.session.publish(state.publisher);
         reactiveAttList()
+
+        const myVideo = document.getElementById('myVideo')
+const canvas = faceapi.createCanvasFromMedia(myVideo)
+const canvasArea = document.querySelector('#myVideo')
+canvasArea.append(canvas)
+
+console.log(myVideo.width + " " + myVideo.height)
+const videoWidth = 1000;
+const videoHeight= 750;
+const displaySize = {width: videoWidth, height: videoHeight}
+faceapi.matchDimensions(canvas, displaySize)
+
+setInterval(async() => {
+  const detections = await faceapi.detectSingleFace(myVideo, new faceapi.DetectSingleFaceLandmarksTask()).withFaceLandmarks()
+
+  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+  console.log(detections)
+  faceapi.draw.drawDetections(canvas, resizedDetections)
+  faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+  faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
+  console.log(">>>>>>>>>>>>>>>>>> " + getConnectoinData.connection)
+},100)
+
       })
       .catch(error => {
         console.log('There was an error connecting to the session:', error.code, error.message);
@@ -443,6 +471,7 @@ const sss = (data) => {
 
 joinSession()
 
+
 ///////////////////////////// Speech Recognition Part ////////////////////////////
 
  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -479,6 +508,7 @@ joinSession()
 
   // print {texts} on console
   }
+
 
 
 
