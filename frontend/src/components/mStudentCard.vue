@@ -7,9 +7,7 @@
 				<div class="text-xl font-semibold text-end">{{ lecture.teacher }}</div>
 				<div class="space-x-5">
 					<button class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]" data-bs-toggle="modal" data-bs-target="#mAttendanceModal">출결 확인</button>
-					<router-link to="/class">
-						<button type="button" class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]">강의 입장</button>
-					</router-link>
+					<button @click="enterClass" type="button" class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]">강의 입장</button>
 					<button type="button" class="py-1.5 px-3 text-white rounded-md bg-[#fe5358]" @click="outModalOpen">수강 철회</button>
 				</div>
 			</div>
@@ -111,6 +109,15 @@ const props = defineProps({
     type: Object,
   }
 })
+
+const enterClass = () => {
+  store.commit("SET_MySessionId",String(props.lecture.sessionId))
+  store.commit("SET_MyLectureId",String(props.lecture.lectureId))
+  store.commit("SET_LecturerName",props.lecture.teacher)
+  store.commit("SET_SidebarTitle", props.lecture.title)
+  store.commit("SET_IsLecturer", false)
+  location.href="/class"
+}
 
 // 수강 철회 관련 함수
 const outModalId = 'mOut'+props.lecture.lectureId

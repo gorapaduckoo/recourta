@@ -46,6 +46,7 @@ const state = reactive({
   subscribers: [],
 
   mySessionId: store.getters.currentMySessionId,
+  myLectureId: store.getters.currentMyLectureId,
   myUserId: store.state.user.userId,
   sidebarTitle: store.getters.currentSidebarTitle,
 
@@ -134,11 +135,13 @@ const reactiveAttList = () => {
 
   for (let sub of state.subscribers) {
     const tmpId = state.classRegiList.find(student => student[0] === JSON.parse(sub.stream.connection.data).clientData)
+    console.log(state.classRegiList)
     tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection,sub])
   }
 
+  console.log(tmpAttList)
   for (let student of state.classRegiList) {
-    const tmpId = state.classAttList.find(att => att[0] === student[0])
+    const tmpId = tmpAttList.find(att => att[0] === student[0])
     if (!tmpId && student[0] !== 'lecturer') tmpAbsList.push(student)
   }
 
@@ -157,28 +160,29 @@ const reactiveAttList = () => {
 
 const getRegiList = async () => {
   await axios({
-    url: rct.regist.currentstudentlist(state.mySessionId),
+    url: rct.regist.currentstudentlist(state.myLectureId),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
       'Context-Type' : 'multipart/form-data',
     }
   }).then(res=>{
-
+    console.log(state.isLecturer)
     for(let usr of res.data.userList){
-      state.classRegiList.push([usr.userId,usr.name])
+      state.classRegiList.push([String(usr.userId),usr.name])
     }
-    const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
+  //   const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
 
-    for(let usr of tmpRegiList) {
-      state.classRegiList.push([usr[0], usr[1]])
-    }
+  //   for(let usr of tmpRegiList) {
+  //     state.classRegiList.push([usr[0], usr[1]])
+  //   }
   })
 }
 
 
 
 const joinSession = async () => {
+  console.log(store.getters.currentMySessionId)
   await axios({
     url: rct.webrtc.checkin(),
     method: 'post',
@@ -309,16 +313,18 @@ const joinSession = async () => {
     .catch(error => {
     });
 
-    if (!state.isLecturer) {
-      if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
-        leaveClass(false)
-      }
-    }
-
+    reactiveAttList()
     window.addEventListener('beforeunload', function(){leaveClass(true)})
-  });
 
-  
+    if (!state.isLecturer) {
+      setTimeout(function() {
+        console.log(state.subscribers)
+        if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
+          leaveClass(false)
+        }
+      }, 500);
+    }
+  });
 }
 
 const getToken = async mySessionId => {
@@ -390,7 +396,7 @@ function getCurrentDate()
 const leaveClass = async (x) => {
   await axios({
     url: rct.webrtc.checkout(),
-    method: 'post',
+    method: 'put',
     headers: {
       Authorization: store.state.user.accessToken,
     },
