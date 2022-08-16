@@ -6,12 +6,12 @@
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
     <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <div v-if="state.issubtitle" class="w-[800px] flex-none text-center my-2 text-lg">
+    <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
       {{state.texts}}
     </div>
     <div v-else class="h-[44px]"></div>
-    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[50vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
@@ -56,7 +56,6 @@ const state = reactive({
   userAll: [],
 
   isshare:false,
-  streamId:"",
   isside:false,
   msgs:[],
   iscam:true,
@@ -261,31 +260,31 @@ const joinSession = () => {
   getToken(state.mySessionId).then(token => {
     const tmpClientData = state.isLecturer? 'lecturer': state.myUserId
     state.session.connect(token, { clientData: tmpClientData })
-      .then(() => {
+    .then(() => {
 
-        // --- Get your own camera stream with the desired properties ---
+      // --- Get your own camera stream with the desired properties ---
 
-        let publisher = state.OV.initPublisher(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: false,	// Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-          resolution: '640x480',  // The resolution of your video
-          frameRate: 30,			// The frame rate of your video
-          insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-          mirror: false       	// Whether to mirror your local video or not
-        });
-
-        state.mainStreamManager = publisher;
-        // state.streamId = publisher.stream.connection.connectionId
-        state.publisher = publisher
-
-        // --- Publish your stream ---
-        state.session.publish(state.publisher);
-        reactiveAttList()
-      })
-      .catch(error => {
+      let publisher = state.OV.initPublisher(undefined, {
+        audioSource: undefined, // The source of audio. If undefined default microphone
+        videoSource: undefined, // The source of video. If undefined default webcam
+        publishAudio: false,	// Whether you want to start publishing with your audio unmuted or not
+        publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+        resolution: '640x480',  // The resolution of your video
+        frameRate: 30,			// The frame rate of your video
+        insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+        mirror: false       	// Whether to mirror your local video or not
       });
+
+      state.mainStreamManager = publisher;
+      state.publisher = publisher
+
+      // --- Publish your stream ---
+      state.session.publish(state.publisher);
+      reactiveAttList()
+    })
+    .catch(error => {
+    });
+    window.addEventListener('beforeunload', leaveClass);
   });
 
   
@@ -358,7 +357,6 @@ const leaveClass = () => {
   }
 
   state.session = undefined
-  state.streamId = ""
   state.mainStreamManager = undefined
   state.publisher = undefined
   state.temppublisher = undefined
@@ -371,10 +369,27 @@ const leaveClass = () => {
   state.isside=false
   state.msgs=[]
 
+  state.mySessionId = ""
+  state.myUserId = ""
+  state.sidebarTitle = ""
+
+  state.classRegiList = []
+  state.classAttList = []
+  state.classAbsList = []
+  state.userAll = []
+
+  state.issubtitle = false
+  state.issublist = false
+  state.texts=""
+  state.isAuth=false
+
+  state.isLecturer = false
+  
+
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
 
-  // window.removeEventListener('beforeunload', leaveClass);
+  window.removeEventListener('beforeunload', leaveClass);
   location.href="/main"
 }
 
@@ -496,7 +511,6 @@ const startsharing = () => {
   state.publisher = newPublisher
   state.session.publish(state.publisher)
   sss('ON')
-  // state.streamId = state.publisher.stream.connection.connectionId
   state.mainStreamManager=state.publisher
 }
 
