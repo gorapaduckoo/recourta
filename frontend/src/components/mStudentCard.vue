@@ -2,15 +2,15 @@
 
 	<div class="flex justify-center mb-3 w-[450px] sm:w-[600px] h-[170px] ml-auto mr-auto">
 		<div class="flex flex-col border w-full rounded-lg justify-between p-6 bg-[#fffbf8] dark:bg-[#4c4c4c]">
-			<div class="text-2xl font-bold mb-2">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
+			<div class="text-2xl font-bold mb-2">{{ lecture.title }}</div>
 			<div class="flex justify-between mt-5">
-				<div class="text-xl font-semibold text-end">김우석</div>
+				<div class="text-xl font-semibold text-end">{{ lecture.teacher }}</div>
 				<div class="space-x-5">
 					<button class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]" data-bs-toggle="modal" data-bs-target="#mAttendanceModal">출결 확인</button>
 					<router-link to="/class">
 						<button type="button" class="py-1.5 px-3 text-white rounded-md bg-[#2c5172]">강의 입장</button>
 					</router-link>
-					<button type="button" class="py-1.5 px-3 text-white rounded-md bg-[#fe5358]" data-bs-toggle="modal" data-bs-target="#mClassoutModal">수강 철회</button>
+					<button type="button" class="py-1.5 px-3 text-white rounded-md bg-[#fe5358]" @click="outModalOpen">수강 철회</button>
 				</div>
 			</div>
 		</div>
@@ -58,11 +58,11 @@
   </div>
 
    <!-- 수강 철회 Modal -->
-  <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" id="mClassoutModal" tabindex="-1" aria-labelledby="mClassoutModalLabel" aria-hidden="true">
+  <div class="modal fade bg-black bg-opacity-50 fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto" :id="outModalId" tabindex="-1" aria-labelledby="mClassoutModalLabel" aria-hidden="true" @click.self="outModalClose">
     <div class="modal-dialog modal-dialog-centered relative w-[440px] ml-auto mr-auto pointer-events-none">
       <div class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white dark:bg-[#4c4c4c] bg-clip-padding rounded-md outline-none text-current">
         <div class="modal-header flex flex-row-reverse flex-shrink-0 items-center justify-between px-6 pt-4 rounded-t-md">
-          <button type="button" data-bs-dismiss="modal" aria-label="Close">
+          <button type="button" data-bs-dismiss="modal" aria-label="Close" @click="outModalClose">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -72,31 +72,75 @@
           <!-- 본문 -->
           <div class="flex flex-wrap w-full mb-6">
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의명</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">데이터로 표현한 세상을 보고있는 우리와 나와 바다 놀러가</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{ lecture.title }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의자</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">김우석</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{ lecture.teacher }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 기간</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">2022-09-01 ~ 2022-09-30</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{ lecture.startDate }} ~ {{ lecture.endDate }}</div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 시간</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">월 13:00 ~ 15:00<br/>목 10:00 ~ 12:00<br/>금 09:00 ~ 12:00</div>
+            <div class="w-[260px] mb-6 flex flex-col">
+              <div class="text-start text-lg font-medium" v-for="lecturetime in lecture.lectureTime" :key="lecturetime">
+                <p>{{lecturetime}}</p>
+              </div>
+            </div>
             <div class="w-[80px] mr-[20px] mb-6 text-start text-lg font-medium border-r border-neutral-400 dark:border-neutral-500">강의 설명</div>
-            <div class="w-[260px] mb-6 text-justify text-lg font-medium">집가고싶다</div>
+            <div class="w-[260px] mb-6 text-justify text-lg font-medium">{{ lecture.content }}</div>
           </div>
 
           <p class="mb-4 font-bold dark:font-semibold text-2xl">해당 강의를 취소 하시겠습니까?</p>
         </div>
         <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-center px-4 pb-4 rounded-b-md space-x-3">
-          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" data-bs-dismiss="modal">예</button>
-          <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
+          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" @click="outRegistration">예</button>
+          <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" @click="outModalClose">아니오</button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
+<script setup>
+import { reactive } from 'vue'
+import { useStore } from 'vuex'
+import axios from 'axios'
+import rct from '../api/rct'
 
+const store = useStore()
+
+const props = defineProps({
+  lecture : {
+    type: Object,
+  }
+})
+
+// 수강 철회 관련 함수
+const outModalId = 'mOut'+props.lecture.lectureId
+
+const outModalOpen = () => {
+  document.getElementById(outModalId).classList.replace('hidden', 'show')
+}
+
+const outModalClose = () => {
+  document.getElementById(outModalId).classList.replace('show', 'hidden')
+}
+
+const outRegistration = async () => {
+  await axios({
+    url: rct.regist.regist(),
+    method: 'delete',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId : store.state.user.userId,
+      lectureId : props.lecture.lectureId,
+    }
+  })
+  .then(res => {
+    location.reload()
+  })
+  .catch(err => {
+    console.log(err)
+  })
 }
 </script>
 
