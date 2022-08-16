@@ -80,7 +80,6 @@
         <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
         <div v-else>{{props.classAttList.find(v => v[2]===msg[1])[1]}}:{{msg[0]}}</div>
       </div>
-      <br />
     </div>
     <div id="msginput">
       <div id="selectreceiver" class="flex items-center px-3 pt-2 space-x-3">
@@ -104,7 +103,7 @@
 </template>
 
 <script setup>
-import { reactive, defineEmits, defineProps, computed, ref, watch } from 'vue'
+import { reactive, defineEmits, defineProps, ref, onUpdated } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore()
@@ -205,7 +204,7 @@ const onClickBan = (connection) => {
   emit('submitBan',[connection])
 }
 
-watch(()=>props.msglist,(newm,oldm)=>{
+onUpdated(()=>{
   console.log(msg.value.scrollTop,msg.value.scrollHeight)
   msg.value.scrollTop = msg.value.scrollHeight
 })
