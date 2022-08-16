@@ -84,9 +84,12 @@ public class LectureResponse {
         @NotBlank
         private JSONArray lectureTime;
 
+        // 현재 참여가능한 수업 중 가장 앞에 있는(= 끝나지 않은 수업 중 가장 빠른) 수업
+        private Integer sessionId;
+
 
         @Builder
-        public LecturePreview(Integer lectureId, String title, String teacher,String lectureImg, JSONArray lectureTime) {
+        public LecturePreview(Integer lectureId, String title, String teacher, String lectureImg, JSONArray lectureTime) {
             this.lectureId = lectureId;
             this.title = title;
             this.teacher = teacher;
