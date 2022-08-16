@@ -1,20 +1,22 @@
 <template>
   <!-- Reactive Desktop -->
   <div class="hidden lg:grid lg:pt-10 lg:grid-cols-2 xl:grid-cols-3">
-	<div>{{state.classification}}</div>
 	<SearchListCard 
-		v-for="(num) in [0,1,2,3,4,5]"
-		:key="num"
+		v-for="searchResult in state.searchList"
+		:key="searchResult"
+    :searchResult="searchResult"
 	/>
 	</div>
 
   <!-- Reactive Mobile -->
   <div class="lg:hidden flex flex-col my-10">
 		<mSearchListCard
-			v-for="num in [0,1,2,3,4,5]"
-			:key="num"
+			v-for="searchResult in state.searchList"
+			:key="searchResult"
+			:searchResult="searchResult"
 		/>
 	</div>
+	<div v-if="(state.searchList)?!state.searchList.length:true" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">검색 결과가 없습니다.</div>
 </template>
 
 <script setup>

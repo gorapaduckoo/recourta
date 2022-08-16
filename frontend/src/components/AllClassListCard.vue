@@ -3,10 +3,10 @@
     <!-- 보이는 부분 -->
     <div class="w-[400px] h-[500px] z-0 border-2 rounded-lg border-[#2c5172] dark:border-neutral-500 bg-[#fffbf8] dark:bg-[#4c4c4c]">
       <img class="rounded-t-lg w-[400px] h-[225px]" :src="lecpreviewThumbnail" alt=""/>
-      <div class="p-6 flex flex-col justify-between h-[275px] dark:text-neutral-100">
+      <div class="pt-6 pb-[11px] px-6 flex flex-col justify-between h-[275px] dark:text-neutral-100">
         <div>
-          <div class="text-3xl text-justify font-bold dark:font-semibold mb-6 h-[72px]">{{ lecpreview.title }}</div>
-          <div class="text-xl font-semibold mt-4 text-end">{{ lecpreview.teacher }}</div>
+          <div class="text-3xl text-justify font-bold dark:font-semibold h-[72px]">{{ lecpreview.title }}</div>
+          <div class="text-xl font-bold dark:font-semibold text-end">{{ lecpreview.teacher }}</div>
         </div>
         <div class="flex flex-col">
           <div class="text-lg text-end" v-for="lecturetime in lecpreview.lectureTime" :key="lecturetime">

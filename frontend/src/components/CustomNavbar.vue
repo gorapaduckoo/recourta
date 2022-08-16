@@ -75,9 +75,7 @@
         <p class="font-medium">로그아웃 하시겠습니까?</p>
       </div>
       <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end px-4 pb-4 rounded-b-md space-x-3">
-        <router-link to="/">
-          <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" data-bs-dismiss="modal">예</button>
-        </router-link>
+        <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" data-bs-dismiss="modal" @click="logout">예</button>
         <button type="button" class="text-gray-500 w-[62.3px] rounded-lg border border-gray-200 text-sm font-medium px-3 py-1.5 dark:text-gray-300 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-[#555555]" data-bs-dismiss="modal">아니오</button>
       </div>
     </div>
@@ -87,6 +85,13 @@
 
 <script setup>
 import { reactive } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
+
+const store = useStore()
+const route = useRouter()
 
 const props = defineProps({
   curpage : {
@@ -97,6 +102,22 @@ const props = defineProps({
 const state = reactive({
   isHam : false,
 })
+
+const logout = async () => {
+  await axios({
+    url: rct.login.logout(),
+    method: 'post',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    }
+  })
+  .then(res => {
+    route.replace({path:'/'})
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
 
 const hamButtonClick = () => {
   state.isHam = !state.isHam
