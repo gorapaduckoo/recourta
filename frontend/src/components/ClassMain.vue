@@ -1,14 +1,16 @@
 <template>
-  <UserCam class="w-[1000px] h-[750px]" :mainStreamManager="props.mainStreamManager"/>
+  <UserCam id="video" class="w-[1000px] h-[750px]" :mainStreamManager="props.mainStreamManager"/>
 </template>
 
 <script setup>
 import UserCam from "./UserCam.vue"
-import { defineProps } from 'vue'
+import { defineProps, onMounted } from 'vue'
+
 
 const props = defineProps({
   mainStreamManager:Object,
 })
+
 
 </script>
 

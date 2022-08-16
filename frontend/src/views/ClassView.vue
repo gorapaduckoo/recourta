@@ -27,8 +27,9 @@ import ClassSubtitle from '../components/ClassSubtitle.vue'
 import axios from 'axios'
 import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
-import { reactive, computed, watch } from 'vue'
+import { reactive, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
+
 
 const store = useStore()
 
@@ -478,6 +479,8 @@ joinSession()
 
   // print {texts} on console
   }
+
+
 
 
 
