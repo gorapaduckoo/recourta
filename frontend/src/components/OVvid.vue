@@ -17,7 +17,7 @@ const el = ref("")
 
 onMounted(() => {
   props.mainStreamManager.addVideoElement(el.value)
-  
+
 
 
 })
