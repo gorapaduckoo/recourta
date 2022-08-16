@@ -3,8 +3,8 @@
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[80px]">
     <LecturerList v-if="!store.state.user.isStudent" :currentTeaching="state.currentTeaching"/>
-    <CardList />
     <div>{{state.currentLearning}}</div>
+    <CardList />
   </div>
 
 </template>
