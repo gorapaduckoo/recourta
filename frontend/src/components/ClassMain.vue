@@ -1,5 +1,5 @@
 <template>
-  <UserCam id="video" class="w-[1000px] h-[750px]" :mainStreamManager="props.mainStreamManager"/>
+  <UserCam class="w-full lg:w-auto" :mainStreamManager="props.mainStreamManager"/>
 </template>
 
 <script setup>

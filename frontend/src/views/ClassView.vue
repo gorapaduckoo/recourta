@@ -1,16 +1,22 @@
 <template>
 <div class="bg-[#444444] text-white">
-  <div :class="{'pr-[360px]':state.isside}" class="flex flex-col h-full py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session" :publisher="state.publisher" :subscribers="state.subscribers"/>
-    <ClassMain id="user-video" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
-    <ClassToolbar :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic"/>
+  <div :class="{'lg:pr-[360px]':state.isside}" class="flex flex-col overflow-y-auto h-[100vh] lg:py-2 justify-between items-center font-bold text-4xl">
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" class="hidden lg:flex flex-1"/>
+    <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
+      <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
+    </button>
+    <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
+    <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
+      {{state.texts}}
+    </div>
+    <div v-else class="h-[44px]"></div>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" v-if="state.isside" class="absolute top-0 right-0 h-screen width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
- <div class="text-center">
-  {{state.texts}}
-</div>
-<button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hover:text-neutral-200 text-neutral-400 absolute">
+ 
+<button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
   <svg v-if="!state.isside" class="h-14 w-14"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
   </svg>
@@ -22,12 +28,10 @@ import ClassList from '../components/ClassList.vue'
 import ClassMain from '../components/ClassMain.vue'
 import ClassToolbar from '../components/ClassToolbar.vue'
 import ClassSidebar from '../components/ClassSidebar.vue'
-import ClassSubtitle from '../components/ClassSubtitle.vue'
-
 import axios from 'axios'
 import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
-import { reactive, computed, watch, onMounted } from 'vue'
+import { reactive } from 'vue'
 import { useStore } from 'vuex'
 import * as faceapi from 'face-api.js'
 import { FaceMatch, FaceMatcher } from 'face-api.js'
@@ -52,27 +56,20 @@ const state = reactive({
   classRegiList: [['lecturer',store.getters.currentLecturerName]],
   classAttList: [],
   classAbsList: [],
+  userAll: [],
 
   isshare:false,
-  streamId:"",
   isside:false,
   msgs:[],
   iscam:true,
   ismic:false,
   issubtitle:false,
+  issublist:true,
   texts:"",
   
   isLecturer:store.getters.currentIsLecturer,
   isAuth:false,
 })
-
-// watch(()=>state.streamId,(newId,oldId)=>{
-//   console.log("change streamId")
-//   const main = state.subscribers.find(sub=>sub.stream.connection.connectionId!==state.streamId)
-//   console.log(main)
-//   if(main) state.mainStreamManager = main
-//   state.mainStreamManager = state.publisher
-// })
 
 const toggleside = () => {
   state.isside=!state.isside
@@ -92,12 +89,26 @@ const togglecam = () => {
 
 const togglemic = () => {
   state.ismic=!state.ismic
-  if(state.iscam) state.publisher.publishAudio(true)
-  else state.publisher.publishAudio(false)
+  if(state.ismic) {
+    state.publisher.publishAudio(true)
+    recognition.start()
+  }
+  else {
+    state.publisher.publishAudio(false)
+    recognition.stop()
+    cnt=0
+  }
+}
+
+const toggleSubtitle = () => {
+  state.issubtitle=!state.issubtitle
+}
+
+const toggleSublist = () => {
+  state.issublist=!state.issublist
 }
 
 const reactiveAttList = () => {
-  console.log('start')
   const tmpAttList = []
   const tmpAbsList = []
 
@@ -119,12 +130,12 @@ const reactiveAttList = () => {
   if (state.publisher) {
     const tmpUserId = state.isLecturer? 'lecturer': state.myUserId
     const tmpId = state.classRegiList.find(student => student[0] === tmpUserId)
-    tmpAttList.push([tmpId[0], tmpId[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection])
+    tmpAttList.push([tmpId[0], tmpId[1], state.publisher.stream.connection.connectionId, state.publisher.stream.connection,state.publisher])
   }
 
   for (let sub of state.subscribers) {
     const tmpId = state.classRegiList.find(student => student[0] === JSON.parse(sub.stream.connection.data).clientData)
-    tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection])
+    tmpAttList.push([tmpId[0], tmpId[1], sub.stream.connection.connectionId, sub.stream.connection,sub])
   }
 
   for (let student of state.classRegiList) {
@@ -134,16 +145,16 @@ const reactiveAttList = () => {
 
   state.classAttList = tmpAttList
   state.classAbsList = tmpAbsList
+
+  const tmpUser = []
+
+  if (state.publisher) tmpUser.push(state.publisher)
+
+  tmpUser.push(...state.subscribers)
+
+  state.userAll = tmpUser
 }
 
-// const getConnectionData = () => {
-//   const conneclist = []
-//   conneclist.push([JSON.parse(props.publisher.stream.connection.data).clientData,props.publisher.stream.connection.connectionId,props.publisher.stream.connection]);
-//   for (let sub of props.subscribers) {
-//     conneclist.push([JSON.parse(sub.stream.connection.data).clientData,sub.stream.connection.connectionId,sub.stream.connection])
-//   }
-//   return conneclist
-// }
 
 const getRegiList = async () => {
   await axios({
@@ -158,7 +169,6 @@ const getRegiList = async () => {
     for(let usr of res.data.userList){
       state.classRegiList.push([usr.userId,usr.name])
     }
-    console.log(res)
     const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
 
     for(let usr of tmpRegiList) {
@@ -168,8 +178,8 @@ const getRegiList = async () => {
 }
 
 
+
 const joinSession = () => {
-  console.log()
   getRegiList()
   
   state.OV = new OpenVidu();
@@ -185,7 +195,6 @@ const joinSession = () => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
     reactiveAttList()
-    // console.log(subscriber.stream.typeOfVideo)
     if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
@@ -202,7 +211,7 @@ const joinSession = () => {
 
   // On every asynchronous exception...
   state.session.on('exception', ({ exception }) => {
-    console.warn(exception);
+    // console.warn(exception);
   });
 
   state.session.on('signal:my-chat', (event) => {
@@ -219,6 +228,34 @@ const joinSession = () => {
     }
   })
 
+  state.session.on('signal:Auth',(event) => {
+    state.isAuth=!state.isAuth
+    if(state.isshare){
+      stopsharing()
+      state.isshare=false
+    }
+  })
+
+  state.session.on('signal:Cam',(event) => {
+    if(state.iscam) togglecam()
+  })
+
+  state.session.on('signal:Mic',(event) => {
+    if(state.ismic) togglemic()
+  })
+
+  state.session.on('signal:Ban',(event) => {
+    leaveClass()
+  })
+
+  state.session.on('publisherStartSpeaking', (event) => {
+    console.log('User ' + event.connection.connectionId + ' start speaking');
+  });
+
+  state.session.on('publisherStopSpeaking', (event) => {
+    console.log('User ' + event.connection.connectionId + ' stop speaking');
+  });
+
   // --- Connect to the session with a valid user token ---
 
   // 'getToken' method is simulating what your server-side should do.
@@ -226,58 +263,31 @@ const joinSession = () => {
   getToken(state.mySessionId).then(token => {
     const tmpClientData = state.isLecturer? 'lecturer': state.myUserId
     state.session.connect(token, { clientData: tmpClientData })
-      .then(() => {
+    .then(() => {
 
-        // --- Get your own camera stream with the desired properties ---
+      // --- Get your own camera stream with the desired properties ---
 
-        let publisher = state.OV.initPublisher(undefined, {
-          audioSource: undefined, // The source of audio. If undefined default microphone
-          videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: false,	// Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-          resolution: '640x480',  // The resolution of your video
-          frameRate: 30,			// The frame rate of your video
-          insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-          mirror: false       	// Whether to mirror your local video or not
-        });
-
-        let video = document.createElement('video')
-        video.setAttribute('id', 'myVideo')
-        publisher.addVideoElement(video);
-        state.mainStreamManager = publisher;
-        // state.streamId = publisher.stream.connection.connectionId
-        state.publisher = publisher
-
-        // --- Publish your stream ---
-        state.session.publish(state.publisher);
-        reactiveAttList()
-
-        const myVideo = document.getElementById('myVideo')
-const canvas = faceapi.createCanvasFromMedia(myVideo)
-const canvasArea = document.querySelector('#myVideo')
-canvasArea.append(canvas)
-
-console.log(myVideo.width + " " + myVideo.height)
-const videoWidth = 1000;
-const videoHeight= 750;
-const displaySize = {width: videoWidth, height: videoHeight}
-faceapi.matchDimensions(canvas, displaySize)
-
-setInterval(async() => {
-  const detections = await faceapi.detectSingleFace(myVideo, new faceapi.DetectSingleFaceLandmarksTask()).withFaceLandmarks()
-
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-  console.log(detections)
-  faceapi.draw.drawDetections(canvas, resizedDetections)
-  faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-  faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-  console.log(">>>>>>>>>>>>>>>>>> " + getConnectoinData.connection)
-},100)
-
-      })
-      .catch(error => {
-        console.log('There was an error connecting to the session:', error.code, error.message);
+      let publisher = state.OV.initPublisher(undefined, {
+        audioSource: undefined, // The source of audio. If undefined default microphone
+        videoSource: undefined, // The source of video. If undefined default webcam
+        publishAudio: false,	// Whether you want to start publishing with your audio unmuted or not
+        publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+        resolution: '640x480',  // The resolution of your video
+        frameRate: 30,			// The frame rate of your video
+        insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+        mirror: false       	// Whether to mirror your local video or not
       });
+
+      state.mainStreamManager = publisher;
+      state.publisher = publisher
+
+      // --- Publish your stream ---
+      state.session.publish(state.publisher);
+      reactiveAttList()
+    })
+    .catch(error => {
+    });
+    window.addEventListener('beforeunload', leaveClass);
   });
 
   
@@ -302,7 +312,6 @@ const createSession = (sessionId) => {
       .then(data => resolve(data.id))
       .catch(error => {
         if (error.response.status === 409) {
-          console.log(error)
           resolve(sessionId);
         } else {
           console.warn(`No connection to OpenVidu Server. This may be a certificate error at ${rct.webrtc.openvd_url()}`);
@@ -346,12 +355,11 @@ const leaveClass = () => {
   if(issave) {
     let blob = new Blob([scripts], {type: 'text/plain'})
     link.href = window.URL.createObjectURL(blob)
-    link.download = 'lecturescript.txt'
+    link.download = state.sidebarTitle + '_강의록.txt'
     link.click()
   }
 
   state.session = undefined
-  state.streamId = ""
   state.mainStreamManager = undefined
   state.publisher = undefined
   state.temppublisher = undefined
@@ -362,12 +370,29 @@ const leaveClass = () => {
   state.iscam=false
   state.isshare=false
   state.isside=false
-  msgs=[]
+  state.msgs=[]
+
+  state.mySessionId = ""
+  state.myUserId = ""
+  state.sidebarTitle = ""
+
+  state.classRegiList = []
+  state.classAttList = []
+  state.classAbsList = []
+  state.userAll = []
+
+  state.issubtitle = false
+  state.issublist = false
+  state.texts=""
+  state.isAuth=false
+
+  state.isLecturer = false
+  
 
   store.commit("SET_MySessionId",'')
   store.commit("SET_MyUserName",'')
 
-  // window.removeEventListener('beforeunload', leaveClass);
+  window.removeEventListener('beforeunload', leaveClass);
   location.href="/main"
 }
 
@@ -378,7 +403,58 @@ const sendMsg = (data,reciever) => {
     type: 'my-chat'             // The type of message (optional)
   })
   .then(() => {
-    // console.log('Message successfully sent')
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendauth = (reciever) => {
+  state.session.signal({
+    data: "auth",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Auth'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendcam = (reciever) => {
+  state.session.signal({
+    data: "cam",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Cam'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendmic = (reciever) => {
+  state.session.signal({
+    data: "mic",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Mic'             // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendban = (reciever) => {
+  state.session.signal({
+    data: "ban",  // Any string (optional)
+    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'Ban'             // The type of message (optional)
+  })
+  .then(() => {
   })
   .catch(error => {
     console.error(error)
@@ -403,13 +479,12 @@ const startsharing = () => {
       // Function to be executed when the method finishes
       if (error) {
         console.error(
-          "Error while initializing publisher: =====================================뉴퍼블리셔 게시하는도중에 에러가 발생했다",
+          "Error while initializing publisher",
           error
         );
         state.publisher = state.temppublisher;
         state.session.publish(state.publisher);
       } else {
-        console.log("Publisher successfully initialized");
       }
     }
   );
@@ -435,13 +510,10 @@ const startsharing = () => {
     }
   });
   state.session.unpublish(state.publisher)
-  // console.log(state.publisher)
   state.temppublisher = state.publisher
   state.publisher = newPublisher
-  // console.log(state.publisher)
   state.session.publish(state.publisher)
   sss('ON')
-  // state.streamId = state.publisher.stream.connection.connectionId
   state.mainStreamManager=state.publisher
 }
 
@@ -455,14 +527,12 @@ const stopsharing = () => {
 
 // sendscreenshare => sss
 const sss = (data) => {
-  console.log("sharing:",data)
   state.session.signal({
     data: data,  // Any string (optional)
     to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
     type: 'screenshare'             // The type of message (optional)
   })
   .then(() => {
-    // console.log('Message successfully sent')
   })
   .catch(error => {
     console.error(error)
@@ -494,17 +564,12 @@ joinSession()
   // When the Speech Recognition Server returns the result, concat '.' on result
   // if you want concat current result and results to be returned later, chain .join('') after map() function
   recognition.onresult = function(e) {
-    console.log(e);
-    console.log(e.results[cnt])
     state.texts = e.results[cnt][0].transcript;
     // texts = Array.from(e.results).map(result => result[0])
     // .map(result => (result.transcript));
     scripts += state.texts;
     scripts +='\n';
     cnt++;
-
-    console.log(state.texts)
-    console.log(scripts)
 
   // print {texts} on console
   }
@@ -516,6 +581,13 @@ joinSession()
 
 </script>
 
-<style>
-
+<style scoped>
+.mainscreen{
+  flex:none;
+}
+@media (min-width: 1024px){
+  .mainscreen{
+    flex: 5 1 0%;
+  }
+}
 </style>

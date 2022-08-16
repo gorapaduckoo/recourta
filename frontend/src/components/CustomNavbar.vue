@@ -10,7 +10,7 @@
       <div class="hidden ml-8 items-center w-full lg:flex lg:w-auto lg:order-1">
         <ul class="flex flex-row space-x-8 mt-0 font-medium">
           <li>
-            <router-link to="/classlist" :class="{'text-neutral-50 font-bold hover:text-neutral-200':props.curpage === 'classList', 'text-neutral-300 hover:text-neutral-100':props.curpage !== 'classList'}" class="block text-base">강의목록</router-link>
+            <router-link to="/classlist" :class="{'text-neutral-50 font-bold hover:text-neutral-200':props.curpage === 'classList', 'text-neutral-300 hover:text-neutral-100':props.curpage !== 'classList'}" class="block text-base">수강신청</router-link>
           </li>
           <li>
             <router-link to="/pastclass" :class="{'text-neutral-50 font-bold hover:text-neutral-200':props.curpage === 'pastClass', 'text-neutral-300 hover:text-neutral-100':props.curpage !== 'pastClass'}" class="block text-base">이전강의</router-link>
@@ -50,7 +50,7 @@
             <router-link to="/profile" :class="{'text-neutral-50 font-bold':props.curpage === 'profile', 'text-neutral-300':props.curpage !== 'profile'}" class="block py-2 pl-3">마이 페이지</router-link>
           </li>
           <li>
-            <router-link to="/classlist" :class="{'text-neutral-50 font-bold':props.curpage === 'classList', 'text-neutral-300':props.curpage !== 'classList'}" class="block py-2 pl-3">강의목록</router-link>
+            <router-link to="/classlist" :class="{'text-neutral-50 font-bold':props.curpage === 'classList', 'text-neutral-300':props.curpage !== 'classList'}" class="block py-2 pl-3">수강신청</router-link>
           </li>
           <li>
             <router-link to="/pastclass" :class="{'text-neutral-50 font-bold':props.curpage === 'pastClass', 'text-neutral-300':props.curpage !== 'pastClass'}" class="block py-2 pl-3">이전강의</router-link>

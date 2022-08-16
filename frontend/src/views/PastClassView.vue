@@ -1,7 +1,7 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
-  <div class="pt-[60px]">
+  <div class="pt-[80px]">
     <PastCardList />
   </div>
 </template>

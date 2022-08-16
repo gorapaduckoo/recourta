@@ -1,8 +1,9 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
-  <div class="pt-[60px]">
+  <div class="pt-[80px]">
     <LecturerList v-if="!store.state.user.isStudent" :currentTeaching="state.currentTeaching"/>
+    <div>{{state.currentLearning}}</div>
     <CardList />
   </div>
 
@@ -23,6 +24,7 @@ const store = useStore()
 const state = reactive({
   curpage : "main",
   currentTeaching : [],
+  currentLearning : {},
 })
 
 const getCurrentTeaching = async () => {
@@ -42,7 +44,25 @@ const getCurrentTeaching = async () => {
   })
 }
 
+const getCurrentLearning = async () => {
+  await axios({
+    url: rct.regist.registlearning(store.state.user.userId),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    state.currentLearning = res.data
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
 getCurrentTeaching()
+getCurrentLearning()
 
 </script>
 
