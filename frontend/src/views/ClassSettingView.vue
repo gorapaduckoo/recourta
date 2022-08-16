@@ -131,7 +131,6 @@ const getClassInfo = async () => {
   })
   .then(res => {
     store.state.lecture.lecInfo = res.data
-    // 페이지 벗어날 때 lecInfo 초기화를 해줘야 할까...?
     state.lecturetime = res.data.lectureTime
     state.lecImgUrl = store.state.lecture.lectureImgFirstUrl+res.data.lectureImg
   })
@@ -140,7 +139,26 @@ const getClassInfo = async () => {
   })
 }
 
+// 강의 수강생 조회
+const getStudentList = async () => {
+  await axios({
+    url: rct.regist.registlearning(store.state.user.userId),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    state.currentLearning = res.data
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
 getClassInfo()
+getStudentList()
 
 const state = reactive({
   lecturetime: [],
