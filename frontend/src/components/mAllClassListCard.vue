@@ -56,8 +56,12 @@
 
 <script setup>
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import rct from '../api/rct'
 
 const store = useStore()
+const route = useRouter()
 
 // { "lectureId": 18, "title": "ggg", "teacher": "유지슬", "lectureImg": "b785ba11-e5ee-468a-b2cd-b2cf16684201.png", "lectureTime": [ "월 0:00 ~ 4:00", "토 0:00 ~ 4:00", "일 0:00 ~ 4:00" ] }
 const props = defineProps({
