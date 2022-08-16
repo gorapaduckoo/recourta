@@ -67,13 +67,13 @@
         </svg>
       </button>
     </div>
-    <div class="text-center" >{{ store.state.lecture.lecInfo.title }}</div>
+    <div class="py-1 text-center text-lg font-bold dark:font-semibold border-b">{{ store.state.lecture.lecInfo.title }}</div>
   </div>
 
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
+    <ClassSetAtt v-if="state.isatten" :studentList="state.studentList.userList"/>
     <ClassSetInfo v-if="state.isinfo" :lecturetime="state.lecturetime"/>
-    <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
     <ClassSetDM v-if="state.isdm"/>
   </div>
@@ -142,7 +142,7 @@ const getClassInfo = async () => {
 // 강의 수강생 조회
 const getStudentList = async () => {
   await axios({
-    url: rct.regist.registlearning(store.state.user.userId),
+    url: rct.regist.currentstudentlist(Number(rout.params.lecId)),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
@@ -150,7 +150,7 @@ const getStudentList = async () => {
     }
   })
   .then(res => {
-    state.currentLearning = res.data
+    state.studentList = res.data
   })
   .catch(err => {
     console.log(err)
@@ -162,6 +162,7 @@ getStudentList()
 
 const state = reactive({
   lecturetime: [],
+  studentList: {},
   lecImgUrl: "",
   isatten: true,
   isinfo: false,

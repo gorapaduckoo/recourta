@@ -1,5 +1,5 @@
 <template>
-  <form class="pt-10 w-4/5 lg:w-3/4 min-w-[450px] ml-auto mr-auto" @submit.prevent="editClassSubmit">
+  <form class="pt-40 lg:pt-10 w-4/5 lg:w-3/4 min-w-[450px] ml-auto mr-auto" @submit.prevent="editClassSubmit">
 
     <!-- 강의 기간 -->
     <div class="form-group mb-10 flex justify-between">
@@ -92,13 +92,12 @@
 import LectureTime from '../components/LectureTime.vue'
 
 import { ref, reactive } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from 'vuex'
 
 const store = useStore()
-const route = useRouter()
 const rout = useRoute()
 
 const props = defineProps({

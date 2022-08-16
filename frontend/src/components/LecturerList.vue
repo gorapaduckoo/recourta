@@ -195,6 +195,7 @@ const makeClassSubmit = async () => {
   })
   .then(res => {
     modalClose()
+    location.reload()
   })
   .catch(err => {
     console.log(err)
@@ -225,7 +226,6 @@ const modalOpen = () => {
 
 const modalClose = () => {
   document.getElementById('classMakeModal').classList.replace('show', 'hidden')
-  location.reload()
 }
 </script>
 
