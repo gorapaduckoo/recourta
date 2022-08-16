@@ -72,7 +72,7 @@ public class RegistrationServiceImpl implements RegistrationService {
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
             LocalDate startDate = lecture.getStartDate();
             LocalDate endDate = lecture.getEndDate();
-            if((startDate.isBefore(LocalDate.now()) || startDate.equals(LocalDate.now())) && (endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now()))) currentLectureList.add(lecture.toLecturePreview());
+            if(endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now())) currentLectureList.add(lecture.toLecturePreview());
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(currentLectureList).build();
