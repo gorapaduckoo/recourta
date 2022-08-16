@@ -7,7 +7,7 @@
     </button>
     <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
-      {{state.subtitles[-1]}}
+      {{state.subtitles[state.subtitles.length - 1]}}
     </div>
     <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
     <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
@@ -179,7 +179,6 @@ const getRegiList = async () => {
 
 
 const joinSession = async () => {
-  console.log(store.state.user.userId, store.getters.currentMySessionId)
   await axios({
     url: rct.webrtc.checkin(),
     method: 'post',
@@ -267,8 +266,7 @@ const joinSession = async () => {
   })
 
   state.session.on('signal:Subtitle', (event) => {
-    console.log(state.userAll)
-    state.subtitles.push(state.userAll.find(usr => usr[2] === event.from.connectionId)[1] + " : " + event.data)
+    state.subtitles.push(state.classAttList.find(usr => usr[2] === event.from.connectionId)[1] + " : " + event.data)
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
@@ -375,6 +373,20 @@ const updateMainVideoStreamManager = (stream) => {
   state.mainStreamManager = stream;
 }
 
+function getCurrentDate()
+    {
+        var date = new Date();
+        var year = date.getFullYear().toString();
+
+        var month = date.getMonth() + 1;
+        month = month < 10 ? '0' + month.toString() : month.toString();
+
+        var day = date.getDate();
+        day = day < 10 ? '0' + day.toString() : day.toString();
+
+        return '_' + year + '_' + month + '_' + day ;
+  }
+
 const leaveClass = async (x) => {
   await axios({
     url: rct.webrtc.checkout(),
@@ -404,10 +416,14 @@ const leaveClass = async (x) => {
     // Select whether to save the lecture script
     let issave = confirm("강의록을 저장하시겠습니까?")
 
+    const tmpScript = state.subtitles.join('\n')
+    const now = getCurrentDate()
+
+
     if(issave) {
-      let blob = new Blob([scripts], {type: 'text/plain'})
+      let blob = new Blob([tmpScript], {type: 'text/plain'})
       link.href = window.URL.createObjectURL(blob)
-      link.download = state.sidebarTitle + '_강의록.txt'
+      link.download = state.sidebarTitle + now + '_강의록' + '.txt'
       link.click()
     }
   }
