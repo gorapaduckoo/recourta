@@ -6,6 +6,7 @@ import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
 import com.ssafy.recourta.domain.registration.service.RegistrationService;
+import com.ssafy.recourta.domain.session.service.SessionService;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
 import com.ssafy.recourta.global.exception.LectureException;
@@ -33,6 +34,8 @@ public class LectureServiceImpl implements LectureService {
 
     @Autowired
     private RegistrationService registrationService;
+    @Autowired
+    private SessionService sessionService;
 
     @Autowired
     private ImgUtil imgUtil;
@@ -118,7 +121,9 @@ public class LectureServiceImpl implements LectureService {
             // 개설중인 강의가 없는 경우, 빈 리스트 반환
             List<LectureResponse.LecturePreview> result = new ArrayList<>();
             for (Lecture l: searchResult){
-                result.add(l.toLecturePreview());
+                LectureResponse.LecturePreview lecturePreview = l.toLecturePreview();
+                lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(l.getLectureId()));
+                result.add(lecturePreview);
             }
             return result;
 
@@ -130,13 +135,16 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
-        List<LectureResponse.LecturePreview> result  = new ArrayList<>();
+        List<LectureResponse.LecturePreview> result = new ArrayList<>();
         if(userRepository.existsById(userId)) {
 //            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
 //            for (Lecture l : lectures) {
 //                result.add(l.toLecturePreview());
 //            }
             result = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
+            for(LectureResponse.LecturePreview lecturePreview : result) {
+                lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(lecturePreview.getLectureId()));
+            }
         } else {
             throw new UserNotFoundException();
         }
@@ -151,10 +159,11 @@ public class LectureServiceImpl implements LectureService {
 
         // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
         for (Lecture l : lectures) {
-            result.add(l.toLecturePreview());
+            LectureResponse.LecturePreview lecturePreview = l.toLecturePreview();
+            lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(l.getLectureId()));
+            result.add(lecturePreview);
         }
         return result;
     }
-
 
 }
