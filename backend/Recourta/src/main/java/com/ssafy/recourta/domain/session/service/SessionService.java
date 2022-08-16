@@ -15,4 +15,5 @@ public interface SessionService {
     List<SessionResponse.SessionIdMapping> searchSessionByDateAndLectureId(LocalDate startDate, LocalDate endDate, Integer lectureId) throws Exception;
     Integer changeSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) throws Exception;
     SessionResponse.SessionId deleteSession(Integer sessionId);
+    Integer getEarliestAvailableSession(Integer lectureId);
 }

@@ -96,4 +96,11 @@ public class SessionServiceImpl implements SessionService{
         sessionRepository.deleteById(sessionId);
         return SessionResponse.SessionId.builder().sessionId(sessionId).build();
     }
+
+    @Override
+    public Integer getEarliestAvailableSession(Integer lectureId) {
+        Session session = sessionRepository.findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(lectureId, LocalDateTime.now()).orElse(null);
+        if(session != null) return session.getSessionId();
+        else return null;
+    }
 }
