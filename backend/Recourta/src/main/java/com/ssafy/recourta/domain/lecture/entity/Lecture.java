@@ -73,6 +73,7 @@ public class Lecture {
         return LectureResponse.LectureDetail.builder()
                 .lectureId(this.getLectureId())
                 .userId(this.getUser().getUserId())
+                .teacher(this.getUser().getName())
                 .title(this.getTitle())
                 .content(this.getContent())
                 .startDate(this.getStartDate())
