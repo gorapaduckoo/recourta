@@ -1,7 +1,7 @@
 <template>
-  <div class="w-[360px] flex flex-col bg-black bg-opacity-50">
+  <div class="w-full lg:w-[360px] flex flex-col text-sm lg:text-base bg-black bg-opacity-50">
     <div class="flex-none flex justify-between items-center space-x-3 mt-2 pb-2 pl-3 pr-4 border-b-[1px] border-neutral-400">
-      <button  @click="closeListEmit" class="hover:text-neutral-200 text-neutral-400">
+      <button  @click="closeListEmit" class="hidden lg:flex hover:text-neutral-200 text-neutral-400">
         <svg class="h-10 w-10" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z"/>
           <line x1="5" y1="12" x2="19" y2="12" />
@@ -9,7 +9,7 @@
           <line x1="15" y1="8" x2="19" y2="12" />
         </svg>
       </button>
-      <div class="text-xl text-justify">{{ props.sidebarTitle }}</div>
+      <div class="text-xl text-center lg:text-justify">{{ props.sidebarTitle }}</div>
       <button @click="togglelist" class="hover:text-neutral-200 text-neutral-400">
         <svg class="h-10 w-10"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -75,7 +75,7 @@
         <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col overflow-y-auto border-b-[1px] px-1 border-neutral-400">
+    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-1 border-neutral-400">
       <div v-for="(msg,index) in props.msglist" :key="index">
         <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
         <div v-else>{{props.classAttList.find(v => v[2]===msg[1])[1]}}:{{msg[0]}}</div>
@@ -83,23 +83,23 @@
       <br />
     </div>
     <div id="msginput">
-        <div id="selectreceiver" class="flex items-center px-3 pt-2 space-x-3">
-          <div class="class-none">받는 사람</div>
-          <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.receiver" name="receiver" id="receiver">
-            <option value="모두에게" selected>모두에게</option>
-            <option v-for="rec in props.classAttList" :key="rec[0]" :value="rec[3]">{{ rec[1] }}</option>
-          </select>
-        </div>
-        <div class="relative px-3 pt-2 mb-2">
-          <textarea @keyup.enter="submitmsg" id="msgbox" rows="2" name="sendmsg" v-model.trim="state.sendmsg" class="block py-2 pl-2 pr-[36px] w-full text-sm resize-none rounded-lg bg-transparent border-2 appearance-none focus:outline-none focus:ring-0 focus:border-neutral-200 border-neutral-400" placeholder=" "/>
-          <button @click="submitmsg" class="absolute top-[28px] right-[20px] hover:text-neutral-200 text-neutral-400">
-            <svg class="h-6 w-6"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
-              <polyline points="9 10 4 15 9 20" />
-              <path d="M20 4v7a4 4 0 0 1-4 4H4" />
-            </svg>
-          </button>
-        </div>
+      <div id="selectreceiver" class="flex items-center px-3 pt-2 space-x-3">
+        <div class="class-none">받는 사람</div>
+        <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.receiver" name="receiver" id="receiver">
+          <option value="모두에게" selected>모두에게</option>
+          <option v-for="rec in props.classAttList" :key="rec[0]" :value="rec[3]">{{ rec[1] }}</option>
+        </select>
       </div>
+      <div class="relative px-3 pt-2 mb-2">
+        <textarea @keyup.enter="submitmsg" id="msgbox" rows="2" name="sendmsg" v-model.trim="state.sendmsg" class="block py-2 pl-2 pr-[36px] w-full resize-none rounded-lg bg-transparent border-2 appearance-none focus:outline-none focus:ring-0 focus:border-neutral-200 border-neutral-400" placeholder=" "/>
+        <button @click="submitmsg" class="absolute top-[28px] right-[20px] hover:text-neutral-200 text-neutral-400">
+          <svg class="h-6 w-6"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+            <polyline points="9 10 4 15 9 20" />
+            <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -147,7 +147,6 @@ const submitmsg = () => {
     reclist.push(state.receiver)
     if(state.receiver.connectionId!==props.publisher.stream.connection.connectionId)reclist.push(props.publisher.stream.connection)
   }
-  console.log(reclist)
   if(state.sendmsg!=="") emit('submitMsg',state.sendmsg,reclist)
   state.sendmsg=""
   // console.log(state.msgheight)
@@ -207,11 +206,7 @@ const onClickBan = (connection) => {
 }
 
 watch(()=>props.msglist,(newm,oldm)=>{
-  msg.value.scrollTop = msg.value.scrollHeight
-})
-
-
-watch(()=>props.msglist,(newm,oldm)=>{
+  console.log(msg.value.scrollTop,msg.value.scrollHeight)
   msg.value.scrollTop = msg.value.scrollHeight
 })
 

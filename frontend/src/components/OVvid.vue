@@ -1,5 +1,5 @@
 <template>
-  <video class="w-full h-full" ref="el" autoplay/>
+  <video class="w-full h-auto lg:h-full" ref="el" autoplay/>
 </template>
 
 <script setup>
