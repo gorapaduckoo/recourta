@@ -85,8 +85,8 @@ public class LectureController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LectureResponse.LecturePreview>> searchAllLecture() throws Exception {
-        List<LectureResponse.LecturePreview> result = lectureService.searchAvailableLecture();
+    public ResponseEntity<List<LectureResponse.LectureDetail>> searchAllLecture() throws Exception {
+        List<LectureResponse.LectureDetail> result = lectureService.searchAvailableLecture();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
