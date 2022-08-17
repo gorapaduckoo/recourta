@@ -1,7 +1,7 @@
 <template>
 <div class="bg-[#444444] text-white">
   <div :class="{'lg:pr-[360px]':state.isside}" class="flex flex-col overflow-y-auto h-[100vh] lg:py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.classAttList" :onMic="state.onMic" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
@@ -9,10 +9,10 @@
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
-    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leavePage(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
@@ -50,10 +50,11 @@ const state = reactive({
   myUserId: store.state.user.userId,
   sidebarTitle: store.getters.currentSidebarTitle,
 
-  classRegiList: [['lecturer',store.getters.currentLecturerName]],
+  classRegiList: [['lecturer',store.getters.currentLecturerName+'(강의자)']],
   classAttList: [],
   classAbsList: [],
   userAll: [],
+  onMic: [],
 
   isshare:false,
   isside:false,
@@ -263,7 +264,7 @@ const joinSession = async () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    if (!state.isLecturer) leaveClass(true)
+    if (!state.isLecturer) leavePage(true)
   })
 
   state.session.on('signal:Subtitle', (event) => {
@@ -271,11 +272,16 @@ const joinSession = async () => {
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
-    // console.log('User ' + event.connection.connectionId + ' start speaking');
+    state.onMic.push(event.connection.connectionId)
+    console.log(state.onMic)
   });
 
   state.session.on('publisherStopSpeaking', (event) => {
-    // console.log('User ' + event.connection.connectionId + ' stop speaking');
+    const index = state.onMic.indexOf(event.connection.connectionId, 0);
+    if (index >= 0) {
+      state.onMic.splice(index, 1);
+    }
+    console.log(state.onMic)
   });
 
   // --- Connect to the session with a valid user token ---
@@ -315,19 +321,19 @@ const joinSession = async () => {
     window.addEventListener('beforeunload', (event) => {
       event.preventDefault();
       event.returnValue = '';
-      leaveClass(true)
+      leavePage(true)
     })
 
     window.addEventListener("hashchange", (event) => {
       event.preventDefault();
-      event.returnValue = '';
-      leaveClass(true)
+      // event.returnValue = '';
+      leavePage(true)
     })
 
     if (!state.isLecturer) {
       setTimeout(function() {
         if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
-          leaveClass(false)
+          leavePage(false)
         }
       }, 500);
     }
@@ -382,6 +388,7 @@ const createToken = (sessionId) => {
 }
 
 const updateMainVideoStreamManager = (stream) => {
+  console.log(stream)
   if (state.mainStreamManager === stream) return;
   state.mainStreamManager = stream;
 }
@@ -479,16 +486,19 @@ const leaveClass = async (x) => {
   window.removeEventListener('beforeunload', (event) => {
     event.preventDefault();
     event.returnValue = '';
-    leaveClass(true)
+    leavePage(true)
   });
 
   window.removeEventListener("hashchange", (event) => {
-      event.preventDefault();
-      event.returnValue = '';
-      leaveClass(true)
+    event.preventDefault();
+    // event.returnValue = '';
+    leavePage(true)
   });
-  
-  location.href="/main"
+}
+
+const leavePage = (x) => {
+  leaveClass(x)
+  location.href = '/main'
 }
 
 const sendMsg = (data,reciever) => {

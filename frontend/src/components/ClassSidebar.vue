@@ -47,7 +47,7 @@
               </svg>
             </button>
             <button @click="onClickMic(name[4])" class="hover:text-neutral-200 text-neutral-400">
-              <svg v-if="(props.isLecturer&&name[4].stream.audioActive)||(!props.isLecturer&&!state.micBanList.find(connectionid => connectionid === name[2]))" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+              <svg v-if="(props.isLecturer&&name[4].stream.audioActive)||(!props.isLecturer&&!state.micBanList.find(connectionid => connectionid === name[2]))" :class="{'text-[#4fb054] hover:text-[#66bb6a]':props.onMic.indexOf(name[2])>=0}" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                 <line x1="12" y1="19" x2="12" y2="23" />
@@ -120,6 +120,7 @@ const props = defineProps({
   classAttList: Array,
   classAbsList: Array,
   isLecturer: Boolean,
+  onMic: Array,
 })
 
 const state = reactive({
@@ -177,8 +178,10 @@ const onClickCam = (sub) => {
       state.camBanList = tmpcamBanList
     }
     else {
-      sub.subscribeToVideo(false)
-      state.camBanList.push(sub.stream.connection.connectionId)
+      if(JSON.parse(sub.stream.connection.data).clientData!=="lecturer"){
+        sub.subscribeToVideo(false)
+        state.camBanList.push(sub.stream.connection.connectionId)
+      }
     }
   }
 }
@@ -194,8 +197,10 @@ const onClickMic = (sub) => {
       state.micBanList = tmpmicBanList
     }
     else {
-      sub.subscribeToAudio(false)
-      state.micBanList.push(sub.stream.connection.connectionId)
+      if(JSON.parse(sub.stream.connection.data).clientData!=="lecturer"){
+        sub.subscribeToAudio(false)
+        state.micBanList.push(sub.stream.connection.connectionId)
+      }
     }
   }
 }
