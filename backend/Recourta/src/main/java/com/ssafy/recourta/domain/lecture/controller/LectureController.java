@@ -84,9 +84,9 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<LectureResponse.LectureDetail>> searchAllLecture(@RequestBody LectureRequest.LectureStudentId request) throws Exception {
-        List<LectureResponse.LectureDetail> result = lectureService.searchAvailableLecture(request.getUserId());
+    @GetMapping("/{userId}/availableList")
+    public ResponseEntity<List<LectureResponse.LectureDetail>> searchAllLecture(@PathVariable Integer userId) throws Exception {
+        List<LectureResponse.LectureDetail> result = lectureService.searchAvailableLecture(userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
