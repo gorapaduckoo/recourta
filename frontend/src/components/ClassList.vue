@@ -1,5 +1,5 @@
 <template>
-  <div v-if="props.publisher" class="flex items-center space-x-3">
+  <div id="myVideo" v-if="props.publisher" class="flex items-center space-x-3">
     <button @click="shiftleft" class="hover:text-neutral-200 text-neutral-400">
       <svg class="h-8 w-8"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -16,7 +16,9 @@
 
 <script setup>
 import UserCam from "./UserCam.vue"
-import { defineProps, reactive, computed } from 'vue'
+import { defineProps, reactive, computed, watch } from 'vue'
+import * as faceapi from '@vladmandic/face-api'
+import cv from 'canvas'
 
 const state = reactive({
   cnt: 0,
@@ -54,6 +56,42 @@ const calEndIndex = () => {
   return tmpEndIndex
 }
 
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
+    faceapi.nets.tinyFaceDetector.loadFromUri("/model"),
+    faceapi.nets.tinyYolov2.loadFromUri("/model"),
+    faceapi.nets.faceLandmark68TinyNet.loadFromUri("/model"),
+    faceapi.nets.faceLandmark68Net.loadFromUri("/model"),
+    faceapi.nets.faceRecognitionNet.loadFromUri("/model"),
+]).then(() => {
+  console.log("success!")
+}).catch(e => {
+  console.log(e)
+})
+
+
+props.publisher.on("streamPlaying", event => {
+  const video = props.publisher.videos[0]
+  const videoWidth = props.publisher.videos[0].video.clientWidth
+  const videoHeight = props.publisher.videos[0].video.clientHeight
+  console.log(video)
+  const canvas = faceapi.createCanvasFromMedia(video.video)
+  canvas.setAttribute('style', 'position: absolute;')
+  document.getElementById('local-video-undefined').before(canvas)
+  const displaySize = {width: videoWidth, height: videoHeight}
+  console.log(displaySize)
+  faceapi.matchDimensions(canvas, displaySize)
+
+  setInterval(async ()=> {
+    const detection = await faceapi.detectAllFaces(video.video).withFaceLandmarks()
+    const resizedDetections = faceapi.resizeResults(detection, displaySize)
+
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    faceapi.draw.drawDetections(canvas, resizedDetections)
+    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+  })
+})
   
 </script>
 
