@@ -1,7 +1,7 @@
 <template>
 <div class="bg-[#444444] text-white">
   <div :class="{'lg:pr-[360px]':state.isside}" class="flex flex-col overflow-y-auto h-[100vh] lg:py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" class="hidden lg:flex flex-1"/>
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
@@ -76,9 +76,8 @@ const toggleside = () => {
 }
 
 const toggleshare = () => {
-  state.isshare=!state.isshare
-  if(state.isshare)startsharing()
-  else stopsharing()
+  if(state.isshare)stopsharing()
+  else startsharing()
 }
 
 const togglecam = () => {
@@ -212,7 +211,7 @@ const joinSession = async () => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
     reactiveAttList()
-    if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
+    // if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
   });
@@ -237,11 +236,14 @@ const joinSession = async () => {
 
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
-      state.isshare=true
+      reactiveAttList()
+      const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
+      if(tmpuser) {
+        updateMainVideoStreamManager(tmpuser)
+      }
     }
     else{
-      state.isshare=false
-      state.mainStreamManager = state.publisher
+      if(state.publisher.stream.connection.connectionId === event.from.connectionId) state.mainStreamManager = state.publisher
     }
   })
 
@@ -249,7 +251,6 @@ const joinSession = async () => {
     state.isAuth=!state.isAuth
     if(state.isshare){
       stopsharing()
-      state.isshare=false
     }
   })
 
@@ -469,8 +470,11 @@ const leaveClass = async (x) => {
   // state.isLecturer = false
   state.checkId = 0
 
-  store.commit("SET_MySessionId",'')
-  store.commit("SET_MyUserName",'')
+  store.commit("SET_MySessionId","")
+  store.commit("SET_MyLectureId","")
+  store.commit("SET_LecturerName","")
+  store.commit("SET_SidebarTitle","")
+  store.commit("SET_IsLecturer", false)
 
   window.removeEventListener('beforeunload', (event) => {
     event.preventDefault();
@@ -553,7 +557,10 @@ const sendban = (reciever) => {
 }
 
 const startsharing = () => {
-  
+  state.isshare=true
+  state.temppublisher = state.publisher
+  state.session.unpublish(state.publisher)
+
   let newPublisher = state.OV.initPublisher(
     undefined,
     {
@@ -580,6 +587,15 @@ const startsharing = () => {
     }
   );
   newPublisher.once("accessAllowed", event => {
+    state.publisher = newPublisher
+    state.session.publish(state.publisher)
+    console.log(state.publisher)
+    console.log(state.publisher.stream.typeOfVideo)
+    setTimeout(function() {
+      sss('ON')
+    }, 1000);
+  })
+  newPublisher.once("accessAllowed", event => {
     newPublisher.stream
       .getMediaStream()
       .getVideoTracks()[0]
@@ -601,22 +617,20 @@ const startsharing = () => {
     }
   });
   
-  console.log(state.publisher)
-
-  state.session.unpublish(state.publisher)
-  state.temppublisher = state.publisher
-  state.publisher = newPublisher
-  state.session.publish(state.publisher)
-  sss('ON')
-  state.mainStreamManager=state.publisher
+  
+  // state.mainStreamManager=state.publisher
 }
 
 const stopsharing = () => {
+  state.isshare=false
   state.session.unpublish(state.publisher);
   state.publisher = state.temppublisher;
   state.session.publish(state.publisher);
-  sss('OFF')
+  setTimeout(function() {
+    sss('OFF')
+  }, 500);
   state.mainStreamManager = state.publisher
+  // state.mainStreamManager = state.publisher
 }
 
 // sendscreenshare => sss
