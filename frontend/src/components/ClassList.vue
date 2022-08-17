@@ -140,6 +140,9 @@ async function recognizeFaces(){
       const resizedDetections = faceapi.resizeResults(detections, displaySize)
 
       canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+      // result는 distance(거리)와 label(인식한 사람 이름) 두개의 요소로 구성.
+      // distance가 특정 값 이하면 타이머를 작동시키는 방향으로 활용 가능할 것 같아요~
+      // distance가 낮을수록 본인이 올린 사진과 일치한다는 의미
       const results = resizedDetections.map((d) => {
         return faceMatcher.findBestMatch(d.descriptor)
       })
