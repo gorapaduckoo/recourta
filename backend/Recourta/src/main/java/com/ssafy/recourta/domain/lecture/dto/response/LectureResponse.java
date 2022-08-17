@@ -53,6 +53,8 @@ public class LectureResponse {
         @NotBlank
         private JSONArray lectureTime; // 강의시간
 
+        private Integer sessionId;
+
         @Builder
         public LectureDetail(Integer lectureId, Integer userId, String teacher, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, JSONArray lectureTime) {
             this.lectureId = lectureId;

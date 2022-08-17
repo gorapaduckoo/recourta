@@ -7,10 +7,11 @@ import java.text.ParseException;
 
 public interface RegistrationService {
 
-    RegistrationResponse.LectureList getLecturesOfUser(Integer userId);
+    RegistrationResponse.LecturePreviewList getLecturesOfUser(Integer userId);
     RegistrationResponse.UserList getUsersOfLecture(Integer lectureId);
-    RegistrationResponse.LectureList getCurrentLecturesOfUser(Integer userId) throws ParseException;
-    RegistrationResponse.LectureList getPreviousLecturesOfUser(Integer userId) throws ParseException;
+    RegistrationResponse.LectureDetailList getCurrentLectureDetailsOfUser(Integer userId) throws ParseException;
+    RegistrationResponse.LecturePreviewList getCurrentLecturePreviewsOfUser(Integer userId) throws ParseException;
+    RegistrationResponse.LectureDetailList getPreviousLecturesOfUser(Integer userId) throws ParseException;
     RegistrationResponse.RegistrationId registerLecture(RegistrationRequest.RegistrationInfo registrationInfo);
     RegistrationResponse.RegistrationId withdrawLecture(RegistrationRequest.RegistrationInfo registrationInfo);
 
