@@ -17,7 +17,7 @@
 	</div>
 
 	<!-- 강의중인 강의가 없을 때 -->
-	<div v-if="!props.currentTeaching.length" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">현재 강의중인 강의가 없습니다.</div>
+	<div v-if="(props.currentTeaching)?!props.currentTeaching.length:true" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">현재 강의중인 강의가 없습니다.</div>
 	
 	<!-- Reactive Desktop -->
 	<div class="hidden lg:grid lg:pt-8 lg:grid-cols-2 xl:grid-cols-3">
@@ -195,6 +195,7 @@ const makeClassSubmit = async () => {
   })
   .then(res => {
     modalClose()
+    location.reload()
   })
   .catch(err => {
     console.log(err)
@@ -225,7 +226,6 @@ const modalOpen = () => {
 
 const modalClose = () => {
   document.getElementById('classMakeModal').classList.replace('show', 'hidden')
-  location.reload()
 }
 </script>
 

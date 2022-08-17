@@ -67,13 +67,13 @@
         </svg>
       </button>
     </div>
-    <div class="text-center" >{{ store.state.lecture.lecInfo.title }}</div>
+    <div class="py-1 text-center text-lg font-bold dark:font-semibold border-b">{{ store.state.lecture.lecInfo.title }}</div>
   </div>
 
 
   <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
+    <ClassSetAtt v-if="state.isatten" :studentList="state.studentList.userList"/>
     <ClassSetInfo v-if="state.isinfo" :lecturetime="state.lecturetime"/>
-    <ClassSetAtt v-if="state.isatten"/>
     <ClassSetRegi v-if="state.isregi"/>
     <ClassSetDM v-if="state.isdm"/>
   </div>
@@ -131,7 +131,6 @@ const getClassInfo = async () => {
   })
   .then(res => {
     store.state.lecture.lecInfo = res.data
-    // 페이지 벗어날 때 lecInfo 초기화를 해줘야 할까...?
     state.lecturetime = res.data.lectureTime
     state.lecImgUrl = store.state.lecture.lectureImgFirstUrl+res.data.lectureImg
   })
@@ -140,10 +139,30 @@ const getClassInfo = async () => {
   })
 }
 
+// 강의 수강생 조회
+const getStudentList = async () => {
+  await axios({
+    url: rct.regist.currentstudentlist(Number(rout.params.lecId)),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+      'Context-Type' : 'multipart/form-data',
+    }
+  })
+  .then(res => {
+    state.studentList = res.data
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
 getClassInfo()
+getStudentList()
 
 const state = reactive({
   lecturetime: [],
+  studentList: {},
   lecImgUrl: "",
   isatten: true,
   isinfo: false,

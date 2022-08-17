@@ -1,19 +1,18 @@
 <template>
 <div class="bg-[#444444] text-white">
   <div :class="{'lg:pr-[360px]':state.isside}" class="flex flex-col overflow-y-auto h-[100vh] lg:py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.userAll" class="hidden lg:flex flex-1"/>
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.classAttList" :onMic="state.onMic" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
     <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
-      {{state.texts}}
+      {{state.subtitles[state.subtitles.length - 1]}}
+    </div>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leavePage(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-    <div v-else class="h-[44px]"></div>
-    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leaveClass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
-</div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
@@ -50,13 +49,15 @@ const state = reactive({
   subscribers: [],
 
   mySessionId: store.getters.currentMySessionId,
+  myLectureId: store.getters.currentMyLectureId,
   myUserId: store.state.user.userId,
   sidebarTitle: store.getters.currentSidebarTitle,
 
-  classRegiList: [['lecturer',store.getters.currentLecturerName]],
+  classRegiList: [['lecturer',store.getters.currentLecturerName+'(강의자)']],
   classAttList: [],
   classAbsList: [],
   userAll: [],
+  onMic: [],
 
   isshare:false,
   isside:false,
@@ -66,9 +67,12 @@ const state = reactive({
   issubtitle:false,
   issublist:true,
   texts:"",
+  subtitles: [],
   
   isLecturer:store.getters.currentIsLecturer,
   isAuth:false,
+
+  checkId: 0
 })
 
 const toggleside = () => {
@@ -76,9 +80,8 @@ const toggleside = () => {
 }
 
 const toggleshare = () => {
-  state.isshare=!state.isshare
-  if(state.isshare)startsharing()
-  else stopsharing()
+  if(state.isshare)stopsharing()
+  else startsharing()
 }
 
 const togglecam = () => {
@@ -139,7 +142,7 @@ const reactiveAttList = () => {
   }
 
   for (let student of state.classRegiList) {
-    const tmpId = state.classAttList.find(att => att[0] === student[0])
+    const tmpId = tmpAttList.find(att => att[0] === student[0])
     if (!tmpId && student[0] !== 'lecturer') tmpAbsList.push(student)
   }
 
@@ -158,28 +161,45 @@ const reactiveAttList = () => {
 
 const getRegiList = async () => {
   await axios({
-    url: rct.regist.currentstudentlist(state.mySessionId),
+    url: rct.regist.currentstudentlist(state.myLectureId),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
       'Context-Type' : 'multipart/form-data',
     }
   }).then(res=>{
-
     for(let usr of res.data.userList){
-      state.classRegiList.push([usr.userId,usr.name])
+      state.classRegiList.push([String(usr.userId),usr.name])
     }
-    const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
+  //   const tmpRegiList = [['0', '김싸피'], ['1', '이싸피'], ['2', '박싸피'], ['3', '안싸피']]
 
-    for(let usr of tmpRegiList) {
-      state.classRegiList.push([usr[0], usr[1]])
-    }
+  //   for(let usr of tmpRegiList) {
+  //     state.classRegiList.push([usr[0], usr[1]])
+  //   }
   })
 }
 
 
 
-const joinSession = () => {
+const joinSession = async () => {
+  await axios({
+    url: rct.webrtc.checkin(),
+    method: 'post',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId: store.state.user.userId,
+      sessionId: store.getters.currentMySessionId,
+    }
+  })
+  .then(res => {
+    state.checkId = res.data.checkId
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
   getRegiList()
   
   state.OV = new OpenVidu();
@@ -195,7 +215,7 @@ const joinSession = () => {
     const subscriber = state.session.subscribe(stream);
     state.subscribers.push(subscriber);
     reactiveAttList()
-    if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
+    // if(state.isshare&&(subscriber.stream.typeOfVideo==="SCREEN")) state.mainStreamManager = subscriber
     // state.mainStreamManager=subscriber
     // updateMainVideoStreamManager(subscriber)
   });
@@ -215,16 +235,19 @@ const joinSession = () => {
   });
 
   state.session.on('signal:my-chat', (event) => {
-    state.msgs.push([event.data,event.from.connectionId])
+    state.msgs.push([event.data,event.from.connectionId,currentTime()])
   });
 
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
-      state.isshare=true
+      reactiveAttList()
+      const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
+      if(tmpuser) {
+        updateMainVideoStreamManager(tmpuser)
+      }
     }
     else{
-      state.isshare=false
-      state.mainStreamManager = state.publisher
+      if(state.publisher.stream.connection.connectionId === event.from.connectionId) state.mainStreamManager = state.publisher
     }
   })
 
@@ -232,7 +255,6 @@ const joinSession = () => {
     state.isAuth=!state.isAuth
     if(state.isshare){
       stopsharing()
-      state.isshare=false
     }
   })
 
@@ -245,15 +267,24 @@ const joinSession = () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    leaveClass()
+    if (!state.isLecturer) leavePage(false)
+  })
+
+  state.session.on('signal:Subtitle', (event) => {
+    state.subtitles.push(state.classAttList.find(usr => usr[2] === event.from.connectionId)[1] + " : " + event.data)
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
-    console.log('User ' + event.connection.connectionId + ' start speaking');
+    state.onMic.push(event.connection.connectionId)
+    console.log(state.onMic)
   });
 
   state.session.on('publisherStopSpeaking', (event) => {
-    console.log('User ' + event.connection.connectionId + ' stop speaking');
+    const index = state.onMic.indexOf(event.connection.connectionId, 0);
+    if (index >= 0) {
+      state.onMic.splice(index, 1);
+    }
+    console.log(state.onMic)
   });
 
   // --- Connect to the session with a valid user token ---
@@ -281,16 +312,42 @@ const joinSession = () => {
         state.mainStreamManager = publisher;
         state.publisher = publisher
 
-        // --- Publish your stream ---
-        state.session.publish(state.publisher);
-        reactiveAttList()
-      })
-      .catch(error => {
-      });
-    window.addEventListener('beforeunload', leaveClass);
-  });
+      // --- Publish your stream ---
+      state.session.publish(state.publisher);
+      reactiveAttList()
+    })
+    .catch(error => {
+    });
 
-  
+    reactiveAttList()
+
+    window.addEventListener('beforeunload', (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leaveClass(true)
+    })
+
+    window.addEventListener("hashchange", (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leavePage(true)
+    })
+
+    window.addEventListener("unload", (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      leavePage(true)
+    })
+
+    if (!state.isLecturer) {
+      setTimeout(function() {
+        if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
+          alert('강의자가 없습니다.')
+          leavePage(false)
+        }
+      }, 500);
+    }
+  });
 }
 
 const getToken = async mySessionId => {
@@ -341,59 +398,123 @@ const createToken = (sessionId) => {
 }
 
 const updateMainVideoStreamManager = (stream) => {
+  console.log(stream)
   if (state.mainStreamManager === stream) return;
   state.mainStreamManager = stream;
 }
 
-const leaveClass = () => {
+function getCurrentDate()
+    {
+        var date = new Date();
+        var year = date.getFullYear().toString();
+
+        var month = date.getMonth() + 1;
+        month = month < 10 ? '0' + month.toString() : month.toString();
+
+        var day = date.getDate();
+        day = day < 10 ? '0' + day.toString() : day.toString();
+
+        return '_' + year + '_' + month + '_' + day ;
+  }
+
+const leaveClass = async (x) => {
+  await axios({
+    url: rct.webrtc.checkout(),
+    method: 'put',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId: store.state.user.userId,
+      sessionId: store.getters.currentMySessionId,
+      checkId: state.checkId,
+    }
+  })
+  .then(res => {
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
+  if (state.isLecturer) sendban([]);
+
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
-  // Select whether to save the lecture script
-  let issave = confirm("강의록을 저장하시겠습니까?")
+  if (x) {
+    // Select whether to save the lecture script
+    let issave = confirm("강의록을 저장하시겠습니까?")
 
-  if(issave) {
-    let blob = new Blob([scripts], {type: 'text/plain'})
-    link.href = window.URL.createObjectURL(blob)
-    link.download = state.sidebarTitle + '_강의록.txt'
-    link.click()
+    const tmpScript = state.subtitles.join('\n')
+    const now = getCurrentDate()
+
+
+    if(issave) {
+      let blob = new Blob([tmpScript], {type: 'text/plain'})
+      link.href = window.URL.createObjectURL(blob)
+      link.download = state.sidebarTitle + now + '_강의록' + '.txt'
+      link.click()
+    }
   }
-
-  state.session = undefined
-  state.mainStreamManager = undefined
-  state.publisher = undefined
-  state.temppublisher = undefined
-  state.subscribers = []
-  state.OV = undefined
   
-  state.ismic=false
-  state.iscam=false
-  state.isshare=false
-  state.isside=false
-  state.msgs=[]
-
-  state.mySessionId = ""
-  state.myUserId = ""
-  state.sidebarTitle = ""
-
-  state.classRegiList = []
-  state.classAttList = []
-  state.classAbsList = []
-  state.userAll = []
-
-  state.issubtitle = false
-  state.issublist = false
-  state.texts=""
-  state.isAuth=false
-
-  state.isLecturer = false
+  // state.session = undefined
+  // state.mainStreamManager = undefined
+  // state.publisher = undefined
+  // state.temppublisher = undefined
+  // state.subscribers = []
+  // state.OV = undefined
   
+  // state.ismic=false
+  // state.iscam=false
+  // state.isshare=false
+  // state.isside=false
+  // state.msgs=[]
 
-  store.commit("SET_MySessionId",'')
-  store.commit("SET_MyUserName",'')
+  // state.mySessionId = ""
+  // state.myUserId = ""
+  // state.sidebarTitle = ""
 
-  window.removeEventListener('beforeunload', leaveClass);
-  location.href="/main"
+  // state.classRegiList = []
+  // state.classAttList = []
+  // state.classAbsList = []
+  // state.userAll = []
+
+  // state.issubtitle = false
+  // state.issublist = false
+  // state.texts=""
+  // state.isAuth=false
+
+  // state.isLecturer = false
+  // state.checkId = 0
+
+  // store.commit("SET_MySessionId","")
+  // store.commit("SET_MyLectureId","")
+  // store.commit("SET_LecturerName","")
+  // store.commit("SET_SidebarTitle","")
+  // store.commit("SET_IsLecturer", false)
+
+  window.removeEventListener('beforeunload', (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+    leaveClass(true)
+  });
+
+  window.removeEventListener("hashchange", (event) => {
+    event.preventDefault();
+    // event.returnValue = '';
+    leavePage(true)
+  });
+
+  window.removeEventListener('unload', (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+    leaveClass(true)
+  });
+}
+
+const leavePage = (x) => {
+  leaveClass(x)
+  location.href = '/main'
 }
 
 const sendMsg = (data,reciever) => {
@@ -407,6 +528,13 @@ const sendMsg = (data,reciever) => {
   .catch(error => {
     console.error(error)
   })
+}
+
+const currentTime = () => {
+  const today = new Date();   
+  const hours = ('0' + today.getHours()).slice(-2); 
+  const minutes = ('0' + today.getMinutes()).slice(-2);
+  return hours + ':' + minutes;
 }
 
 const sendauth = (reciever) => {
@@ -462,13 +590,16 @@ const sendban = (reciever) => {
 }
 
 const startsharing = () => {
-  
+  state.isshare=true
+  state.temppublisher = state.publisher
+  state.session.unpublish(state.publisher)
+
   let newPublisher = state.OV.initPublisher(
     undefined,
     {
       audioSource: undefined, // The source of audio. If undefined default microphone
       videoSource: "screen",
-      publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+      publishAudio: state.ismic, // Whether you want to start publishing with your audio unmuted or not
       publishVideo: true, // Whether you want to start publishing with your video enabled or not
       resolution: "1920x1080", // The resolution of your video
       frameRate: 30, // The frame rate of your video
@@ -488,6 +619,15 @@ const startsharing = () => {
       }
     }
   );
+  newPublisher.once("accessAllowed", event => {
+    state.publisher = newPublisher
+    state.session.publish(state.publisher)
+    console.log(state.publisher)
+    console.log(state.publisher.stream.typeOfVideo)
+    setTimeout(function() {
+      sss('ON')
+    }, 1000);
+  })
   newPublisher.once("accessAllowed", event => {
     newPublisher.stream
       .getMediaStream()
@@ -509,20 +649,21 @@ const startsharing = () => {
       console.error("Error applying constraints: ", error);
     }
   });
-  state.session.unpublish(state.publisher)
-  state.temppublisher = state.publisher
-  state.publisher = newPublisher
-  state.session.publish(state.publisher)
-  sss('ON')
-  state.mainStreamManager=state.publisher
+  
+  
+  // state.mainStreamManager=state.publisher
 }
 
 const stopsharing = () => {
+  state.isshare=false
   state.session.unpublish(state.publisher);
   state.publisher = state.temppublisher;
   state.session.publish(state.publisher);
-  sss('OFF')
+  setTimeout(function() {
+    sss('OFF')
+  }, 500);
   state.mainStreamManager = state.publisher
+  // state.mainStreamManager = state.publisher
 }
 
 // sendscreenshare => sss
@@ -552,13 +693,10 @@ joinSession()
   recognition.continuous = true;
   recognition.lang = 'ko-KR';
 
-  
-
   // Create <p> element to insert on view
-  let p = document.createElement('p');
+  // let p = document.createElement('p');
   let link = document.createElement('a');
-  let scripts = ""; // lecture script text
-
+  // let scripts = ""; // lecture script text
 
   let cnt = 0;
   // When the Speech Recognition Server returns the result, concat '.' on result
@@ -567,8 +705,19 @@ joinSession()
     state.texts = e.results[cnt][0].transcript;
     // texts = Array.from(e.results).map(result => result[0])
     // .map(result => (result.transcript));
-    scripts += state.texts;
-    scripts +='\n';
+    // scripts += state.texts;
+
+    state.session.signal({
+      data: state.texts,  // Any string (optional)
+      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'Subtitle'             // The type of message (optional)
+    })
+    .then(() => {
+    })
+    .catch(error => {
+      console.error(error)
+    })
+    // scripts +='\n';
     cnt++;
 
   // print {texts} on console

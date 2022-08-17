@@ -54,6 +54,11 @@ export default createRouter({
       component: () => import('./views/ClassSettingView.vue'),
     },
     {
+      path: '/search/:searchText',
+      name: 'search',
+      component: () => import('./views/SearchView.vue'),
+    },
+    {
       path: '/notice',
       name: 'notice',
       component: () => import('./views/NoticeListView.vue'),

@@ -21,13 +21,15 @@ export default {
   lecture: {
     lecturecreate: () => HOST + LECTURE,
     lectureinfo: lectureid => HOST + LECTURE + '/' + lectureid,
+    availablelist: userid => HOST + LECTURE + '/' + userid + '/availableList',
     currentteaching: userid => HOST + LECTURE + '/' + userid + '/currentTeachingList',
-    currentlearning: userid => HOST + LECTURE + '/' + userid + '/currentLectureList'
+    currentlearning: userid => HOST + LECTURE + '/' + userid + '/currentLectureList',
   },
   regist: {
     regist: () => HOST + REGIST,
     registinfo: regiid => HOST + REGIST + '/' + regiid,
     registlearning: userid => HOST + REGIST + USER + '/current/' + userid,
+    registlearned: userid => HOST + REGIST + USER + '/previous/' + userid,
     currentstudentlist: lectureid => HOST + REGIST + '/lecture/' + lectureid,
   },
   login: {

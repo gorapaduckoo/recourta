@@ -18,23 +18,52 @@
 </template>
 
 <script setup>
-import { useStore } from 'vuex'
+import { useStore } from "vuex"
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const route = useRouter()
+
+const props = defineProps({
+  allClassList : {
+    type: Array,
+  }
+})
 
 const onSearch = () => {
-  store.commit("UpdateClassification",document.getElementById('searching_classification').value)
-  store.commit("UpdateSearchText",document.getElementById('searching_text').value)
-  document.getElementById('searching_classification').value = 1
+  const classification = document.getElementById('searching_classification').value
+  const searchText = document.getElementById('searching_text').value
+  store.commit("UpdateClassification",classification)
+  store.commit("UpdateSearchText",searchText)
+  // 걸러서 searchList 설정
+  if (classification === '1') {
+    let tempList = []
+    for (let lecture of props.allClassList) {
+      if (lecture.title.indexOf(searchText) !== -1 || lecture.teacher.indexOf(searchText) !== -1) {
+        tempList.push(lecture)
+      }
+    }
+    store.commit("UpdateSearchList",tempList)
+  } else if (classification === '2') {
+    let tempList = []
+    for (let lecture of props.allClassList) {
+      if (lecture.title.indexOf(searchText) !== -1) {
+        tempList.push(lecture)
+      }
+    }
+    store.commit("UpdateSearchList",tempList)
+  } else if (classification === '3') {
+    let tempList = []
+    for (let lecture of props.allClassList) {
+      if (lecture.teacher.indexOf(searchText) !== -1) {
+        tempList.push(lecture)
+      }
+    }
+    store.commit("UpdateSearchList",tempList)
+  }
+  document.getElementById('searching_classification').value = '1'
   document.getElementById('searching_text').value = ""
-  // 걸러서 searchList 설정 후 classification, searchText 초기화
-  // const makeSearchList = () => {
-  // 	if (state.searchText) {
-  // 		console.log('있다')
-  // 	} else {
-  // 		console.log('없다')
-  // 	}
-  // }
+  route.push({ name: 'search', params: { searchText: searchText } })
 }
 
 </script>

@@ -47,7 +47,7 @@
               </svg>
             </button>
             <button @click="onClickMic(name[4])" class="hover:text-neutral-200 text-neutral-400">
-              <svg v-if="(props.isLecturer&&name[4].stream.audioActive)||(!props.isLecturer&&!state.micBanList.find(connectionid => connectionid === name[2]))" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
+              <svg v-if="(props.isLecturer&&name[4].stream.audioActive)||(!props.isLecturer&&!state.micBanList.find(connectionid => connectionid === name[2]))" :class="{'text-[#4fb054] hover:text-[#66bb6a]':props.onMic.indexOf(name[2])>=0}" class="h-5 w-5 mr-auto ml-auto"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                 <line x1="12" y1="19" x2="12" y2="23" />
@@ -75,10 +75,27 @@
         <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-1 border-neutral-400">
-      <div v-for="(msg,index) in props.msglist" :key="index">
-        <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
-        <div v-else>{{props.classAttList.find(v => v[2]===msg[1])[1]}}:{{msg[0]}}</div>
+    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 border-neutral-400">
+      <div class="mb-2" v-for="(msg,index) in props.msglist" :key="index">
+        <div v-if="props.myID===msg[1]">
+          <div class="flex items-end justify-end">
+            <div class="text-[12px] lg:text-sm text-neutral-400 mr-2">{{msg[2]}}</div>
+            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl">
+              {{msg[0]}}
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="flex items-end">
+            <div>{{props.classAttList.find(v => v[2]===msg[1])[1]}}</div>
+          </div>
+          <div class="flex items-end">
+            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
+              {{msg[0]}}
+            </div>
+            <div class="text-[12px] lg:text-sm text-neutral-400">{{msg[2]}}</div>
+          </div>
+        </div>
       </div>
     </div>
     <div id="msginput">
@@ -120,6 +137,7 @@ const props = defineProps({
   classAttList: Array,
   classAbsList: Array,
   isLecturer: Boolean,
+  onMic: Array,
 })
 
 const state = reactive({
@@ -177,8 +195,10 @@ const onClickCam = (sub) => {
       state.camBanList = tmpcamBanList
     }
     else {
-      sub.subscribeToVideo(false)
-      state.camBanList.push(sub.stream.connection.connectionId)
+      if(JSON.parse(sub.stream.connection.data).clientData!=="lecturer"){
+        sub.subscribeToVideo(false)
+        state.camBanList.push(sub.stream.connection.connectionId)
+      }
     }
   }
 }
@@ -194,8 +214,10 @@ const onClickMic = (sub) => {
       state.micBanList = tmpmicBanList
     }
     else {
-      sub.subscribeToAudio(false)
-      state.micBanList.push(sub.stream.connection.connectionId)
+      if(JSON.parse(sub.stream.connection.data).clientData!=="lecturer"){
+        sub.subscribeToAudio(false)
+        state.micBanList.push(sub.stream.connection.connectionId)
+      }
     }
   }
 }
@@ -205,7 +227,6 @@ const onClickBan = (connection) => {
 }
 
 onUpdated(()=>{
-  console.log(msg.value.scrollTop,msg.value.scrollHeight)
   msg.value.scrollTop = msg.value.scrollHeight
 })
 

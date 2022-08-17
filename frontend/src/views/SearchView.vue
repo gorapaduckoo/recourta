@@ -8,34 +8,36 @@
       <div class="flex-grow h-px bg-neutral-400"></div> 
 
       <!-- Your text here -->
-      <div class="flex-shrink text-2xl font-bold px-4">신청 가능한 강의</div>
+      <div class="flex-shrink text-2xl font-bold px-4">'{{state.searchText}}' 에 대한 검색 결과</div>
 
       <!-- The right line -->
-      <div class="flex-grow h-px bg-neutral-400 lg:w-3/4"></div>
+      <div class="flex-grow h-px bg-neutral-400"></div>
     </div>
   </div>
 
   <SearchForm :allClassList="state.allClassList"/>
 
-  <AllClassList :allClassList="state.allClassList"/>
-  <div v-if="(state.allClassList)?!state.allClassList.length:true" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">신청 가능한 강의가 없습니다.</div>
+  <SearchList />
+
 </template>
 
 <script setup>
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
-import AllClassList from '../components/AllClassList.vue'
+import SearchList from '../components/SearchList.vue'
 import SearchForm from '../components/SearchForm.vue'
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
-import { useStore } from 'vuex'
 
 const store = useStore()
+const rout = useRoute()
 
 const getClassList = async () => {
   await axios({
-    url: rct.lecture.availablelist(store.state.user.userId),
+    url: rct.lecture.lecturecreate(),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
@@ -49,18 +51,12 @@ const getClassList = async () => {
   })
 }
 
-const resetSearchInfo = () => {
-  store.commit("UpdateClassification", 1)
-  store.commit("UpdateSearchText", "")
-  store.commit('UpdateSearchList', [])
-}
-
 getClassList()
-resetSearchInfo()
 
 const state = reactive({
-  curpage : "classList",
-  allClassList : [],
+  curpage: "classList",
+  allClassList: [],
+  searchText: computed (() => rout.params.searchText)
 })
 
 </script>
