@@ -32,8 +32,6 @@ import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
-import * as faceapi from 'face-api.js'
-import { FaceMatch, FaceMatcher } from 'face-api.js'
 
 
 const store = useStore()

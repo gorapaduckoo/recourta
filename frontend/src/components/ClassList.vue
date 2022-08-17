@@ -16,10 +16,11 @@
 
 <script setup>
 import UserCam from "./UserCam.vue"
-import { defineProps, reactive, computed, watch } from 'vue'
+import { defineProps, reactive, computed, defineEmits, onMounted } from 'vue'
 import * as faceapi from '@vladmandic/face-api'
-import { useStore, defineEmits } from 'vuex'
+import { useStore } from 'vuex'
 import rct from '../api/rct'
+import axios from 'axios'
 
 const emit = defineEmits(["updateMainVideoStreamManager"])
 
@@ -29,7 +30,6 @@ const state = reactive({
   userId: null,
   userName: "",
   takenImg: "",
-,
   isList:true,
 })
 
@@ -73,9 +73,6 @@ const calEndIndex = () => {
 /////////////// Face Recognition Part
 
 const store = useStore()
-let FaceMatcher = null
-
-let input = document.createElement("img")
 
 const getUserImage = async () => {
   await axios({
@@ -90,7 +87,6 @@ const getUserImage = async () => {
     state.userId = res.data.userId
     state.userName = res.data.name
     state.takenImg = store.state.user.userImgFirstUrl+res.data.userImg
-    input.src = state.takenImg
   })
   .catch(err => {
     console.log(err)
@@ -99,59 +95,80 @@ const getUserImage = async () => {
 
 
 function loadLabeledImage() {
-  const label = state.userName
+  const labels = [state.userName]
   return Promise.all(
-    async () => {
-      const img = faceapi.fetchImage(state.takenImg)
-      const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
-      console.log(JSON.stringify(detection))
-      const description = detection.descriptor
+    labels.map(async (label) => {
+      const descriptions = []
+      for (let i=1; i<=2; i++) {
+        // let img = document.createElement('img')
+        // img.src = state.takenImg
+        const img = await faceapi.fetchImage(state.takenImg)
+        const detections = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+        descriptions.push(detections.descriptor)
+      }
       
-      return new faceapi.LabeledFaceDescriptors(label, description)
-    }
+      console.log(label+' Faces Loaded | ')
+      return new faceapi.LabeledFaceDescriptors(label, descriptions)
+    })
   )
 }
 
+async function recognizeFaces(){
+
+
+  console.log("here!!")
+  const labeledDescriptor = await loadLabeledImage()
+  console.log(labeledDescriptor)
+  // 두번째 인자는 역치값: 높을수록 본인 인정 기준이 널널해짐
+  const faceMatcher = new faceapi.FaceMatcher(labeledDescriptor, 0.4)
+
+
+  props.publisher.on("streamPlaying", event => {
+    const video = props.publisher.videos[0]
+    const videoWidth = props.publisher.videos[0].video.clientWidth
+    const videoHeight = props.publisher.videos[0].video.clientHeight
+
+    const canvas = faceapi.createCanvasFromMedia(video.video)
+    canvas.setAttribute('style', 'position: absolute;')
+    document.getElementById('local-video-undefined').before(canvas)
+
+    const displaySize = {width: videoWidth, height: videoHeight}
+    faceapi.matchDimensions(canvas, displaySize)
+
+    setInterval(async ()=> {
+      const detections = await faceapi.detectAllFaces(video.video).withFaceLandmarks().withFaceDescriptors()
+      const resizedDetections = faceapi.resizeResults(detections, displaySize)
+
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+      const results = resizedDetections.map((d) => {
+        return faceMatcher.findBestMatch(d.descriptor)
+      })
+      results.forEach((result, i) => {
+        const box = resizedDetections[i].detection.box
+      const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
+      console.log(result.toString())
+      drawBox.draw(canvas)
+      })
+      // faceapi.draw.drawDetections(canvas, resizedDetections)
+    })
+},100)
+
+}
+
+getUserImage()
 
 Promise.all([
     faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
-    faceapi.nets.tinyFaceDetector.loadFromUri("/model"),
+    faceapi.nets.faceLandmark68Net.loadFromUri("/model"),
     faceapi.nets.faceRecognitionNet.loadFromUri("/model"),
-    getUserImage()
 ]).then(() => {
   console.log("success!")
-}).catch(e => {
-  console.log(e)
+  recognizeFaces()
 })
 
-const labeledDescriptor = await loadLabeledImage()
-console.log(faceapi.labeledDescriptor)
-const faceMatcher = new faceapi.FaceMatcher(labeledDescriptor, 0.7)
 
-props.publisher.on("streamPlaying", event => {
-  const video = props.publisher.videos[0]
-  const videoWidth = props.publisher.videos[0].video.clientWidth
-  const videoHeight = props.publisher.videos[0].video.clientHeight
 
-  const canvas = faceapi.createCanvasFromMedia(video.video)
-  canvas.setAttribute('style', 'position: absolute;')
-  document.getElementById('local-video-undefined').before(canvas)
 
-  const displaySize = {width: videoWidth, height: videoHeight}
-  faceapi.matchDimensions(canvas, displaySize)
-
-  setInterval(async ()=> {
-    const detections = await faceapi.detectSingleFace(video.video, getFaceDetectorOptions())
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-    const result = faceMatcher.findBestMatch(detections.descriptor)
-    const box = resizedDetections.detection.box
-    const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
-    drawBox.draw(canvas)
-    // faceapi.draw.drawDetections(canvas, resizedDetections)
-  })
-})
   
 </script>
 
