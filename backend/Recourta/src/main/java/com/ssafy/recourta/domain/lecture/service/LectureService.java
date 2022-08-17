@@ -15,6 +15,6 @@ public interface LectureService {
     LectureResponse.LectureId deleteLecture(Integer lectureId) throws Exception;
     List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) throws Exception;
     List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException;
-    List<LectureResponse.LectureDetail> searchAvailableLecture() throws Exception;
+    List<LectureResponse.LectureDetail> searchAvailableLecture(Integer userId) throws Exception;
 
 }

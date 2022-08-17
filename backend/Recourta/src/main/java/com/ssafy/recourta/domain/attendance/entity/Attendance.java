@@ -29,8 +29,9 @@ public class Attendance extends BaseEntity {
     private Integer attType;
 
     @Builder
-    public Attendance(User user, Session session) {
+    public Attendance(User user, Session session, Integer attType) {
         this.user = user;
         this.session = session;
+        this.attType = attType;
     }
 }
