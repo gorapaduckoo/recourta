@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -41,7 +42,8 @@ public class SecurityConfig{
                 // h2-console 화면을 사용하기 위해 옵션을 disable
                 .and()
                     .logout()
-                    .logoutSuccessUrl("http://localhost:5173/")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/")
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
