@@ -21,8 +21,9 @@ export default {
   lecture: {
     lecturecreate: () => HOST + LECTURE,
     lectureinfo: lectureid => HOST + LECTURE + '/' + lectureid,
+    availablelist: userid => HOST + LECTURE + '/' + userid + '/availableList',
     currentteaching: userid => HOST + LECTURE + '/' + userid + '/currentTeachingList',
-    currentlearning: userid => HOST + LECTURE + '/' + userid + '/currentLectureList'
+    currentlearning: userid => HOST + LECTURE + '/' + userid + '/currentLectureList',
   },
   regist: {
     regist: () => HOST + REGIST,
