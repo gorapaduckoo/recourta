@@ -1,7 +1,7 @@
 export const lecture = {
     state: {
       lectureTimeList: [],
-      lectureImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/lecture/',
+      lectureImgFirstUrl: 'file:///media/uploads/img/lecture/',
       lecInfo: {},
       searchList: [],
       classification: 1,

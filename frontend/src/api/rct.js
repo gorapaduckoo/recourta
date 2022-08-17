@@ -1,4 +1,4 @@
-const HOST = 'http://recourta.ga/recourta'
+const HOST = 'https://recourta.ga/recourta'
 
 const USER = '/user'
 const LECTURE = '/lecture'
