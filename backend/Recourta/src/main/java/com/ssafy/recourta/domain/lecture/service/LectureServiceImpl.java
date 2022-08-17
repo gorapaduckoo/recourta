@@ -22,8 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
-
 @Service
 public class LectureServiceImpl implements LectureService {
 
@@ -36,6 +34,9 @@ public class LectureServiceImpl implements LectureService {
     private RegistrationService registrationService;
     @Autowired
     private SessionService sessionService;
+
+    @Autowired
+    private RegistrationRepository registrationRepository;
 
     @Autowired
     private ImgUtil imgUtil;
@@ -112,6 +113,8 @@ public class LectureServiceImpl implements LectureService {
         }
     }
 
+
+    // 자신이 가르치고 있는 강의 검색
     @Override
     public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
@@ -128,15 +131,17 @@ public class LectureServiceImpl implements LectureService {
             }
             return result;
 
-        // 존재하지 않는 회원인 경우
+            // 존재하지 않는 회원인 경우
         } else {
             throw new UserNotFoundException();
         }
     }
 
+
+    // 수강중인 강의 검색
     @Override
     public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
-        List<LectureResponse.LecturePreview> result = new ArrayList<>();
+        List<LectureResponse.LecturePreview> result;
         if(userRepository.existsById(userId)) {
 //            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
 //            for (Lecture l : lectures) {
@@ -152,15 +157,20 @@ public class LectureServiceImpl implements LectureService {
         return result;
     }
 
+
+    // 신청 가능한 강의 검색
     @Override
-    public List<LectureResponse.LectureDetail> searchAvailableLecture() throws Exception {
+    public List<LectureResponse.LectureDetail> searchAvailableLecture(Integer userId) {
 
         List<LectureResponse.LectureDetail> result = new ArrayList<>();
-        List<Lecture> lectures = lectureRepository.findAllByStartDateAfter(LocalDate.now());
+        List<Lecture> lectures = lectureRepository.findAllByUser_UserIdNotAndStartDateAfter(userId, LocalDate.now());
 
         // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
         for (Lecture l : lectures) {
-            result.add(l.toLectureDetail());
+            // 개강 전이면서 타인이 개설한 강의 중, 수강중이지 않은 강의만 result에 추가
+            if(!registrationRepository.findByUserUserIdAndLectureLectureId(userId, l.getLectureId()).isPresent()) {
+                result.add(l.toLectureDetail());
+            }
         }
         return result;
     }
