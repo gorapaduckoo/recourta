@@ -35,7 +35,7 @@ const store = useStore()
 
 const getClassList = async () => {
   await axios({
-    url: rct.lecture.lecturecreate(),
+    url: rct.lecture.availablelist(store.state.user.userId),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
