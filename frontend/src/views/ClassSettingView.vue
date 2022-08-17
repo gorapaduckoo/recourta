@@ -71,7 +71,7 @@
   </div>
 
 
-  <div class="left-[15rem] lg:pl-60 w-full pt-0 lg:pt-[70px]">
+  <div class="left-[15rem] lg:pl-60 w-full pt-44 lg:pt-[70px]">
     <ClassSetAtt v-if="state.isatten" :studentList="state.studentList.userList"/>
     <ClassSetInfo v-if="state.isinfo" :lecturetime="state.lecturetime"/>
     <ClassSetRegi v-if="state.isregi"/>
