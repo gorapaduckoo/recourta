@@ -96,7 +96,7 @@ public class LectureRequest {
         private Integer userId;
 
         @Builder
-        public LectureStudentId(){
+        public LectureStudentId(Integer userId){
             this.userId = userId;
         }
     }
