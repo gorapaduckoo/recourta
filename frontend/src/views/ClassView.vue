@@ -232,7 +232,7 @@ const joinSession = async () => {
   });
 
   state.session.on('signal:my-chat', (event) => {
-    state.msgs.push([event.data,event.from.connectionId])
+    state.msgs.push([event.data,event.from.connectionId,currentTime()])
   });
 
   state.session.on('signal:screenshare',(event) => {
@@ -525,6 +525,13 @@ const sendMsg = (data,reciever) => {
   .catch(error => {
     console.error(error)
   })
+}
+
+const currentTime = () => {
+  const today = new Date();   
+  const hours = ('0' + today.getHours()).slice(-2); 
+  const minutes = ('0' + today.getMinutes()).slice(-2);
+  return hours + ':' + minutes;
 }
 
 const sendauth = (reciever) => {
