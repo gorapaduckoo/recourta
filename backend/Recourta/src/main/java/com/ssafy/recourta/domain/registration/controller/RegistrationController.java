@@ -22,9 +22,9 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<RegistrationResponse.LectureList> getLecturesOfUser(@PathVariable String userId) {
+    public ResponseEntity<RegistrationResponse.LecturePreviewList> getLecturesOfUser(@PathVariable String userId) {
         Integer id = Integer.parseInt(userId);
-        RegistrationResponse.LectureList result = registrationService.getLecturesOfUser(id);
+        RegistrationResponse.LecturePreviewList result = registrationService.getLecturesOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -36,16 +36,16 @@ public class RegistrationController {
     }
 
     @GetMapping("/user/current/{userId}")
-    public ResponseEntity<RegistrationResponse.LectureList> getCurrentLecturesOfUser(@PathVariable String userId) throws ParseException {
+    public ResponseEntity<RegistrationResponse.LectureDetailList> getCurrentLecturesOfUser(@PathVariable String userId) throws ParseException {
         Integer id = Integer.parseInt(userId);
-        RegistrationResponse.LectureList result = registrationService.getCurrentLecturesOfUser(id);
+        RegistrationResponse.LectureDetailList result = registrationService.getCurrentLectureDetailsOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/user/previous/{userId}")
-    public ResponseEntity<RegistrationResponse.LectureList> getPreviousLecturesOfUser(@PathVariable String userId) throws ParseException {
+    public ResponseEntity<RegistrationResponse.LectureDetailList> getPreviousLecturesOfUser(@PathVariable String userId) throws ParseException {
         Integer id = Integer.parseInt(userId);
-        RegistrationResponse.LectureList result = registrationService.getPreviousLecturesOfUser(id);
+        RegistrationResponse.LectureDetailList result = registrationService.getPreviousLecturesOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

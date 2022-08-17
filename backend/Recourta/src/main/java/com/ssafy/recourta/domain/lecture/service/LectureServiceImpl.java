@@ -146,7 +146,7 @@ public class LectureServiceImpl implements LectureService {
 //            for (Lecture l : lectures) {
 //                result.add(l.toLecturePreview());
 //            }
-            result = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
+            result = registrationService.getCurrentLecturePreviewsOfUser(userId).getLecturePreviewList();
             for(LectureResponse.LecturePreview lecturePreview : result) {
                 lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(lecturePreview.getLectureId()));
             }

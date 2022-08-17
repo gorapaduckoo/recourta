@@ -12,12 +12,22 @@ import java.util.List;
 public class RegistrationResponse {
 
     @Getter
-    public static class LectureList {
-        private List<LectureResponse.LecturePreview> lectureList;
+    public static class LecturePreviewList {
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
 
         @Builder
-        public LectureList(List<LectureResponse.LecturePreview> lectureList) {
-            this.lectureList = lectureList;
+        public LecturePreviewList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
+        }
+    }
+
+    @Getter
+    public static class LectureDetailList {
+        private List<LectureResponse.LectureDetail> lectureDetailList;
+
+        @Builder
+        public LectureDetailList(List<LectureResponse.LectureDetail> lectureDetailList) {
+            this.lectureDetailList = lectureDetailList;
         }
     }
 
@@ -33,19 +43,19 @@ public class RegistrationResponse {
 
     @Getter
     public static class CurrentLectureList {
-        private List<LectureResponse.LecturePreview> lectureList;
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
 
-        @Builder CurrentLectureList(List<LectureResponse.LecturePreview> lectureList) {
-            this.lectureList = lectureList;
+        @Builder CurrentLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
         }
     }
 
     @Getter
     public static class PreviousLectureList {
-        private List<LectureResponse.LecturePreview> lectureList;
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
 
-        @Builder PreviousLectureList(List<LectureResponse.LecturePreview> lectureList) {
-            this.lectureList = lectureList;
+        @Builder PreviousLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
         }
     }
 
