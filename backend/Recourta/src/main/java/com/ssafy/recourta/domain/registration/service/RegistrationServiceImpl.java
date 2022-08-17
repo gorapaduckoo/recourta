@@ -7,6 +7,7 @@ import com.ssafy.recourta.domain.registration.dto.request.RegistrationRequest;
 import com.ssafy.recourta.domain.registration.dto.response.RegistrationResponse;
 import com.ssafy.recourta.domain.registration.entity.Registration;
 import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
+import com.ssafy.recourta.domain.session.service.SessionService;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
@@ -34,6 +35,9 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    SessionService sessionService;
+
     @Override
     public RegistrationResponse.LectureList getLecturesOfUser(Integer userId) {
         List<Registration> registrationList = registrationRepository.findAllByUserUserId(userId);
@@ -42,6 +46,10 @@ public class RegistrationServiceImpl implements RegistrationService {
         for(Registration registration : registrationList) {
             Lecture lecture = lectureRepository.findById(registration.getLecture().getLectureId()).orElseThrow(() -> new IllegalArgumentException());
             lectureList.add(lecture.toLecturePreview());
+        }
+
+        for(LectureResponse.LecturePreview lecturePreview : lectureList) {
+            lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(lecturePreview.getLectureId()));
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(lectureList).build();
@@ -73,6 +81,10 @@ public class RegistrationServiceImpl implements RegistrationService {
             LocalDate startDate = lecture.getStartDate();
             LocalDate endDate = lecture.getEndDate();
             if((startDate.isBefore(LocalDate.now()) || startDate.equals(LocalDate.now())) && (endDate.isAfter(LocalDate.now()) || endDate.equals(LocalDate.now()))) currentLectureList.add(lecture.toLecturePreview());
+        }
+
+        for(LectureResponse.LecturePreview lecturePreview : currentLectureList) {
+            lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(lecturePreview.getLectureId()));
         }
 
         return RegistrationResponse.LectureList.builder().lectureList(currentLectureList).build();
