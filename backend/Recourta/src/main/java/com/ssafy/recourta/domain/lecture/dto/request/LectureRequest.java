@@ -88,4 +88,16 @@ public class LectureRequest {
 
     // Read, Delete는 URL에 lectureID가 포함되어있음 => 따로 requestDto 만들 필요 X
 
+    @Data
+    @NoArgsConstructor
+    public static class LectureStudentId {
+
+        @NotNull
+        private Integer userId;
+
+        @Builder
+        public LectureStudentId(){
+            this.userId = userId;
+        }
+    }
 }
