@@ -18,7 +18,7 @@
   <SearchForm :allClassList="state.allClassList"/>
 
   <AllClassList :allClassList="state.allClassList"/>
-
+  <div v-if="(state.allClassList)?!state.allClassList.length:true" class="w-3/4 ml-auto mr-auto mt-20 mb-16 text-lg lg:text-xl text-center font-semibold">신청 가능한 강의가 없습니다.</div>
 </template>
 
 <script setup>

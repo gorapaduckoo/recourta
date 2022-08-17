@@ -29,6 +29,7 @@ export default {
     regist: () => HOST + REGIST,
     registinfo: regiid => HOST + REGIST + '/' + regiid,
     registlearning: userid => HOST + REGIST + USER + '/current/' + userid,
+    registlearned: userid => HOST + REGIST + USER + '/previous/' + userid,
     currentstudentlist: lectureid => HOST + REGIST + '/lecture/' + lectureid,
   },
   login: {
