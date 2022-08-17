@@ -51,7 +51,6 @@ public class LectureServiceImpl implements LectureService {
         imgUtil.uploadImage(lecture, lectureImg);
 
         // DB 저장 후 저장한 lecture의 lectureId를 결과값으로 반환
-        System.out.println(lecture.getLectureTime());
         Integer result = lectureRepository.save(lecture).getLectureId();
         if(result!=null){
             return LectureResponse.LectureId.builder().lectureId(result).build();
