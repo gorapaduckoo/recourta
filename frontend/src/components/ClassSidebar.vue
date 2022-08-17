@@ -75,10 +75,27 @@
         <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-1 border-neutral-400">
-      <div v-for="(msg,index) in props.msglist" :key="index">
-        <div v-if="props.myID===msg[1]">내가:{{msg[0]}}</div>
-        <div v-else>{{props.classAttList.find(v => v[2]===msg[1])[1]}}:{{msg[0]}}</div>
+    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 border-neutral-400">
+      <div class="mb-2" v-for="(msg,index) in props.msglist" :key="index">
+        <div v-if="props.myID===msg[1]">
+          <div class="flex items-end justify-end">
+            <div class="text-[12px] lg:text-sm text-neutral-400 mr-2">{{msg[2]}}</div>
+            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl">
+              {{msg[0]}}
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="flex items-end">
+            <div>{{props.classAttList.find(v => v[2]===msg[1])[1]}}</div>
+          </div>
+          <div class="flex items-end">
+            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
+              {{msg[0]}}
+            </div>
+            <div class="text-[12px] lg:text-sm text-neutral-400">{{msg[2]}}</div>
+          </div>
+        </div>
       </div>
     </div>
     <div id="msginput">

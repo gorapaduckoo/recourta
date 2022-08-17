@@ -232,7 +232,7 @@ const joinSession = async () => {
   });
 
   state.session.on('signal:my-chat', (event) => {
-    state.msgs.push([event.data,event.from.connectionId])
+    state.msgs.push([event.data,event.from.connectionId,currentTime()])
   });
 
   state.session.on('signal:screenshare',(event) => {
@@ -264,7 +264,7 @@ const joinSession = async () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    if (!state.isLecturer) leavePage(true)
+    if (!state.isLecturer) leavePage(false)
   })
 
   state.session.on('signal:Subtitle', (event) => {
@@ -321,18 +321,25 @@ const joinSession = async () => {
     window.addEventListener('beforeunload', (event) => {
       event.preventDefault();
       event.returnValue = '';
-      leavePage(true)
+      leaveClass(true)
     })
 
     window.addEventListener("hashchange", (event) => {
       event.preventDefault();
-      // event.returnValue = '';
+      event.returnValue = '';
+      leavePage(true)
+    })
+
+    window.addEventListener("unload", (event) => {
+      event.preventDefault();
+      event.returnValue = '';
       leavePage(true)
     })
 
     if (!state.isLecturer) {
       setTimeout(function() {
         if (!(state.subscribers.find(sub => JSON.parse(sub.stream.connection.data).clientData === 'lecturer'))) {
+          alert('강의자가 없습니다.')
           leavePage(false)
         }
       }, 500);
@@ -447,52 +454,58 @@ const leaveClass = async (x) => {
     }
   }
   
-  state.session = undefined
-  state.mainStreamManager = undefined
-  state.publisher = undefined
-  state.temppublisher = undefined
-  state.subscribers = []
-  state.OV = undefined
+  // state.session = undefined
+  // state.mainStreamManager = undefined
+  // state.publisher = undefined
+  // state.temppublisher = undefined
+  // state.subscribers = []
+  // state.OV = undefined
   
-  state.ismic=false
-  state.iscam=false
-  state.isshare=false
-  state.isside=false
-  state.msgs=[]
+  // state.ismic=false
+  // state.iscam=false
+  // state.isshare=false
+  // state.isside=false
+  // state.msgs=[]
 
-  state.mySessionId = ""
-  state.myUserId = ""
-  state.sidebarTitle = ""
+  // state.mySessionId = ""
+  // state.myUserId = ""
+  // state.sidebarTitle = ""
 
-  state.classRegiList = []
-  state.classAttList = []
-  state.classAbsList = []
-  state.userAll = []
+  // state.classRegiList = []
+  // state.classAttList = []
+  // state.classAbsList = []
+  // state.userAll = []
 
-  state.issubtitle = false
-  state.issublist = false
-  state.texts=""
-  state.isAuth=false
+  // state.issubtitle = false
+  // state.issublist = false
+  // state.texts=""
+  // state.isAuth=false
 
   // state.isLecturer = false
-  state.checkId = 0
+  // state.checkId = 0
 
-  store.commit("SET_MySessionId","")
-  store.commit("SET_MyLectureId","")
-  store.commit("SET_LecturerName","")
-  store.commit("SET_SidebarTitle","")
-  store.commit("SET_IsLecturer", false)
+  // store.commit("SET_MySessionId","")
+  // store.commit("SET_MyLectureId","")
+  // store.commit("SET_LecturerName","")
+  // store.commit("SET_SidebarTitle","")
+  // store.commit("SET_IsLecturer", false)
 
   window.removeEventListener('beforeunload', (event) => {
     event.preventDefault();
     event.returnValue = '';
-    leavePage(true)
+    leaveClass(true)
   });
 
   window.removeEventListener("hashchange", (event) => {
     event.preventDefault();
     // event.returnValue = '';
     leavePage(true)
+  });
+
+  window.removeEventListener('unload', (event) => {
+    event.preventDefault();
+    event.returnValue = '';
+    leaveClass(true)
   });
 }
 
@@ -512,6 +525,13 @@ const sendMsg = (data,reciever) => {
   .catch(error => {
     console.error(error)
   })
+}
+
+const currentTime = () => {
+  const today = new Date();   
+  const hours = ('0' + today.getHours()).slice(-2); 
+  const minutes = ('0' + today.getMinutes()).slice(-2);
+  return hours + ':' + minutes;
 }
 
 const sendauth = (reciever) => {
