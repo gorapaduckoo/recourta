@@ -1,7 +1,7 @@
 package com.ssafy.recourta.domain.registration.dto.response;
 
-import com.ssafy.recourta.domain.lecture.entity.Lecture;
-import com.ssafy.recourta.domain.user.entity.User;
+import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
+import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import lombok.*;
 
 import java.util.List;
@@ -12,31 +12,59 @@ import java.util.List;
 public class RegistrationResponse {
 
     @Getter
-    public static class LectureList {
-        private List<Lecture> lectureList;
+    public static class LecturePreviewList {
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
 
         @Builder
-        public LectureList(List<Lecture> lectureList) {
-            this.lectureList = lectureList;
+        public LecturePreviewList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
+        }
+    }
+
+    @Getter
+    public static class LectureDetailList {
+        private List<LectureResponse.LectureDetail> lectureDetailList;
+
+        @Builder
+        public LectureDetailList(List<LectureResponse.LectureDetail> lectureDetailList) {
+            this.lectureDetailList = lectureDetailList;
         }
     }
 
     @Getter
     public static class UserList {
-        private List<User> userList;
+        private List<UserResponse.Search> userList;
 
         @Builder
-        public UserList(List<User> userList) {
+        public UserList(List<UserResponse.Search> userList) {
             this.userList = userList;
         }
     }
 
     @Getter
     public static class CurrentLectureList {
-        private List<Lecture> lectureList;
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
 
-        @Builder CurrentLectureList(List<Lecture> lectureList) {
-            this.lectureList = lectureList;
+        @Builder CurrentLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
+        }
+    }
+
+    @Getter
+    public static class PreviousLectureList {
+        private List<LectureResponse.LecturePreview> lecturePreviewList;
+
+        @Builder PreviousLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+            this.lecturePreviewList = lecturePreviewList;
+        }
+    }
+
+    @Getter
+    public static class RegistrationId {
+        private long registrationId;
+
+        @Builder RegistrationId(long registrationId) {
+            this.registrationId = registrationId;
         }
     }
 }

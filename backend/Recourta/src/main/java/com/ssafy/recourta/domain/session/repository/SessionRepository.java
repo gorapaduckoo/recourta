@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SessionRepository extends JpaRepository<Session, Integer> {
@@ -15,4 +16,6 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     Integer countByLecture_LectureIdAndStartTimeBefore(Integer lectureId, LocalDateTime start);
 
     Integer deleteAllByLecture_LectureIdAndStartTimeAfter(Integer lectureId, LocalDateTime start);
+
+    Optional<Session> findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(Integer lectureId, LocalDateTime end);
 }

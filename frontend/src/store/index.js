@@ -27,8 +27,6 @@ export default createStore({
     classroom,
   },
   plugins: [
-    createPersistedState({
-      paths: ['lecture', 'lectureinfo', 'login', 'user','classroom'],
-    }),
+    createPersistedState(),
   ],
 })

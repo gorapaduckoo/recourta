@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RegistrationRepository extends JpaRepository<Registration, Long> {
@@ -14,5 +15,8 @@ public interface RegistrationRepository extends JpaRepository<Registration, Long
     List<Registration> findAllByUserUserId(Integer userId);
     // 해당 강의를 듣는 유저 목록
     List<Registration> findAllByLectureLectureId(Integer lectureId);
-
+    // 수강 철회
+    void deleteByUserUserIdAndLectureLectureId(Integer userId, Integer lectureId);
+    // id 찾기
+    Optional<Registration> findByUserUserIdAndLectureLectureId(Integer userId, Integer lectureId);
 }

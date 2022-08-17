@@ -91,6 +91,10 @@ public class JwtTokenUtil implements Serializable {
 
     // Token에서 userId 추출
     public String getUserIdFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        try {
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        } catch(ExpiredJwtException e) {
+            return e.getClaims().getSubject();
+        }
     }
 }

@@ -1,31 +1,30 @@
 package com.ssafy.recourta.domain.registration.controller;
 
+import com.ssafy.recourta.domain.registration.dto.request.RegistrationRequest;
 import com.ssafy.recourta.domain.registration.dto.response.RegistrationResponse;
+import com.ssafy.recourta.domain.registration.entity.Registration;
 import com.ssafy.recourta.domain.registration.service.RegistrationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.ssafy.recourta.global.exception.LectureException;
+import com.ssafy.recourta.global.exception.RegistrationException;
+import com.ssafy.recourta.global.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
 @RestController
 @RequestMapping("/registration")
 public class RegistrationController {
-    private Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 
     @Autowired
     private RegistrationService registrationService;
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<RegistrationResponse.LectureList> getLecturesOfUser(@PathVariable String userId) {
+    public ResponseEntity<RegistrationResponse.LecturePreviewList> getLecturesOfUser(@PathVariable String userId) {
         Integer id = Integer.parseInt(userId);
-        RegistrationResponse.LectureList result = registrationService.getLecturesOfUser(id);
+        RegistrationResponse.LecturePreviewList result = registrationService.getLecturesOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -37,9 +36,46 @@ public class RegistrationController {
     }
 
     @GetMapping("/user/current/{userId}")
-    public ResponseEntity<RegistrationResponse.LectureList> getCurrentLecturesOfUser(@PathVariable String userId) throws ParseException {
+    public ResponseEntity<RegistrationResponse.LectureDetailList> getCurrentLecturesOfUser(@PathVariable String userId) throws ParseException {
         Integer id = Integer.parseInt(userId);
-        RegistrationResponse.LectureList result = registrationService.getCurrentLecturesOfUser(id);
+        RegistrationResponse.LectureDetailList result = registrationService.getCurrentLectureDetailsOfUser(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/previous/{userId}")
+    public ResponseEntity<RegistrationResponse.LectureDetailList> getPreviousLecturesOfUser(@PathVariable String userId) throws ParseException {
+        Integer id = Integer.parseInt(userId);
+        RegistrationResponse.LectureDetailList result = registrationService.getPreviousLecturesOfUser(id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<RegistrationResponse.RegistrationId> registerToLecture(@RequestBody RegistrationRequest.RegistrationInfo request) {
+        try {
+            RegistrationResponse.RegistrationId result = registrationService.registerLecture(request);
+            return ResponseEntity.ok().body(result);
+        } catch(RegistrationException.RegistrationFail e) {
+            return ResponseEntity.internalServerError().build();
+        } catch(UserNotFoundException e) {
+            return ResponseEntity.internalServerError().build();
+        } catch(LectureException.UnvalidLectureId e) {
+            return ResponseEntity.internalServerError().build();
+        } catch(RegistrationException.RegistrationAlreadyExists e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<RegistrationResponse.RegistrationId> withdrawRegistration(@RequestBody RegistrationRequest.RegistrationInfo request) {
+        try {
+            RegistrationResponse.RegistrationId result = registrationService.withdrawLecture(request);
+            return ResponseEntity.ok().body(result);
+        } catch(RegistrationException.RegistrationDeleteFail e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch(UserNotFoundException e) {
+            return ResponseEntity.internalServerError().build();
+        } catch(LectureException.UnvalidLectureId e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
