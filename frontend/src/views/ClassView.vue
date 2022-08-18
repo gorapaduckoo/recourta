@@ -17,9 +17,9 @@
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
     <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leavePage(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
@@ -83,8 +83,27 @@ const state = reactive({
   checkId: 0,
   issit:false,
 
-  outtime:900,
+  outtime:15,
 })
+
+const updateouttime = (newtime) => {
+  state.outtime=newtime
+}
+
+if(state.isLecturer){
+  setInterval(()=>{
+    state.session.signal({
+      data: String(state.outtime), // Any string (optional)
+      to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'OutTime' // The type of message (optional)
+    })
+    .then(() => {
+    })
+    .catch(error => {
+      console.error(error)
+    })
+  },30000)
+}
 
 const toggleside = () => {
   state.isside=!state.isside
@@ -125,12 +144,12 @@ const toggleSublist = () => {
 const changeFacecount = cnt => {
   if(cnt){
     state.facecount+=1
-    if(state.facecount===state.outtime){
+    if(state.facecount===state.outtime*60){
       checkout()
       sendsit("OUT")
     }
   }else{
-    if(state.facecount>=state.outtime){
+    if(state.facecount>=state.outtime*60){
       checkin()
       sendsit("IN")
     }
@@ -328,11 +347,14 @@ const joinSession = () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    console.log(event.data)
     if (!state.isLecturer){
       if(event.data==="EXIT") leavePage(true)
       else leavePage(false)
     }
+  })
+
+  state.session.on('signal:OutTime',(event) => {
+    state.outtime=Number(event.data)
   })
 
   state.session.on('signal:Subtitle', (event) => {
@@ -342,7 +364,7 @@ const joinSession = () => {
   state.session.on('signal:sit',(event) => {
     if(event.data==="OUT"){
       state.unsitList.push(event.from.connectionId)
-      if(state.isLecturer) state.msgs.push(["WARNING : 해당 수강생이 15분 이상 자리를 비웠습니다",event.from.connectionId,currentTime()])
+      if(state.isLecturer) state.msgs.push([`WARNING : 해당 수강생이 ${state.outtime}분 이상 자리를 비웠습니다`,event.from.connectionId,currentTime()])
     }
     else{
       const tmpunsitList = state.unsitList.filter(unsit => unsit!==event.from.connectionId)

@@ -27,9 +27,16 @@
         <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
           <div class="flex">
             <div class="mr-2" :class="{'text-[#fe5358]':props.unsitList.indexOf(name[2])>=0}">{{ name[1] }}</div>
-            <div :class="{'text-[#fe5358]':props.facecount>=900,'text-[#faa405]':props.facecount>=600&&props.facecout<900}" class="text-neutral-400" v-if="index===0&&props.facecount">
+            <div :class="{'text-[#fe5358]':props.facecount>=props.outtime*60,'text-[#faa405]':props.facecount>=props.outtime*40&&props.facecout<props.outtime*60}" class="text-neutral-400" v-if="index===0&&props.facecount">
               {{Math.floor(props.facecount / 60) + ":" + (props.facecount % 60).toString().padStart(2,"0")}}
             </div>
+          </div>
+          <div v-if="props.isLecturer&&index==0" class="flex items-center text-xs lg:text-sm space-x-1">
+            <div class="text-neutral-400">자리비움시간 : </div>
+            <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thisouttime" @change="updateouttime" name="receiver" id="receiver">
+              <option v-for="min in minrange" :key="min" :value="min">{{ min }}</option>
+            </select>
+            <div class="text-xs lg:text-sm text-neutral-400">분</div>
           </div>
           <div v-if="index" class="flex items-center space-x-2">
             <button v-if="props.isLecturer" @click="onClickAuth(name[3])" class="hover:text-neutral-200 text-neutral-400">
@@ -130,7 +137,12 @@ const store = useStore()
 
 const msg = ref("")
 
-const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan"])
+const minrange = []
+for(let i=1;i<=30;i++){
+  minrange.push(i)
+}
+
+const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan","updateouttime"])
 const props = defineProps({
   msglist:Array,
   myID:String,
@@ -143,6 +155,7 @@ const props = defineProps({
   onMic: Array,
   facecount: Number,
   unsitList: Array,
+  outtime: Number,
 })
 
 const state = reactive({
@@ -153,7 +166,12 @@ const state = reactive({
   sendmsg:"",
   camBanList:[],
   micBanList:[],
+  thisouttime:15,
 })
+
+const updateouttime = () => {
+  emit("updateouttime",state.thisouttime)
+}
 
 const togglelist = () => {
   state.isAtt=!state.isAtt
