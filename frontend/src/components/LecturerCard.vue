@@ -56,7 +56,7 @@ const enterClass = () => {
   store.commit("SET_LecturerName",props.lecture.teacher)
   store.commit("SET_SidebarTitle", props.lecture.title)
   store.commit("SET_IsLecturer", true)
-  location.href="/class"
+  route.push({path:"/class"})
 }
 
 

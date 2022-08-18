@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[60px] w-1/3 min-w-[480px] ml-auto mr-auto">
     <div class="pt-20 ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
@@ -114,6 +115,7 @@
 </template>
 
 <script setup>
+import CustomFooter from './components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import { ref, reactive } from 'vue'

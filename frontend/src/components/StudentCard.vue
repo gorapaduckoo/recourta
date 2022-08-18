@@ -112,11 +112,13 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import rct from '../api/rct'
 
 const store = useStore()
+const route = useRouter()
 
 const props = defineProps({
   lecture : {
@@ -169,7 +171,7 @@ const enterClass = () => {
   store.commit("SET_LecturerName",props.lecture.teacher)
   store.commit("SET_SidebarTitle", props.lecture.title)
   store.commit("SET_IsLecturer", false)
-  location.href="/class"
+  route.push({path:"/class"})
 }
 
 // 출결 확인 관련 함수
@@ -231,7 +233,7 @@ const outRegistration = async () => {
     }
   })
   .then(res => {
-    location.reload()
+    route.go(0)
   })
   .catch(err => {
     console.log(err)

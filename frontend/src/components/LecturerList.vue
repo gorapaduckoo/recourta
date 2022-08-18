@@ -205,7 +205,7 @@ const makeClassSubmit = async () => {
     })
     .then(res => {
       modalClose()
-      location.reload()
+      route.go(0)
     })
     .catch(err => {
       console.log(err)

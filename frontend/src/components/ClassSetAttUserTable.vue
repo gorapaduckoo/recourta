@@ -48,12 +48,12 @@
 <script setup>
 import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 
 const store = useStore()
-const rout = useRoute()
+const route = useRouter()
 
 // [ { "userId": 3, "name": "김우석", "email": "terrykim96@naver.com", "userImg": "5da33e52-1d2a-4c37-be64-af7891d68f03.png" }, 2, 1, 3, 1, 3 ], [ { "userId": 4, "name": "김페페", "email": "terrykim96@gmail.com", "userImg": "7de9f422-c9e5-4543-80f4-a89c250aabe7.png" }, 3, 2, 2, 1, 3 ]
 const props = defineProps({
@@ -101,11 +101,11 @@ const outRegistration = async () => {
     },
     data: {
       userId : props.userAttendance[0].userId,
-      lectureId : Number(rout.params.lecId),
+      lectureId : store.state.lecture.lectureId,
     }
   })
   .then(res => {
-    location.reload()
+    route.go(0)
   })
   .catch(err => {
     console.log(err)

@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <CustomNavbar :curpage="state.curpage"/>
   <div class="fixed bg-white dark:bg-[#444444] hidden w-60 lg:flex lg:flex-col items-center h-full pt-[68px] border-r-[1px] border-neutral-300 dark:border-neutral-500">
     <img class="rounded-md w-[224px] h-[126px] mb-[4px]" :src="state.lecImgUrl" alt=""/>
@@ -88,6 +89,7 @@
 </template>
 
 <script setup>
+import CustomFooter from './components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import ClassSetInfo from '../components/ClassSetInfo.vue'

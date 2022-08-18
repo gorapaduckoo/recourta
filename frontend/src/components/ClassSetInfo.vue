@@ -92,13 +92,13 @@
 import LectureTime from '../components/LectureTime.vue'
 
 import { ref, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from 'vuex'
 
 const store = useStore()
-const rout = useRoute()
+const route = useRouter()
 
 const props = defineProps({
   lecturetime : {
@@ -163,7 +163,7 @@ const editClassSubmit = async () => {
     const datablob = new Blob([json],{type:"application/json"})
     editfd.append("lectureImg",editblob)
     editfd.append("request",datablob)
-    await axios.put(rct.lecture.lectureinfo(Number(rout.params.lecId)),editfd,{
+    await axios.put(rct.lecture.lectureinfo(store.state.lecture.lectureId),editfd,{
       headers: {
         Authorization: store.state.user.accessToken,
         'Context-Type' : 'multipart/form-data',
@@ -188,7 +188,7 @@ const editClassSubmit = async () => {
     const json = JSON.stringify(data)
     const datablob = new Blob([json],{type:"application/json"})
     editfd.append("request",datablob)
-    await axios.put(rct.lecture.lectureinfo(Number(rout.params.lecId)),editfd,{
+    await axios.put(rct.lecture.lectureinfo(store.state.lecture.lectureId),editfd,{
       headers: {
         Authorization: store.state.user.accessToken,
         'Context-Type' : 'multipart/form-data',
@@ -223,7 +223,7 @@ const modalOpen = () => {
 
 const modalClose = () => {
   document.getElementById('infoEditModal').classList.replace('show', 'hidden')
-  location.reload()
+  route.go(0)
 }
 </script>
 

@@ -40,8 +40,10 @@ import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const route = useRouter()
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
@@ -608,7 +610,7 @@ const leaveClass = (x) => {
 
 const leavePage = (x) => {
   leaveClass(x)
-  location.href = '/main'
+  route.replace({path:"/main"})
 }
 
 const sendMsg = (data,reciever) => {
