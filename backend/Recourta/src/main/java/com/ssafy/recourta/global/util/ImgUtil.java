@@ -41,16 +41,16 @@ public class ImgUtil {
             deleteImage(((User) o).getUserImg(), "user");
             storedFileName = uuid+".png";
 
-            File file = new File(storedFileName);
+            File file = new File("user/" + storedFileName);
             img.transferTo(file);
 
             ((User) o).setUserImg(storedFileName);
         } else if (o instanceof Lecture) {
             deleteImage(((Lecture) o).getLectureImg(), "lecture");
-            fileExtension = fileExtension.substring(fileExtension.lastIndexOf("."));
-            storedFileName = uuid + fileExtension;
+//            fileExtension = fileExtension.substring(fileExtension.lastIndexOf("."));
+            storedFileName = uuid+".png";
 
-            File file = new File(storedFileName);
+            File file = new File("lecture/"+storedFileName);
             img.transferTo(file);
 
             ((Lecture) o).update(storedFileName);

@@ -30,51 +30,30 @@
   </button>
 </template>
 
-<script>
-import {reactive} from 'vue'
+<script setup>
+import { reactive, onBeforeMount } from 'vue'
 
-export default {  
+const state = reactive({
+  isDark : (localStorage.theme === 'dark')? true : false
+})
 
-  name: 'DarkModeButton',
-  setup(){
-    const state = reactive({
-      isDark : (localStorage.theme === 'dark')? true : false
-    })
-    const toggleDarkMode = () => {
-      if(localStorage.theme === 'dark'){
-        document.documentElement.classList.remove('dark')
-        localStorage.theme='light'
-        state.isDark=false
-      }
-      else {
-        document.documentElement.classList.add('dark')
-        localStorage.theme='dark'
-        state.isDark=true
-      }
-    }
-    return {
-      state,
-      toggleDarkMode,
-    }
-  },
-  // data: function() {
-  //   return {
-  //     isDark: localStorage.theme ==='dark' ? true : false,
-  //   }
-  // },
-  // methods: {
-  //   toggleDarkMode() {
-  //     if (localStorage.theme === 'dark') {
-  //       document.documentElement.classList.remove('dark')
-  //       localStorage.theme = 'light'
-  //       this.isDark = false
-  //     } else {
-  //       document.documentElement.classList.add('dark')
-  //       localStorage.theme = 'dark'
-  //       this.isDark = true
-  //     }
-  //   },
-  // },
+onBeforeMount(() => {
+  if(localStorage.theme === 'dark') {
+    document.documentElement.classList.add('dark')
+  }
+})
+
+const toggleDarkMode = () => {
+  if(localStorage.theme === 'dark'){
+    document.documentElement.classList.remove('dark')
+    localStorage.theme='light'
+    state.isDark=false
+  }
+  else {
+    document.documentElement.classList.add('dark')
+    localStorage.theme='dark'
+    state.isDark=true
+  }
 }
 </script>
 
