@@ -14,9 +14,9 @@
             </div>
           </div>
           <div class="flex flex-col items-end justify-end space-y-5">
-            <router-link :to="{ name: 'classsetting', params: { lecId: props.lecture.lectureId } }" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
-              <button>강의 관리</button>
-            </router-link>
+            <button @click="gotoclasssetting" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
+              강의 관리
+            </button>
             <button @click="enterClass" class="text-xl text-white font-semibold bg-[#2c5172] hover:bg-[#325c81] dark:hover:bg-[#325c81] focus:outline-none rounded-lg w-full text-center dark:bg-[#2c5172] py-2 px-10">
               강의 시작
             </button>
@@ -30,6 +30,9 @@
 
 <script setup>
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+
+const route = useRouter()
 
 const store = useStore()
 
@@ -41,6 +44,11 @@ const props = defineProps({
 
 const lectime = [...props.lecture.lectureTime].reverse()
 const lectureThumbnail = store.state.lecture.lectureImgFirstUrl+props.lecture.lectureImg
+
+const gotoclasssetting = () => {
+  store.commit("updateLectureId",props.lecture.lectureId)
+  route.push({ path: '/classsetting'})
+}
 
 const enterClass = () => {
   store.commit("SET_MySessionId",String(props.lecture.sessionId))
