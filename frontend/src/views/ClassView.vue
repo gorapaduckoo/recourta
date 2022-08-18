@@ -377,9 +377,13 @@ const joinSession = () => {
     if(event.data==="ON"){
       reactiveAttList()
       const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-      if(tmpuser) {
-        updateMainVideoStreamManager(tmpuser)
-      }
+      state.issublist=!state.issublist
+      setTimeout(()=>{
+        if(tmpuser) {
+          state.issublist=!state.issublist
+          updateMainVideoStreamManager(tmpuser)
+        }
+      },500)
     }
     else{
       updateMainVideoStreamManager(state.publisher)

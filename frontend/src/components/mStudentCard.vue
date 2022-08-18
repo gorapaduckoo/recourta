@@ -211,7 +211,7 @@ const outRegistration = async () => {
     }
   })
   .then(res => {
-    route.go(0)
+    route.go()
   })
   .catch(err => {
     console.log(err)
