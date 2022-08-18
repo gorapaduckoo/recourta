@@ -164,11 +164,6 @@ import rct from '../api/rct'
 import axios from 'axios'
 import * as faceapi from '@vladmandic/face-api'
 
-Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
-])
-
-
 const route = useRouter()
 const store = useStore()
 
@@ -196,6 +191,11 @@ const state = reactive({
   emailsendbtnmsg:'메일발송',
   istimer: false,
 })
+
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri(rct.user.facemodel()),
+])
 
 const camera = ref(null)
 const canvas = ref(null)

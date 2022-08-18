@@ -124,9 +124,9 @@ async function recognizeFaces(){
 if(!props.isLecturer){
   getUserImage()
   Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
-    faceapi.nets.faceLandmark68Net.loadFromUri("/model"),
-    faceapi.nets.faceRecognitionNet.loadFromUri("/model"),
+    faceapi.nets.ssdMobilenetv1.loadFromUri(rct.user.facemodel()),
+    faceapi.nets.faceLandmark68Net.loadFromUri(rct.user.facemodel()),
+    faceapi.nets.faceRecognitionNet.loadFromUri(rct.user.facemodel()),
   ]).then(() => {
     // console.log("success!")
     recognizeFaces()

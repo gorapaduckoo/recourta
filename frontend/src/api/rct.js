@@ -18,7 +18,7 @@ export default {
     userinfo: userid => HOST + USER + '/' + userid,
     userimgmod: () => HOST + USER + '/img',
     userpwmod: () => HOST + USER + '/pw',
-      
+    facemodel: () => HOST + '/uploads/model/',
   },
   lecture: {
     lecturecreate: () => HOST + LECTURE,
