@@ -380,7 +380,7 @@ const joinSession = () => {
       }
     }
     else{
-      if(state.publisher.stream.connection.connectionId === event.from.connectionId) state.mainStreamManager = state.publisher
+      updateMainVideoStreamManager(state.publisher)
     }
   })
 
