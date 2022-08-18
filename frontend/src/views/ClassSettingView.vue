@@ -59,7 +59,7 @@
 
 
   <div class="left-[15rem] lg:pl-60 w-full pt-44 lg:pt-[70px]">
-    <ClassSetAtt v-if="state.isatten" :studentList="state.studentList.userList" :lectureId="Number(rout.params.lecId)"/>
+    <ClassSetAtt v-if="state.isatten" :studentList="state.studentList.userList" :lectureId="store.state.lecture.lectureId"/>
     <ClassSetInfo v-if="state.isinfo" :lecturetime="state.lecturetime"/>
   </div>
 
@@ -94,18 +94,18 @@ import ClassSetInfo from '../components/ClassSetInfo.vue'
 import ClassSetAtt from '../components/ClassSetAtt.vue'
 import { reactive } from 'vue'
 import { useStore } from "vuex"
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 
 const store = useStore()
 const route = useRouter()
-const rout = useRoute()
+
 
 // 강의 정보 조회
 const getClassInfo = async () => {
   await axios({
-    url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
+    url: rct.lecture.lectureinfo(store.state.lecture.lectureId),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
@@ -125,7 +125,7 @@ const getClassInfo = async () => {
 // 강의 수강생 조회
 const getStudentList = async () => {
   await axios({
-    url: rct.regist.currentstudentlist(Number(rout.params.lecId)),
+    url: rct.regist.currentstudentlist(store.state.lecture.lectureId),
     method: 'get',
     headers: {
       Authorization: store.state.user.accessToken,
@@ -156,7 +156,7 @@ const state = reactive({
 // 강의 폐쇄 함수
 const deleteLecture = async () => {
   await axios({
-    url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
+    url: rct.lecture.lectureinfo(store.state.lecture.lectureId),
     method: 'delete',
     headers: {
       Authorization: store.state.user.accessToken,
