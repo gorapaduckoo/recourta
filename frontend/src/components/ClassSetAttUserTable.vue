@@ -9,10 +9,17 @@
       </button>
     </td>
     <td class="px-6 py-3 border text-sm">{{userAttendance[0].email}}</td>
-    <td class="px-6 py-3 border text-sm"
-      v-for="attendance of userAttendance.slice(1,userAttendance.length)"
-      :key="attendance"
-    >{{attendance}}</td>
+    <td class="px-3 py-3 border text-center text-sm">{{(state.attLateAbs)?state.attLateAbs[1]:' '}} / {{(state.attLateAbs)?state.attLateAbs[2]:' '}} / {{(state.attLateAbs)?state.attLateAbs[3]:' '}}</td>
+    <td :class="{'bg-[#4fb054]':state.userAtt[index+1]==1, 'bg-[#faa405]':state.userAtt[index+1]==2, 'bg-[#fe5358]':state.userAtt[index+1]==3}" class="py-3 border text-sm text-white"
+      v-for="(attendance,index) in userAttendance.slice(1,userAttendance.length)"
+      :key="index"
+    >
+      <select v-model="state.userAtt[index+1]" :class="{'bg-[#4fb054] dark:bg-[#4fb054]':state.userAtt[index+1]==1, 'bg-[#faa405] dark:bg-[#faa405]':state.userAtt[index+1]==2, 'bg-[#fe5358] dark:bg-[#fe5358]':state.userAtt[index+1]==3}" class="form-control block ml-auto mr-auto font-semibold bg-clip-padding border-neutral-300 focus:border-[#2c5172] focus:ring-0 transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" @change="changeAtt(index)" required>
+        <option value=1 class="bg-[#4fb054]">출석</option>
+        <option value=2 class="bg-[#faa405]">지각</option>
+        <option value=3 class="bg-[#fe5358]">결석</option>
+      </select>
+    </td>
   </tr>
 
   <!-- 내보내기 Modal -->
@@ -39,6 +46,7 @@
 </template>
 
 <script setup>
+import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
@@ -51,8 +59,28 @@ const rout = useRoute()
 const props = defineProps({
   userAttendance : {
     type: Array,
-  }
+  },
+  sessionList : {
+    type: Array,
+  },
 })
+
+const state = reactive({
+  userAtt: null,
+  attLateAbs: computed(() => {
+    if (state.userAtt) {
+      let tempala = [0, 0, 0, 0]
+      for (let att of state.userAtt) {
+        tempala[att]++
+      }
+      return tempala
+    } else {
+      return null
+    }
+  })
+})
+
+state.userAtt = props.userAttendance
 
 const useroutModal = 'userOut'+props.userAttendance[0].userId
 
@@ -83,6 +111,27 @@ const outRegistration = async () => {
     console.log(err)
   })
 }
+
+const changeAtt = async (index) => {
+  await axios({
+    url: rct.attendance.changeAttendance(),
+    method: 'put',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+    data: {
+      userId : props.userAttendance[0].userId,
+      sessionId : props.sessionList[index],
+      attType : state.userAtt[index+1],
+    }
+  })
+  .then(res => {
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
 </script>
 
 <style>

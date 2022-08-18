@@ -5,15 +5,17 @@
       <tr>
         <th class="px-4 py-3 border w-[160px]">이름</th>
         <th class="px-4 py-3 border w-[250px]">이메일</th>
-        <th class="px-4 py-3 border w-[75px]"
-          v-for="sessionId of state.sessionList"
-          :key="sessionId"
-        >{{sessionId}}</th>
+        <th class="px-4 py-3 border w-[100px]">출석 현황</th>
+        <th class="px-3 py-3 border w-[75px]"
+          v-for="startDate of state.sessionStartTimeList.sort()"
+          :key="startDate"
+        >{{startDate}}</th>
       </tr>
       <ClassSetAttUserTable 
         v-for="userAttendance in state.userAttendance"
         :key="userAttendance"
         :userAttendance="userAttendance"
+        :sessionList="state.sessionList"
       />
     </table>
   </div>
@@ -37,6 +39,13 @@ const props = defineProps({
   }
 })
 
+const state = reactive({
+  lectureAttendance : [],
+  sessionList: [],
+  sessionStartTimeList: [],
+  userAttendance: [],
+})
+
 const getLectureAttendance = async () => {
   await axios({
     url: rct.attendance.lectureAllAttendance(props.lectureId),
@@ -46,9 +55,11 @@ const getLectureAttendance = async () => {
     }
   })
   .then(res => {
-    console.log(res.data)
     state.lectureAttendance = res.data.lectureAttendance
     state.sessionList = res.data.lectureAttendance.map(a => a.sessionId)
+    for (let ssId of state.sessionList) {
+      getSessionStartTime(ssId)
+    }
     for (let i = 0; i < props.studentList.length; i++) {
       const tempAttList = Array(props.studentList[i])
       state.lectureAttendance.map(sessionAtt => {
@@ -66,11 +77,24 @@ const getLectureAttendance = async () => {
 
 getLectureAttendance()
 
-const state = reactive({
-  lectureAttendance : [],
-  sessionList: [],
-  userAttendance: [],
-})
+const getSessionStartTime = async (ssId) => {
+  await axios({
+    url: rct.attendance.sessionstarttime(ssId),
+    method: 'get',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    }
+  })
+  .then(res => {
+    state.sessionStartTimeList.push(res.data.startTime.slice(5,10).replace('-','/'))
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+
+
 </script>
 
 <style scoped>

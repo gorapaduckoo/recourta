@@ -51,5 +51,6 @@ export default {
     sessionAttendance: sessionId => HOST + ATTENDANCE + '/session/' + sessionId,
     lectureAllAttendance: lectureId => HOST + ATTENDANCE + LECTURE + '/' + lectureId,
     changeAttendance: () => HOST + ATTENDANCE + '/change',
+    sessionstarttime: sessionId => HOST + '/session/starttime/' + sessionId,
   },
 }
