@@ -106,6 +106,7 @@
           </div>
           <div v-if="!state.isphoto" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">사진을 등록해주세요</div>
           <div v-if="!state.isface" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">얼굴이 잘 보이게 사진을 찍어주세요.</div>
+          <div v-if="!state.issingle" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">한 사람만 나오게 사진을 찍어주세요.</div>
         </div>
 
         <!-- 카메라 버튼 -->
@@ -184,6 +185,7 @@ const state = reactive({
   isrepeat: true,
   isphoto: true,
   isface: true,
+  issingle: true,
   isemailsend: false,
   isemailverified: false,
   wrongemail:'',
@@ -252,6 +254,8 @@ const stopCameraStream = () => {
 }
 
 const takePhoto = async () => {
+  state.isface = true
+  state.issingle = true
   state.isphoto = true
   if(!state.isPhotoTaken) {
     state.isShotPhoto = true;
@@ -401,14 +405,19 @@ const signupSubmit = async () => {
   if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
 
   if(!state.isPhotoTaken) state.isphoto=false
-  const detections = await faceapi.detectSingleFace(document.getElementById("photoTaken"))
-  if(detections == undefined) {
+  const detections = await faceapi.detectAllFaces(document.getElementById("photoTaken"))
+  if(detections.length==0 && state.isPhotoTaken) {
     state.isface=false
+    state.issingle=true
+  } else if (detections.length==1){
+    state.isface=true
+    state.issingle=true
   } else {
     state.isface=true
+    state.issingle=false
   }
 
-  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface) {
+  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface&&issingle) {
     signupdatatoserver()
   }
 }
