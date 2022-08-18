@@ -101,13 +101,24 @@ if(state.isLecturer){
     .catch(error => {
       console.error(error)
     })
-  },450)
+  },450*1000)
 }
 
 const updateouttime = (newmult,newsec) => {
-  state.timemult = newmult
-  state.timesec = newsec
+  state.timemult = Number(newmult)
+  state.timesec = Number(newsec)
+  state.outtime = Number(newmult)*Number(newsec)
   if(state.recogTimer) clearInterval(state.recogTimer)
+  state.session.signal({
+    data: String(state.outtime), // Any string (optional)
+    to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'OutTime' // The type of message (optional)
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
   state.recogTimer = setInterval(()=>{
     state.session.signal({
       data: String(state.outtime), // Any string (optional)
@@ -119,7 +130,7 @@ const updateouttime = (newmult,newsec) => {
     .catch(error => {
       console.error(error)
     })
-  },Math.ceil(state.timemult*state.timesec/2))
+  },Math.ceil(state.timemult*state.timesec/2*1000))
 }
 
 const toggleside = () => {
@@ -161,12 +172,12 @@ const toggleSublist = () => {
 const changeFacecount = (cnt) => {
   if(cnt){
     state.facecount+=1
-    if(state.facecount===state.outtime){
+    if(state.facecount>=state.outtime&&state.issit){
       checkout()
       sendsit("OUT")
     }
   }else{
-    if(state.facecount>=state.outtime){
+    if(!state.issit){
       checkin()
       sendsit("IN")
     }
@@ -406,7 +417,7 @@ const joinSession = () => {
   state.session.on('signal:sit',(event) => {
     if(event.data==="OUT"){
       state.unsitList.push(event.from.connectionId)
-      if(state.isLecturer) state.msgs.push([`WARNING : 해당 수강생이 ${state.outtime}분 이상 자리를 비웠습니다`,event.from.connectionId,currentTime()])
+      if(state.isLecturer) state.msgs.push([`WARNING : 해당 수강생이 ${state.timemult}${(state.timesec===60)?"분":"초"} 이상 자리를 비웠습니다`,event.from.connectionId,currentTime()])
     }
     else{
       const tmpunsitList = state.unsitList.filter(unsit => unsit!==event.from.connectionId)
