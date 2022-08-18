@@ -42,7 +42,7 @@ import rct from '../api/rct'
 import jwt_decode from "jwt-decode"
 
 const store = useStore()
-const router = useRouter()
+const route = useRouter()
 
 const state = reactive({
   email_check: true,
