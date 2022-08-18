@@ -87,7 +87,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        URL url = MailService.class.getClassLoader().getResource("image/logo.png");
+        URL url = MailService.class.getClassLoader().getResource("/image/logo.png");
         javax.activation.DataSource fds = new FileDataSource(url.getFile());
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
@@ -143,7 +143,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        URL url = MailService.class.getClassLoader().getResource("image/logo.png");
+        URL url = MailService.class.getClassLoader().getResource("/image/logo.png");
         javax.activation.DataSource fds = new FileDataSource(url.getFile());
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
