@@ -7,7 +7,7 @@ export const user = {
 	  accessToken: localStorage.getItem('accessToken') || '' ,
 		refreshToken: localStorage.getItem('refreshToken') || '' ,
     refreshtime: localStorage.getItem('refreshtime') || null ,
-    islogin: localStorage.getItem('islogin') || false ,
+    islogin: 0,
 		userImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/user/',
 		userId: null,
 		isStudent: null,
@@ -43,7 +43,6 @@ export const user = {
 
     updateIsLogin({ commit }, islogin) {
 			commit('SET_IS_LOGIN', islogin)
-			localStorage.setItem('islogin', islogin)
 		},
 	},
 }

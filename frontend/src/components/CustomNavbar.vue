@@ -86,12 +86,10 @@
 <script setup>
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 
 const store = useStore()
-const route = useRouter()
 
 const props = defineProps({
   curpage : {
@@ -112,8 +110,11 @@ const logout = async () => {
     }
   })
   .then(res => {
-    store.dispatch("updateIsLogin",false)
-    route.replace({path:'/'})
+    store.dispatch('saveAccessToken', '')
+    store.dispatch('saveRefreshToken', '')
+    store.dispatch("updateRefreshTime", null)
+    store.dispatch('updateIsLogin', 0)
+    location.href = '/'
   })
   .catch(err => {
     console.log(err)

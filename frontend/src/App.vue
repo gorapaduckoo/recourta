@@ -8,35 +8,32 @@
 
 <script setup>
 import CustomFooter from './components/CustomFooter.vue'
-import { reactive, computed, onBeforeMount } from 'vue'
+import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from './api/rct'
 import jwt_decode from "jwt-decode"
 
 const store = useStore()
-const route = useRouter()
 
 const state = reactive({
-  isclass:computed(() => {
+  isclass: computed(() => {
     return document.location.pathname==="/class"
   }),
+  loginCheck: computed(() => store.state.user.islogin),
 })
 
-const currrentTime = new Date() / 1000 | 0
-
-beforeRouteUpdate(() => {
-  if(store.state.user.islogin && store.state.user.refreshtime - currrentTime < 1780) {
+if(state.loginCheck) {
+  setInterval(() => {
     refresh()
-  }
-})
+  }, 1500000)
+}
 
 const refresh = async () => {
   await axios({
     url: rct.user.tokenrefresh(),
     method: 'post',
-    data: {
+    headers: {
       Authorization : store.state.user.accessToken,
       Refresh : store.state.user.refreshToken,
     }
@@ -48,9 +45,9 @@ const refresh = async () => {
     store.dispatch("updateRefreshTime",jwt.exp)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
-    console.log('갱신성공')
   })
   .catch(err => {
+    console.log(err)
     logout()
   })
 }
@@ -64,8 +61,11 @@ const logout = async () => {
     }
   })
   .then(res => {
-    store.dispatch("updateIsLogin",false)
-    route.replace({path:'/'})
+    store.dispatch('saveAccessToken', '')
+    store.dispatch('saveRefreshToken', '')
+    store.dispatch("updateRefreshTime", null)
+    store.dispatch('updateIsLogin', 0)
+    location.href = '/'
   })
   .catch(err => {
     console.log(err)
