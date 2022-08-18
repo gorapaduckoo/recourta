@@ -87,7 +87,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("classpath:/image/logo.png"));
+        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("/image/logo.png"));
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
@@ -142,7 +142,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("classpath:/image/logo.png"));
+        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("/image/logo.png"));
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
