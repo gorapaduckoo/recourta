@@ -127,7 +127,7 @@ const store = useStore()
 const route = useRouter()
 
 Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
+    faceapi.nets.ssdMobilenetv1.loadFromUri(rct.user.facemodel()),
 ])
 
 const getProfile = async () => {
