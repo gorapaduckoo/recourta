@@ -13,4 +13,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     // 수업 시간의 모든 출석 정보
     List<Attendance> findAllBySessionSessionId(Integer sessionId);
     Optional<Attendance> findByUserUserIdAndSessionSessionId(Integer userId, Integer sessionId);
+
+    Optional<Attendance> findFirstBySessionSessionId(Integer sessionId);
 }

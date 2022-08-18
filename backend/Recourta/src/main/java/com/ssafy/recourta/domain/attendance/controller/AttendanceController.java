@@ -24,6 +24,8 @@ public class AttendanceController {
             return ResponseEntity.ok().build();
         } catch(SessionNotFoundException e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
+        } catch(AttendanceException.AlreadyAttendanceRecordedSessionException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
