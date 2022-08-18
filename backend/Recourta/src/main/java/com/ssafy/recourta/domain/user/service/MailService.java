@@ -9,7 +9,7 @@ import com.ssafy.recourta.global.exception.UserNotFoundException;
 import com.ssafy.recourta.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util;
+import org.springframework.Util;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
