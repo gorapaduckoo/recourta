@@ -112,7 +112,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         Integer attType = attendanceInfo.getAttType();
         Attendance attendance = attendanceRepository.findByUserUserIdAndSessionSessionId(userId, sessionId).orElseThrow(AttendanceException.NoSuchAttendanceException::new);
         Integer originalAttType = attendance.getAttType();
-        if(originalAttType < 0 || originalAttType > 3) throw new AttendanceException.InvalidTypeOfAttendanceException();
+        if(attType < 0 || attType > 3) throw new AttendanceException.InvalidTypeOfAttendanceException();
         attendance.setAttType(attType);
         attendanceRepository.save(attendance);
     }

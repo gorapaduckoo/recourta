@@ -4,6 +4,7 @@ import com.ssafy.recourta.domain.attendance.dto.request.AttendanceRequest;
 import com.ssafy.recourta.domain.attendance.dto.response.AttendanceResponse;
 import com.ssafy.recourta.domain.attendance.service.AttendanceService;
 import com.ssafy.recourta.global.exception.AttendanceException;
+import com.ssafy.recourta.global.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,8 @@ public class AttendanceController {
         try {
             attendanceService.recordAllAttendanceOfSession(sessionId);
             return ResponseEntity.ok().build();
-        } catch(Exception e) {
-            return ResponseEntity.internalServerError().build();
+        } catch(SessionNotFoundException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
@@ -38,7 +39,7 @@ public class AttendanceController {
         return ResponseEntity.ok().body(lectureAttendance);
     }
 
-    @PostMapping("/change")
+    @PutMapping("/change")
     public ResponseEntity<String> changeAttendance(@RequestBody AttendanceRequest.AttendanceInfo request) {
         try {
             attendanceService.changeAttendance(request);
