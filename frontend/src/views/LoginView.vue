@@ -70,7 +70,7 @@ const login = async () => {
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
     console.log("SET IS_STUDENT")
-    location.href="/recourta/main"
+    location.href="/main"
     console.log("LOCATION HREF")
 })
   .catch(err => {
