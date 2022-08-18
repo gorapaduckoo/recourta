@@ -25,8 +25,11 @@
       </button>
       <div v-if="state.isattendlist" class="flex w-full flex-col">
         <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
-          <div>
-            {{ name[1] }}
+          <div class="flex">
+            <div class="mr-2">{{ name[1] }}</div>
+            <div :class="{'text-[#fe5358]':props.facecount>=900,'text-[#faa405]':props.facecount>=600&&props.facecout<900}" class="text-neutral-400" v-if="index===0&&props.facecount">
+              {{Math.floor(props.facecount / 60) + ":" + (props.facecount % 60).toString().padStart(2,"0")}}
+            </div>
           </div>
           <div v-if="index" class="flex items-center space-x-2">
             <button v-if="props.isLecturer" @click="onClickAuth(name[3])" class="hover:text-neutral-200 text-neutral-400">
@@ -138,6 +141,7 @@ const props = defineProps({
   classAbsList: Array,
   isLecturer: Boolean,
   onMic: Array,
+  facecount: Number,
 })
 
 const state = reactive({
@@ -223,7 +227,7 @@ const onClickMic = (sub) => {
 }
 
 const onClickBan = (connection) => {
-  emit('submitBan',[connection])
+  emit('submitBan',"BAN",[connection])
 }
 
 onUpdated(()=>{
