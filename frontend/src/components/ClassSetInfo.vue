@@ -223,7 +223,7 @@ const modalOpen = () => {
 
 const modalClose = () => {
   document.getElementById('infoEditModal').classList.replace('show', 'hidden')
-  route.go()
+  route.replace({path:"/classsetting"})
 }
 </script>
 

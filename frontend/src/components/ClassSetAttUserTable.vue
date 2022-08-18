@@ -105,7 +105,7 @@ const outRegistration = async () => {
     }
   })
   .then(res => {
-    route.go()
+    route.replace({path:"/classsetting"})
   })
   .catch(err => {
     console.log(err)

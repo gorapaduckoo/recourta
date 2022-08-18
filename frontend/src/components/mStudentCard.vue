@@ -211,7 +211,7 @@ const outRegistration = async () => {
     }
   })
   .then(res => {
-    route.go()
+    route.replace({path:"/main"})
   })
   .catch(err => {
     console.log(err)
