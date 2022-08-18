@@ -417,7 +417,7 @@ const signupSubmit = async () => {
     state.issingle=false
   }
 
-  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface&&issingle) {
+  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface&&state.issingle) {
     signupdatatoserver()
   }
 }
