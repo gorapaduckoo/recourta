@@ -49,10 +49,10 @@ public class MailService {
         message.addRecipients(Message.RecipientType.TO, email);
         message.setSubject("Recourta 회원가입 인증번호입니다.");
 
-        // image
-        MimeMultipart multipart = new MimeMultipart("related");
-        BodyPart messageBodyPart = new MimeBodyPart();
-        //
+        // // image
+        // MimeMultipart multipart = new MimeMultipart("related");
+        // BodyPart messageBodyPart = new MimeBodyPart();
+        // //
 
         String  code = UUID.randomUUID().toString().replaceAll("-","").substring(0, 9);
 
@@ -79,23 +79,21 @@ public class MailService {
         msg+= "</div>";
 
 
-       // message.setText(msg, "utf-8", "html");
+        message.setText(msg, "utf-8", "html");
 
         message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
 
-        //image
-        messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
-        multipart.addBodyPart(messageBodyPart);
+//         //image
+//         messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
+//         multipart.addBodyPart(messageBodyPart);
 
-        messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
+//         messageBodyPart = new MimeBodyPart();
+// //        javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
 
-        messageBodyPart.setDataHandler(new DataHandler(fds));
-        messageBodyPart.setHeader("Content-ID","<image>");
-        multipart.addBodyPart(messageBodyPart);
-        message.setContent(multipart);
-
-        //
+// //        messageBodyPart.setDataHandler(new DataHandler(fds));
+//         messageBodyPart.setHeader("Content-ID","<image>");
+//         multipart.addBodyPart(messageBodyPart);
+//         message.setContent(multipart);
 
         return  message;
     }
@@ -135,22 +133,20 @@ public class MailService {
         msg+= "<br/> ";
         msg+= "</div>";
 
-        //message.setText("이메일 인증코드: "+code, "utf-8", "html");
-        //message.setText(msg, "utf-8", "html");
+        message.setText("이메일 인증코드: "+code, "utf-8", "html");
+        message.setText(msg, "utf-8", "html");
 
-        //image
-        messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
-        multipart.addBodyPart(messageBodyPart);
+        // //image
+        // messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
+        // multipart.addBodyPart(messageBodyPart);
 
-        messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
+        // messageBodyPart = new MimeBodyPart();
+        // javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
 
-        messageBodyPart.setDataHandler(new DataHandler(fds));
-        messageBodyPart.setHeader("Content-ID","<image>");
-        multipart.addBodyPart(messageBodyPart);
-        message.setContent(multipart);
-
-        //
+        // messageBodyPart.setDataHandler(new DataHandler(fds));
+        // messageBodyPart.setHeader("Content-ID","<image>");
+        // multipart.addBodyPart(messageBodyPart);
+        // message.setContent(multipart);
 
         message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
 
