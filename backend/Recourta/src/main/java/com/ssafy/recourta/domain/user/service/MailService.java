@@ -9,7 +9,7 @@ import com.ssafy.recourta.global.exception.UserNotFoundException;
 import com.ssafy.recourta.global.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.Util;
+import org.springframework.util.ResourceUtils;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -87,7 +87,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(ResourceUtil.getFile("classpath:/image/logo.png"));
+        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("classpath:/image/logo.png"));
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
@@ -142,7 +142,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(ResourceUtil.getFile("classpath:/image/logo.png"));
+        javax.activation.DataSource fds = new FileDataSource(ResourceUtils.getFile("classpath:/image/logo.png"));
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
