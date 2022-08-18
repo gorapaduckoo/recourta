@@ -69,8 +69,10 @@ const login = async () => {
     store.dispatch("updateRefreshTime",jwt.exp)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
-    route.replace({path:'/main'})
-  })
+    console.log("SET IS_STUDENT")
+    location.href="/recourta/main"
+    console.log("LOCATION HREF")
+})
   .catch(err => {
     state.email_err_msg = "가입된 이메일이 아니거나"
     state.email_check=false
