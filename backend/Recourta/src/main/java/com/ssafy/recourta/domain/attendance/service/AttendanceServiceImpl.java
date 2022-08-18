@@ -34,6 +34,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public void recordAllAttendanceOfSession(Integer sessionId) {
+        if(attendanceRepository.findFirstBySessionSessionId(sessionId).isPresent()) throw new AttendanceException.AlreadyAttendanceRecordedSessionException();
+
         Session session = sessionRepository.findById(sessionId).orElseThrow(SessionNotFoundException::new);
         Integer teacherId = session.getLecture().getUser().getUserId();
         List<CheckInOut> teacherCheckInOutList = checkInOutRepository.findAllByUserUserIdAndSessionSessionId(teacherId, sessionId);
