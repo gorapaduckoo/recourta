@@ -84,7 +84,7 @@ const state = reactive({
   issit:false,
 
   outtime:900,
-  timemult=15,
+  timemult:15,
   timesec:60,
   recogTimer:null,
 })
