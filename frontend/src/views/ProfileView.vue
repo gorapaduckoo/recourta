@@ -136,7 +136,7 @@ const getProfile = async () => {
     state.name = res.data.name
     state.email = res.data.email
     state.takenImg = store.state.user.userImgFirstUrl+res.data.userImg
-    console.log(state.takenImg)
+    console.log(store.state.user.userImgFirstUrl)
   })
   .catch(err => {
     console.log(err)
