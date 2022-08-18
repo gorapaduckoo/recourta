@@ -105,6 +105,7 @@
             </div>
           </div>
           <div v-if="!state.isphoto" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">사진을 등록해주세요</div>
+          <div v-if="!state.isface" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">얼굴이 잘 보이게 사진을 찍어주세요.</div>
         </div>
 
         <!-- 카메라 버튼 -->
@@ -160,6 +161,11 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import rct from '../api/rct'
 import axios from 'axios'
+import * as faceapi from '@vladmandic/face-api'
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
+])
 
 
 const route = useRouter()
@@ -177,6 +183,7 @@ const state = reactive({
   ispassword: true,
   isrepeat: true,
   isphoto: true,
+  isface: true,
   isemailsend: false,
   isemailverified: false,
   wrongemail:'',
@@ -244,7 +251,7 @@ const stopCameraStream = () => {
   });
 }
 
-const takePhoto = () => {
+const takePhoto = async () => {
   state.isphoto = true
   if(!state.isPhotoTaken) {
     state.isShotPhoto = true;
@@ -382,7 +389,7 @@ const signupdatatoserver = async () => {
   })
 }
 
-const signupSubmit = () => {
+const signupSubmit = async () => {
 
   if(floating_name.value==="") state.isname = false
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
@@ -392,9 +399,16 @@ const signupSubmit = () => {
   }
   if(!pw_regex.test(floating_password.value)) state.ispassword=false
   if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
-  if(!state.isPhotoTaken) state.isphoto=false
 
-  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) {
+  if(!state.isPhotoTaken) state.isphoto=false
+  const detections = await faceapi.detectSingleFace(document.getElementById("photoTaken"))
+  if(detections == undefined) {
+    state.isface=false
+  } else {
+    state.isface=true
+  }
+
+  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface) {
     signupdatatoserver()
   }
 }
