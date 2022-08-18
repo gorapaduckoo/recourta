@@ -87,8 +87,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        URL url = MailService.class.getClassLoader().getResource("/image/logo.png");
-        javax.activation.DataSource fds = new FileDataSource(url.getFile());
+        javax.activation.DataSource fds = new FileDataSource("/image/logo.png");
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
@@ -143,8 +142,7 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        URL url = MailService.class.getClassLoader().getResource("/image/logo.png");
-        javax.activation.DataSource fds = new FileDataSource(url.getFile());
+        javax.activation.DataSource fds = new FileDataSource("/image/logo.png");
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
