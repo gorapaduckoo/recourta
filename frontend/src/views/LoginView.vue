@@ -36,11 +36,13 @@
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 import jwt_decode from "jwt-decode"
 
 const store = useStore()
+const router = useRouter()
 
 const state = reactive({
   email_check: true,
@@ -69,9 +71,7 @@ const login = async () => {
     store.dispatch("updateRefreshTime",jwt.exp)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
-    console.log("SET IS_STUDENT")
-    location.href="/main"
-    console.log("LOCATION HREF")
+    route.replace({"/main"})
 })
   .catch(err => {
     state.email_err_msg = "가입된 이메일이 아니거나"
