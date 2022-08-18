@@ -112,6 +112,7 @@ const logout = async () => {
     }
   })
   .then(res => {
+    store.dispatch("updateIsLogin",false)
     route.replace({path:'/'})
   })
   .catch(err => {
