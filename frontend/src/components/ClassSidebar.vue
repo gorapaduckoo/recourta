@@ -27,7 +27,7 @@
         <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
           <div class="flex">
             <div class="mr-2" :class="{'text-[#fe5358]':props.unsitList.indexOf(name[2])>=0}">{{ name[1] }}</div>
-            <div :class="{'text-[#fe5358]':props.facecount>=props.outtime*60,'text-[#faa405]':props.facecount>=props.outtime*40&&props.facecout<props.outtime*60}" class="text-neutral-400" v-if="index===0&&props.facecount">
+            <div :class="{'text-[#fe5358]':props.facecount>=props.outtime,'text-[#faa405]':props.facecount>=(props.outtime*2/3)&&props.facecount<props.outtime}" class="text-neutral-400" v-if="index===0&&props.facecount">
               {{Math.floor(props.facecount / 60) + ":" + (props.facecount % 60).toString().padStart(2,"0")}}
             </div>
           </div>
@@ -37,10 +37,9 @@
               <option v-for="timemul in timeemuls" :key="timemul" :value="timemul">{{ timemul }}</option>
             </select>
             <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thistimesec" @change="updateouttime">
-              <option :value=60>분</option>
+              <option :value=60 selected>분</option>
               <option :value=1>초</option>
             </select>
-            <div class="text-xs lg:text-sm text-neutral-400">분</div>
           </div>
           <div v-if="index" class="flex items-center space-x-2">
             <button v-if="props.isLecturer" @click="onClickAuth(name[3])" class="hover:text-neutral-200 text-neutral-400">
@@ -141,7 +140,7 @@ const store = useStore()
 
 const msg = ref("")
 
-const minrange = [1,3,5,10,15,30,45,60,90,120,150,180]
+const timeemuls = [1,3,5,10,15,30,45,60,90,120,150,180]
 
 const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan","updateouttime"])
 const props = defineProps({
@@ -156,6 +155,7 @@ const props = defineProps({
   onMic: Array,
   facecount: Number,
   unsitList: Array,
+  outtime: Number,
   timemul: Number,
   timesec: Number,
 })
