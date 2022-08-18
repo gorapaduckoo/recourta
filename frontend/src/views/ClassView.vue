@@ -1,7 +1,14 @@
 <template>
-<div class="bg-[#444444] text-white">
+<div class="bg-[#444444] text-white w-[100%] h-[100%] relative">
+  <ClassRecog v-if="state.publisher&&!state.isLecturer" class="absolute invisible top-0 left-0" :facecount="state.facecount" :publisher="state.publisher" :isLecturer="state.isLecturer" @checkin="checkin" @checkout="checkout" @finishLoading="finishLoading" @changeFacecount="changeFacecount"/>
+  <div v-if="state.isloading&&!state.isLecturer" class="absolute flex w-full h-full justify-center items-center z-40 bg-[#444444]">
+    <svg aria-hidden="true" role="status" class="w-[200px] h-[200px] text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#2c5172"/>
+      <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="#92a8d1"/>
+    </svg>
+  </div>
   <div :class="{'lg:pr-[360px]':state.isside}" class="flex flex-col overflow-y-auto h-[100vh] lg:py-2 justify-between items-center font-bold text-4xl">
-    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.classAttList" :onMic="state.onMic" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
+    <ClassList v-if="state.session && state.issublist" :publisher="state.publisher" :userAll="state.classAttList" :onMic="state.onMic" :unsitList="state.unsitList" @updateMainVideoStreamManager="updateMainVideoStreamManager" class="hidden lg:flex flex-1"/>
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
@@ -10,9 +17,9 @@
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
     <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leavePage(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
+    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
@@ -27,6 +34,7 @@ import ClassList from '../components/ClassList.vue'
 import ClassMain from '../components/ClassMain.vue'
 import ClassToolbar from '../components/ClassToolbar.vue'
 import ClassSidebar from '../components/ClassSidebar.vue'
+import ClassRecog from '../components/ClassRecog.vue'
 import axios from 'axios'
 import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
@@ -55,6 +63,7 @@ const state = reactive({
   classAbsList: [],
   userAll: [],
   onMic: [],
+  unsitList: [],
 
   isshare:false,
   isside:false,
@@ -69,8 +78,32 @@ const state = reactive({
   isLecturer:store.getters.currentIsLecturer,
   isAuth:false,
 
-  checkId: 0
+  facecount:0,
+  isloading:true,
+  checkId: 0,
+  issit:false,
+
+  outtime:15,
 })
+
+const updateouttime = (newtime) => {
+  state.outtime=newtime
+}
+
+if(state.isLecturer){
+  setInterval(()=>{
+    state.session.signal({
+      data: String(state.outtime), // Any string (optional)
+      to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'OutTime' // The type of message (optional)
+    })
+    .then(() => {
+    })
+    .catch(error => {
+      console.error(error)
+    })
+  },30000)
+}
 
 const toggleside = () => {
   state.isside=!state.isside
@@ -107,6 +140,27 @@ const toggleSubtitle = () => {
 const toggleSublist = () => {
   state.issublist=!state.issublist
 }
+
+const changeFacecount = cnt => {
+  if(cnt){
+    state.facecount+=1
+    if(state.facecount===state.outtime*60){
+      checkout()
+      sendsit("OUT")
+    }
+  }else{
+    if(state.facecount>=state.outtime*60){
+      checkin()
+      sendsit("IN")
+    }
+    state.facecount=0
+  }
+}
+
+const finishLoading = () => {
+  state.isloading = false
+}
+
 
 const reactiveAttList = () => {
   const tmpAttList = []
@@ -176,27 +230,56 @@ const getRegiList = async () => {
   })
 }
 
+const checkin = async () => {
+  if(!state.issit){
+    await axios({
+      url: rct.webrtc.checkin(),
+      method: 'post',
+      headers: {
+        Authorization: store.state.user.accessToken,
+      },
+      data: {
+        userId: store.state.user.userId,
+        sessionId: store.getters.currentMySessionId,
+      }
+    })
+    .then(res => {
+      state.checkId = res.data.checkId
+      state.issit=true
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+}
+
+const checkout = async () => {
+  if(state.issit){
+    await axios({
+      url: rct.webrtc.checkout(),
+      method: 'put',
+      headers: {
+        Authorization: store.state.user.accessToken,
+      },
+      data: {
+        userId: store.state.user.userId,
+        sessionId: store.getters.currentMySessionId,
+        checkId: state.checkId,
+      }
+    })
+    .then(res => {
+      state.issit=false
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+}
 
 
-const joinSession = async () => {
-  await axios({
-    url: rct.webrtc.checkin(),
-    method: 'post',
-    headers: {
-      Authorization: store.state.user.accessToken,
-    },
-    data: {
-      userId: store.state.user.userId,
-      sessionId: store.getters.currentMySessionId,
-    }
-  })
-  .then(res => {
-    state.checkId = res.data.checkId
-  })
-  .catch(err => {
-    console.log(err)
-  })
-
+const joinSession = () => {
+  
+  checkin()
   getRegiList()
   
   state.OV = new OpenVidu();
@@ -264,11 +347,30 @@ const joinSession = async () => {
   })
 
   state.session.on('signal:Ban',(event) => {
-    if (!state.isLecturer) leavePage(false)
+    if (!state.isLecturer){
+      if(event.data==="EXIT") leavePage(true)
+      else leavePage(false)
+    }
+  })
+
+  state.session.on('signal:OutTime',(event) => {
+    state.outtime=Number(event.data)
   })
 
   state.session.on('signal:Subtitle', (event) => {
     state.subtitles.push(state.classAttList.find(usr => usr[2] === event.from.connectionId)[1] + " : " + event.data)
+  })
+
+  state.session.on('signal:sit',(event) => {
+    if(event.data==="OUT"){
+      state.unsitList.push(event.from.connectionId)
+      if(state.isLecturer) state.msgs.push([`WARNING : 해당 수강생이 ${state.outtime}분 이상 자리를 비웠습니다`,event.from.connectionId,currentTime()])
+    }
+    else{
+      const tmpunsitList = state.unsitList.filter(unsit => unsit!==event.from.connectionId)
+      state.unsitList = tmpunsitList
+      if(state.isLecturer) state.msgs.push(["WARNING : 해당 수강생이 자리비움에서 복귀하였습니다",event.from.connectionId,currentTime()])
+    }
   })
 
   state.session.on('publisherStartSpeaking', (event) => {
@@ -319,20 +421,20 @@ const joinSession = async () => {
     reactiveAttList()
 
     window.addEventListener('beforeunload', (event) => {
-      event.preventDefault();
-      event.returnValue = '';
+      // event.preventDefault();
+      // event.returnValue = '';
       leaveClass(true)
     })
 
     window.addEventListener("hashchange", (event) => {
-      event.preventDefault();
-      event.returnValue = '';
+      // event.preventDefault();
+      // event.returnValue = '';
       leavePage(true)
     })
 
     window.addEventListener("unload", (event) => {
-      event.preventDefault();
-      event.returnValue = '';
+      // event.preventDefault();
+      // event.returnValue = '';
       leavePage(true)
     })
 
@@ -342,7 +444,7 @@ const joinSession = async () => {
           alert('강의자가 없습니다.')
           leavePage(false)
         }
-      }, 500);
+      }, 10000);
     }
   });
 }
@@ -414,44 +516,22 @@ function getCurrentDate()
         return '_' + year + '_' + month + '_' + day ;
   }
 
-const leaveClass = async (x) => {
-  await axios({
-    url: rct.webrtc.checkout(),
-    method: 'put',
-    headers: {
-      Authorization: store.state.user.accessToken,
-    },
-    data: {
-      userId: store.state.user.userId,
-      sessionId: store.getters.currentMySessionId,
-      checkId: state.checkId,
-    }
-  })
-  .then(res => {
-  })
-  .catch(err => {
-    console.log(err)
-  })
+const leaveClass = (x) => {
 
-  if (state.isLecturer) sendban([]);
+  checkout()
+
+  if (state.isLecturer) sendban("EXIT",[]);
 
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
 
   if (x) {
-    // Select whether to save the lecture script
-    let issave = confirm("강의록을 저장하시겠습니까?")
-
     const tmpScript = state.subtitles.join('\n')
     const now = getCurrentDate()
-
-
-    if(issave) {
-      let blob = new Blob([tmpScript], {type: 'text/plain'})
-      link.href = window.URL.createObjectURL(blob)
-      link.download = state.sidebarTitle + now + '_강의록' + '.txt'
-      link.click()
-    }
+    let blob = new Blob([tmpScript], {type: 'text/plain'})
+    link.href = window.URL.createObjectURL(blob)
+    link.download = state.sidebarTitle + now + '_강의록' + '.txt'
+    link.click()
   }
   
   // state.session = undefined
@@ -491,20 +571,20 @@ const leaveClass = async (x) => {
   // store.commit("SET_IsLecturer", false)
 
   window.removeEventListener('beforeunload', (event) => {
-    event.preventDefault();
-    event.returnValue = '';
+    // event.preventDefault();
+    // event.returnValue = '';
     leaveClass(true)
   });
 
   window.removeEventListener("hashchange", (event) => {
-    event.preventDefault();
+    // event.preventDefault();
     // event.returnValue = '';
     leavePage(true)
   });
 
   window.removeEventListener('unload', (event) => {
-    event.preventDefault();
-    event.returnValue = '';
+    // event.preventDefault();
+    // event.returnValue = '';
     leaveClass(true)
   });
 }
@@ -516,9 +596,9 @@ const leavePage = (x) => {
 
 const sendMsg = (data,reciever) => {
   state.session.signal({
-    data: data,  // Any string (optional)
-    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    type: 'my-chat'             // The type of message (optional)
+    data: data, // Any string (optional)
+    to: reciever, // Array of Connection objects (optional. Broadcast to everyone if empty)
+    type: 'my-chat' // The type of message (optional)
   })
   .then(() => {
   })
@@ -536,9 +616,9 @@ const currentTime = () => {
 
 const sendauth = (reciever) => {
   state.session.signal({
-    data: "auth",  // Any string (optional)
-    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    type: 'Auth'             // The type of message (optional)
+    data: "auth",
+    to: reciever,
+    type: 'Auth'
   })
   .then(() => {
   })
@@ -549,9 +629,9 @@ const sendauth = (reciever) => {
 
 const sendcam = (reciever) => {
   state.session.signal({
-    data: "cam",  // Any string (optional)
-    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    type: 'Cam'             // The type of message (optional)
+    data: "cam",
+    to: reciever,
+    type: 'Cam'
   })
   .then(() => {
   })
@@ -562,9 +642,9 @@ const sendcam = (reciever) => {
 
 const sendmic = (reciever) => {
   state.session.signal({
-    data: "mic",  // Any string (optional)
-    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    type: 'Mic'             // The type of message (optional)
+    data: "mic",
+    to: reciever,
+    type: 'Mic'
   })
   .then(() => {
   })
@@ -573,11 +653,24 @@ const sendmic = (reciever) => {
   })
 }
 
-const sendban = (reciever) => {
+const sendban = (data,reciever) => {
   state.session.signal({
-    data: "ban",  // Any string (optional)
-    to: reciever,                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-    type: 'Ban'             // The type of message (optional)
+    data: data,
+    to: reciever,
+    type: 'Ban'
+  })
+  .then(() => {
+  })
+  .catch(error => {
+    console.error(error)
+  })
+}
+
+const sendsit = (data) => {
+  state.session.signal({
+    data: data,
+    to: [],
+    type: 'sit'
   })
   .then(() => {
   })

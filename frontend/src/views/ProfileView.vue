@@ -16,6 +16,9 @@
     <!-- 사진등록을 위한 캠/사진 화면 -->
     <div v-if="state.isCamOpen" v-show="!state.isLoad" class="my-2" :class="{ 'opacity-0' : state.isShot }">
       <div :class="{'opacity-0' : state.isShot}"></div>
+      <div v-if="!state.isFace" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">얼굴이 잘 보이게 사진을 찍어주세요.</div>
+      <div v-if="!state.isSingle" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">한 사람만 나오게 사진을 찍어주세요.</div>
+      <div v-if="state.isFace&&state.isSingle&&!state.isPhotoTake" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">얼굴 인식까지 다소 시간이 걸릴 수 있으니 잠시 기다려주세요.</div>
       <!-- 웹캠 -->
       <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="profileCamera" autoplay></video>
       <!-- 캡쳐 -->
@@ -30,7 +33,7 @@
         <span v-if="state.isPhotoTake && state.isCamOpen">다시찍기</span>
         <span v-else>사진촬영</span>
       </button>
-      <button v-if="state.isCamOpen && !state.isLoad && state.isPhotoTake && state.isCamOpen" type="button" class="bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a] text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md ml-2 px-3 py-0.5 text-center" @click="changePhoto">저장</button>
+      <button v-if="state.isCamOpen && !state.isLoad && state.isPhotoTake && state.isCamOpen" type="button" class="bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a] text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md ml-2 px-3 py-0.5 text-center" @click="btnClick">저장</button>
     </div>
 
     <!-- 비밀번호 변경 Button -->
@@ -118,9 +121,14 @@ import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from "vuex"
 import { useRouter } from 'vue-router'
+import * as faceapi from '@vladmandic/face-api'
 
 const store = useStore()
 const route = useRouter()
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
+])
 
 const getProfile = async () => {
   await axios({
@@ -147,6 +155,8 @@ getProfile()
 const state = reactive({
   isCamOpen: false,
   isPhotoTake: false,
+  isFace: true,
+  isSingle: true,
   isShot: false,
   isLoad: false,
   current_pw_check : true,
@@ -208,7 +218,9 @@ const stopCamStream = () => {
   });
 }
 
-const takePhotoShot = () => {
+const takePhotoShot = async () => {
+  state.isFace = true;
+  state.isSingle = true;
   if(!state.isPhotoTake) {
     state.isShot = true;
 
@@ -223,6 +235,18 @@ const takePhotoShot = () => {
   
   const context = profileCanvas.value.getContext('2d');
   context.drawImage(profileCamera.value, 0, 0, 384, 288);
+  const detections = await faceapi.detectAllFaces(profileCamera.value)
+
+  if(detections.length==0) {
+    state.isFace=false
+    state.isSingle=true
+  } else if (detections.length==1){
+    state.isFace=true
+    state.isSingle=true
+  } else {
+    state.isFace=true
+    state.isSingle=false
+  }
 }
 
 // 사진 변경 함수
@@ -230,6 +254,12 @@ const UrltoBlob = async (dataURL) => {
   const res = await fetch(dataURL)
   const blob = await res.blob()
   return blob
+}
+
+const btnClick = () => {
+  if (state.isFace && state.isSingle) {
+    changePhoto()
+  }
 }
 
 const changePhoto = async () => {

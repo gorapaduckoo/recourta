@@ -2,8 +2,7 @@
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[80px]">
-    <div>{{state.pastLearned}}</div>
-    <PastCardList />
+    <PastCardList :pastLearned="state.pastLearned"/>
   </div>
 </template>
 

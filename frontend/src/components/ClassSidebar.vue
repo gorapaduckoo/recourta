@@ -25,8 +25,18 @@
       </button>
       <div v-if="state.isattendlist" class="flex w-full flex-col">
         <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
-          <div>
-            {{ name[1] }}
+          <div class="flex">
+            <div class="mr-2" :class="{'text-[#fe5358]':props.unsitList.indexOf(name[2])>=0}">{{ name[1] }}</div>
+            <div :class="{'text-[#fe5358]':props.facecount>=props.outtime*60,'text-[#faa405]':props.facecount>=props.outtime*40&&props.facecout<props.outtime*60}" class="text-neutral-400" v-if="index===0&&props.facecount">
+              {{Math.floor(props.facecount / 60) + ":" + (props.facecount % 60).toString().padStart(2,"0")}}
+            </div>
+          </div>
+          <div v-if="props.isLecturer&&index==0" class="flex items-center text-xs lg:text-sm space-x-1">
+            <div class="text-neutral-400">자리비움시간 : </div>
+            <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thisouttime" @change="updateouttime" name="receiver" id="receiver">
+              <option v-for="min in minrange" :key="min" :value="min">{{ min }}</option>
+            </select>
+            <div class="text-xs lg:text-sm text-neutral-400">분</div>
           </div>
           <div v-if="index" class="flex items-center space-x-2">
             <button v-if="props.isLecturer" @click="onClickAuth(name[3])" class="hover:text-neutral-200 text-neutral-400">
@@ -75,7 +85,7 @@
         <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 border-neutral-400">
+    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 pt-2 border-neutral-400">
       <div class="mb-2" v-for="(msg,index) in props.msglist" :key="index">
         <div v-if="props.myID===msg[1]">
           <div class="flex items-end justify-end">
@@ -90,7 +100,7 @@
             <div>{{props.classAttList.find(v => v[2]===msg[1])[1]}}</div>
           </div>
           <div class="flex items-end">
-            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
+            <div :class="{'text-[#faa405]':msg[0].includes('WARNING')}" class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
               {{msg[0]}}
             </div>
             <div class="text-[12px] lg:text-sm text-neutral-400">{{msg[2]}}</div>
@@ -127,7 +137,12 @@ const store = useStore()
 
 const msg = ref("")
 
-const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan"])
+const minrange = []
+for(let i=1;i<=30;i++){
+  minrange.push(i)
+}
+
+const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan","updateouttime"])
 const props = defineProps({
   msglist:Array,
   myID:String,
@@ -138,6 +153,9 @@ const props = defineProps({
   classAbsList: Array,
   isLecturer: Boolean,
   onMic: Array,
+  facecount: Number,
+  unsitList: Array,
+  outtime: Number,
 })
 
 const state = reactive({
@@ -148,7 +166,12 @@ const state = reactive({
   sendmsg:"",
   camBanList:[],
   micBanList:[],
+  thisouttime:15,
 })
+
+const updateouttime = () => {
+  emit("updateouttime",state.thisouttime)
+}
 
 const togglelist = () => {
   state.isAtt=!state.isAtt
@@ -223,7 +246,7 @@ const onClickMic = (sub) => {
 }
 
 const onClickBan = (connection) => {
-  emit('submitBan',[connection])
+  emit('submitBan',"BAN",[connection])
 }
 
 onUpdated(()=>{
