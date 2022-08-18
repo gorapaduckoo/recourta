@@ -43,8 +43,13 @@ export default {
   webrtc: {
     openvd_url:() => "https://"+location.hostname+openvidu_port,
     openvd_secret:() => openvidu_server_secret,
-    exitclass:sessionid => HOST + ATTENDANCE + "/autorecord/" + sessionid,
+    exitclass: sessionid => HOST + ATTENDANCE + "/autorecord/" + sessionid,
     checkin:() => HOST + CHECK + "/in",
     checkout:() => HOST + CHECK + "/out",
-  }
+  },
+  attendance: {
+    sessionAttendance: sessionId => HOST + ATTENDANCE + '/session/' + sessionId,
+    lectureAllAttendance: lectureId => HOST + ATTENDANCE + LECTURE + '/' + lectureId,
+    changeAttendance: () => HOST + ATTENDANCE + '/change',
+  },
 }

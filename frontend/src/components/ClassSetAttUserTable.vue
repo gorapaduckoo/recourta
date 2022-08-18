@@ -1,14 +1,18 @@
 <template>
   <tr>
     <td class="px-6 py-3 border text-sm flex justify-between">
-      <div>{{student.name}}</div>
+      <div>{{userAttendance[0].name}}</div>
       <button type="button" @click="modalOpen">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#fe343b] dark:text-[#fe4d53]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </button>
     </td>
-    <td class="px-6 py-3 border text-sm">{{student.email}}</td>
+    <td class="px-6 py-3 border text-sm">{{userAttendance[0].email}}</td>
+    <td class="px-6 py-3 border text-sm"
+      v-for="attendance of userAttendance.slice(1,userAttendance.length)"
+      :key="attendance"
+    >{{attendance}}</td>
   </tr>
 
   <!-- 내보내기 Modal -->
@@ -23,7 +27,7 @@
           </button>
         </div>
         <div class="modal-body pt-2 pb-4 text-center">
-          <p class="font-medium">{{student.name}}({{student.email}}) 님을<br/>강의에서 내보내시겠습니까?</p>
+          <p class="font-medium">{{userAttendance[0].name}}({{userAttendance[0].email}}) 님을<br/>강의에서 내보내시겠습니까?</p>
         </div>
         <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end px-4 pb-4 rounded-b-md space-x-3">
           <button type="button" class="text-white bg-[#fe5358] w-[62.3px] border border-[#fe5358] font-medium rounded-lg text-sm px-3 py-1.5 text-center hover:bg-[#fe343b]" @click="outRegistration">예</button>
@@ -43,14 +47,14 @@ import rct from '../api/rct'
 const store = useStore()
 const rout = useRoute()
 
-// { "userId": 2, "name": "김그작", "email": "2753dudwns@gmail.com", "userImg": "cbde9471-50c5-449f-bff9-6d400d92a0df.png" }
+// [ { "userId": 3, "name": "김우석", "email": "terrykim96@naver.com", "userImg": "5da33e52-1d2a-4c37-be64-af7891d68f03.png" }, 2, 1, 3, 1, 3 ], [ { "userId": 4, "name": "김페페", "email": "terrykim96@gmail.com", "userImg": "7de9f422-c9e5-4543-80f4-a89c250aabe7.png" }, 3, 2, 2, 1, 3 ]
 const props = defineProps({
-  student : {
-    type: Object,
+  userAttendance : {
+    type: Array,
   }
 })
 
-const useroutModal = 'userOut'+props.student.userId
+const useroutModal = 'userOut'+props.userAttendance[0].userId
 
 const modalOpen = () => {
   document.getElementById(useroutModal).classList.replace('hidden', 'show')
@@ -68,7 +72,7 @@ const outRegistration = async () => {
       Authorization: store.state.user.accessToken,
     },
     data: {
-      userId : props.student.userId,
+      userId : props.userAttendance[0].userId,
       lectureId : Number(rout.params.lecId),
     }
   })
