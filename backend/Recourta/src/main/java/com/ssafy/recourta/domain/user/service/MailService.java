@@ -24,6 +24,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.sql.DataSource;
+import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -86,7 +87,8 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(MailService.class.getClassLoader().getResource("image/logo.png"));
+        URL url = MailService.class.getClassLoader().getResource("image/logo.png");
+        javax.activation.DataSource fds = new FileDataSource(url);
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
@@ -141,7 +143,8 @@ public class MailService {
         multipart.addBodyPart(messageBodyPart);
 
         messageBodyPart = new MimeBodyPart();
-        javax.activation.DataSource fds = new FileDataSource(MailService.class.getClassLoader().getResource("image/logo.png"));
+        URL url = MailService.class.getClassLoader().getResource("image/logo.png");
+        javax.activation.DataSource fds = new FileDataSource(url);
 
         messageBodyPart.setDataHandler(new DataHandler(fds));
         messageBodyPart.setHeader("Content-ID","<image>");
