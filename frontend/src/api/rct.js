@@ -4,6 +4,7 @@ const USER = '/user'
 const LECTURE = '/lecture'
 const REGIST = '/registration'
 const CHECK = '/check'
+const ATTENDANCE = '/attendance'
 
 const openvidu_port = ":4443"
 const openvidu_server_secret = "MY_SECRET"
@@ -42,6 +43,7 @@ export default {
   webrtc: {
     openvd_url:() => "https://"+location.hostname+openvidu_port,
     openvd_secret:() => openvidu_server_secret,
+    exitclass:sessionid => HOST + ATTENDANCE + "/autorecord/" + sessionid,
     checkin:() => HOST + CHECK + "/in",
     checkout:() => HOST + CHECK + "/out",
   }

@@ -33,8 +33,12 @@
           </div>
           <div v-if="props.isLecturer&&index==0" class="flex items-center text-xs lg:text-sm space-x-1">
             <div class="text-neutral-400">자리비움시간 : </div>
-            <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thisouttime" @change="updateouttime" name="receiver" id="receiver">
-              <option v-for="min in minrange" :key="min" :value="min">{{ min }}</option>
+            <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thistimemult" @change="updateouttime">
+              <option v-for="timemul in timeemuls" :key="timemul" :value="timemul">{{ timemul }}</option>
+            </select>
+            <select class="flex-1 rounded-lg px-2 py-1 bg-[#444444] border border-neutral-400" v-model="state.thistimesec" @change="updateouttime">
+              <option :value=60>분</option>
+              <option :value=1>초</option>
             </select>
             <div class="text-xs lg:text-sm text-neutral-400">분</div>
           </div>
@@ -137,10 +141,7 @@ const store = useStore()
 
 const msg = ref("")
 
-const minrange = []
-for(let i=1;i<=30;i++){
-  minrange.push(i)
-}
+const minrange = [1,3,5,10,15,30,45,60,90,120,150,180]
 
 const emit = defineEmits(["closeList","submitMsg","submitAuth","submitCam","submitMic","submitBan","updateouttime"])
 const props = defineProps({
@@ -155,7 +156,8 @@ const props = defineProps({
   onMic: Array,
   facecount: Number,
   unsitList: Array,
-  outtime: Number,
+  timemul: Number,
+  timesec: Number,
 })
 
 const state = reactive({
@@ -166,11 +168,12 @@ const state = reactive({
   sendmsg:"",
   camBanList:[],
   micBanList:[],
-  thisouttime:15,
+  thistimemult:15,
+  thistimesec:60,
 })
 
 const updateouttime = () => {
-  emit("updateouttime",state.thisouttime)
+  emit("updateouttime",state.thistimemult,state.thistimesec)
 }
 
 const togglelist = () => {

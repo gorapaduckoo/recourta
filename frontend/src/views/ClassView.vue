@@ -16,7 +16,7 @@
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
-    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="leavePage(true)" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
+    <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="closingclass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
     <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
   <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
@@ -83,15 +83,14 @@ const state = reactive({
   checkId: 0,
   issit:false,
 
-  outtime:15,
+  outtime:900,
+  timemult=15,
+  timesec:60,
+  recogTimer:null,
 })
 
-const updateouttime = (newtime) => {
-  state.outtime=newtime
-}
-
 if(state.isLecturer){
-  setInterval(()=>{
+  state.recogTimer = setInterval(()=>{
     state.session.signal({
       data: String(state.outtime), // Any string (optional)
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
@@ -102,7 +101,25 @@ if(state.isLecturer){
     .catch(error => {
       console.error(error)
     })
-  },30000)
+  },450)
+}
+
+const updateouttime = (newmult,newsec) => {
+  state.timemult = newmult
+  state.timesec = newsec
+  if(state.recogTimer) clearInterval(state.recogTimer)
+  state.recogTimer = setInterval(()=>{
+    state.session.signal({
+      data: String(state.outtime), // Any string (optional)
+      to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'OutTime' // The type of message (optional)
+    })
+    .then(() => {
+    })
+    .catch(error => {
+      console.error(error)
+    })
+  },Math.ceil(state.timemult*state.timesec/2))
 }
 
 const toggleside = () => {
@@ -141,15 +158,15 @@ const toggleSublist = () => {
   state.issublist=!state.issublist
 }
 
-const changeFacecount = cnt => {
+const changeFacecount = (cnt) => {
   if(cnt){
     state.facecount+=1
-    if(state.facecount===state.outtime*60){
+    if(state.facecount===state.outtime){
       checkout()
       sendsit("OUT")
     }
   }else{
-    if(state.facecount>=state.outtime*60){
+    if(state.facecount>=state.outtime){
       checkin()
       sendsit("IN")
     }
@@ -255,6 +272,7 @@ const checkin = async () => {
 
 const checkout = async () => {
   if(state.issit){
+    console.log(rct.webrtc.checkout())
     await axios({
       url: rct.webrtc.checkout(),
       method: 'put',
@@ -274,6 +292,30 @@ const checkout = async () => {
       console.log(err)
     })
   }
+}
+
+const closeClass = async () => {
+  await axios({
+    url: rct.webrtc.exitclass(state.mySessionId),
+    method: 'post',
+    headers: {
+      Authorization: store.state.user.accessToken,
+    },
+  })
+  .then(res => {
+    console.log("success")
+  })
+  .catch(err => {
+    console.log(err)
+  })
+}
+
+const closingclass = () => {
+  if(state.isLecturer){
+    // console.log("lecturer exit")
+    closeClass()
+  }
+  leavePage(true)
 }
 
 
@@ -429,13 +471,13 @@ const joinSession = () => {
     window.addEventListener("hashchange", (event) => {
       // event.preventDefault();
       // event.returnValue = '';
-      leavePage(true)
+      leaveClass(true)
     })
 
     window.addEventListener("unload", (event) => {
       // event.preventDefault();
       // event.returnValue = '';
-      leavePage(true)
+      leaveClass(true)
     })
 
     if (!state.isLecturer) {
@@ -518,14 +560,7 @@ function getCurrentDate()
 
 const leaveClass = (x) => {
 
-  checkout()
-
-  if (state.isLecturer) sendban("EXIT",[]);
-
-  // --- Leave the session by calling 'disconnect' method over the Session object ---
-  if (state.session) state.session.disconnect();
-
-  if (x) {
+  if (x&&!state.isLecturer) {
     const tmpScript = state.subtitles.join('\n')
     const now = getCurrentDate()
     let blob = new Blob([tmpScript], {type: 'text/plain'})
@@ -533,42 +568,13 @@ const leaveClass = (x) => {
     link.download = state.sidebarTitle + now + '_강의록' + '.txt'
     link.click()
   }
-  
-  // state.session = undefined
-  // state.mainStreamManager = undefined
-  // state.publisher = undefined
-  // state.temppublisher = undefined
-  // state.subscribers = []
-  // state.OV = undefined
-  
-  // state.ismic=false
-  // state.iscam=false
-  // state.isshare=false
-  // state.isside=false
-  // state.msgs=[]
 
-  // state.mySessionId = ""
-  // state.myUserId = ""
-  // state.sidebarTitle = ""
+  checkout()
 
-  // state.classRegiList = []
-  // state.classAttList = []
-  // state.classAbsList = []
-  // state.userAll = []
+  if (state.isLecturer) sendban("EXIT",[]);
 
-  // state.issubtitle = false
-  // state.issublist = false
-  // state.texts=""
-  // state.isAuth=false
-
-  // state.isLecturer = false
-  // state.checkId = 0
-
-  // store.commit("SET_MySessionId","")
-  // store.commit("SET_MyLectureId","")
-  // store.commit("SET_LecturerName","")
-  // store.commit("SET_SidebarTitle","")
-  // store.commit("SET_IsLecturer", false)
+  // --- Leave the session by calling 'disconnect' method over the Session object ---
+  if (state.session) state.session.disconnect();
 
   window.removeEventListener('beforeunload', (event) => {
     // event.preventDefault();
@@ -579,7 +585,7 @@ const leaveClass = (x) => {
   window.removeEventListener("hashchange", (event) => {
     // event.preventDefault();
     // event.returnValue = '';
-    leavePage(true)
+    leaveClass(true)
   });
 
   window.removeEventListener('unload', (event) => {
