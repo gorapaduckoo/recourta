@@ -69,7 +69,7 @@ const login = async () => {
     store.dispatch("updateRefreshTime",jwt.exp)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
-    location.href = '/main'
+    location.href = '/recourta/main'
   })
   .catch(err => {
     state.email_err_msg = "가입된 이메일이 아니거나"
