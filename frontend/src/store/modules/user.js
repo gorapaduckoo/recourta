@@ -8,7 +8,7 @@ export const user = {
 		refreshToken: localStorage.getItem('refreshToken') || '' ,
     refreshtime: localStorage.getItem('refreshtime') || null ,
     islogin: 0,
-		userImgFirstUrl: 'http://localhost:8081/recourta/uploads/img/user/',
+		userImgFirstUrl: 'assets/img/user/',
 		userId: null,
 		isStudent: null,
 	},
