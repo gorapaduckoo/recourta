@@ -116,7 +116,7 @@ const logout = async () => {
     store.dispatch('saveRefreshToken', '')
     store.dispatch("updateRefreshTime", null)
     store.dispatch('updateIsLogin', 0)
-    route.replace({"/"})
+    route.replace({path:"/"})
   })
   .catch(err => {
     console.log(err)
