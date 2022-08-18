@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import CustomFooter from './components/CustomFooter.vue'
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'

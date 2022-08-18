@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import CustomFooter from './components/CustomFooter.vue'
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import SearchList from '../components/SearchList.vue'

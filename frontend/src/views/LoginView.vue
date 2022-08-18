@@ -33,7 +33,7 @@
 </template>
 
 <script setup>
-import CustomFooter from './components/CustomFooter.vue'
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useStore } from 'vuex'
