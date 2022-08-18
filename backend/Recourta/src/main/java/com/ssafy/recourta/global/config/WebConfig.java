@@ -10,7 +10,9 @@ public class WebConfig implements WebMvcConfigurer {
     private final String resourcePath = "file:///media/uploads/img/";
 
     private final String modelRequestPath = "/uploads/model/**";
-    private final String modelResourcePath = "file:///C:/Users/SSAFY/Desktop/uploads/model/";
+//    private final String modelResourcePath = "file:///C:/Users/SSAFY/Desktop/uploads/model/";
+    private final String modelResourcePath = "file:///media/uploads/model/";
+
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
