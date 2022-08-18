@@ -1,5 +1,6 @@
 package com.ssafy.recourta.domain.attendance.service;
 
+import com.ssafy.recourta.domain.attendance.dto.request.AttendanceRequest;
 import com.ssafy.recourta.domain.attendance.dto.response.AttendanceResponse;
 import com.ssafy.recourta.domain.attendance.entity.Attendance;
 import com.ssafy.recourta.domain.attendance.repository.AttendanceRepository;
@@ -9,6 +10,7 @@ import com.ssafy.recourta.domain.registration.entity.Registration;
 import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
 import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.session.repository.SessionRepository;
+import com.ssafy.recourta.global.exception.AttendanceException;
 import com.ssafy.recourta.global.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,17 +75,46 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public AttendanceResponse.SessionAttendance getAttendanceOfSession(Integer sessionId) {
-        return null;
+        List<Attendance> attendanceList = attendanceRepository.findAllBySessionSessionId(sessionId);
+        List<AttendanceResponse.AttendanceInfo> attendanceInfoList = new ArrayList<>();
+
+        for(Attendance attendance : attendanceList) {
+            AttendanceResponse.AttendanceInfo attendanceInfo = attendance.toAttendanceInfo();
+            attendanceInfoList.add(attendanceInfo);
+        }
+
+        return AttendanceResponse.SessionAttendance.builder()
+                                                    .sessionId(sessionId)
+                                                    .sessionAttendance(attendanceInfoList)
+                                                    .build();
     }
 
     @Override
     public AttendanceResponse.LectureAttendance getAttendanceOfLecture(Integer lectureId) {
-        return null;
+        List<Session> sessionList = sessionRepository.findAllByLectureLectureId(lectureId);
+        List<AttendanceResponse.SessionAttendance> sessionAttendanceList = new ArrayList<>();
+
+        for(Session session : sessionList) {
+            AttendanceResponse.SessionAttendance sessionAttendance = getAttendanceOfSession(session.getSessionId());
+            sessionAttendanceList.add(sessionAttendance);
+        }
+
+        return AttendanceResponse.LectureAttendance.builder()
+                                    .lectureId(lectureId)
+                                    .lectureAttendance(sessionAttendanceList)
+                                    .build();
     }
 
     @Override
-    public void changeAttendance(Integer userId, Integer sessionId) {
-
+    public void changeAttendance(AttendanceRequest.AttendanceInfo attendanceInfo) {
+        Integer userId = attendanceInfo.getUserId();
+        Integer sessionId = attendanceInfo.getSessionId();
+        Integer attType = attendanceInfo.getAttType();
+        Attendance attendance = attendanceRepository.findByUserUserIdAndSessionSessionId(userId, sessionId).orElseThrow(AttendanceException.NoSuchAttendanceException::new);
+        Integer originalAttType = attendance.getAttType();
+        if(originalAttType < 0 || originalAttType > 3) throw new AttendanceException.InvalidTypeOfAttendanceException();
+        attendance.setAttType(attType);
+        attendanceRepository.save(attendance);
     }
 
     public long getTotalLengthOfSession(List<CheckInOut> checkInOutList) {
