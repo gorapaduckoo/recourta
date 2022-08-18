@@ -44,7 +44,7 @@ public class SecurityConfig{
                 .and()
                     .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/")
+                    .logoutSuccessUrl("https://recourta.ga")
                 .and()
                     .httpBasic().disable()
                     .authorizeRequests() //URL별 권한 접근제어 관리 옵션 시작점
