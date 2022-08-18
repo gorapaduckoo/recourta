@@ -165,7 +165,7 @@ import axios from 'axios'
 import * as faceapi from '@vladmandic/face-api'
 
 Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri("/model"),
+    faceapi.nets.ssdMobilenetv1.loadFromUri("../../model"),
 ])
 
 
