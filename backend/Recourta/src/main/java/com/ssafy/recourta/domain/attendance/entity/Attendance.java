@@ -1,5 +1,6 @@
 package com.ssafy.recourta.domain.attendance.entity;
 
+import com.ssafy.recourta.domain.attendance.dto.response.AttendanceResponse;
 import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.global.entity.BaseEntity;
@@ -33,5 +34,12 @@ public class Attendance extends BaseEntity {
         this.user = user;
         this.session = session;
         this.attType = attType;
+    }
+
+    public AttendanceResponse.AttendanceInfo toAttendanceInfo() {
+        return AttendanceResponse.AttendanceInfo.builder()
+                                                .userId(this.getUser().getUserId())
+                                                .attType(this.attType)
+                                                .build();
     }
 }

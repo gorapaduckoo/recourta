@@ -14,17 +14,19 @@
   <div class="pt-8">
     <NoticeCard
       :isread="state.t_isread"
+      :num=1
     />
     <NoticeCard 
       v-for="(num) in [0,1,2,3,4,5]"
       :key="num"
       :isread="state.f_isread"
+      :num="num"
     />
   </div>
 </template>
 
 <script setup>
-import NoticeCard from './Notice.vue'
+import NoticeCard from './NoticeCard.vue'
 import { reactive } from 'vue'
 
 const state = reactive({

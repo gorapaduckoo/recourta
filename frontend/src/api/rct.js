@@ -13,6 +13,7 @@ export default {
     signup: () => HOST + USER,
     userauth: () => HOST + '/auth/regist',
     usercode: () => HOST + '/auth/code',
+    tokenrefresh: () => HOST + '/auth/refresh',
     userinfo: userid => HOST + USER + '/' + userid,
     userimgmod: () => HOST + USER + '/img',
     userpwmod: () => HOST + USER + '/pw',

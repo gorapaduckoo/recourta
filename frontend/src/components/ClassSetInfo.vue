@@ -1,5 +1,5 @@
 <template>
-  <form class="pt-40 lg:pt-10 w-4/5 lg:w-3/4 min-w-[450px] ml-auto mr-auto" @submit.prevent="editClassSubmit">
+  <form class="lg:pt-10 w-4/5 lg:w-3/4 min-w-[450px] ml-auto mr-auto" @submit.prevent="editClassSubmit">
 
     <!-- 강의 기간 -->
     <div class="form-group mb-10 flex justify-between">
@@ -55,7 +55,7 @@
     <!-- 강의 썸네일 -->
     <div class="form-group mb-10 flex justify-between">
       <div>강의 썸네일</div>
-      <input type="file" @change="onInputImage()" ref="editing_lecture_image" name="editing_lecture_image" id="editing_lecture_image" accept="image/gif, image/jpeg, image/png" class="form-control block w-4/5 px-3 py-2 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
+      <input type="file" @change="onInputImage()" ref="editing_lecture_image" name="editing_lecture_image" id="editing_lecture_image" accept="image/gif, image/jpeg, image/png" class="form-control block w-4/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700">
     </div>
 
     <!-- 강의 정보 수정 버튼 -->
