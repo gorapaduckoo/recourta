@@ -1,6 +1,6 @@
 <template>
   <div v-if="props.publisher" class="flex items-center space-x-3">
-      <UserCam class="h-full w-[480px] relative" :isonMic="false" :screenName="null" :isList="true" :mainStreamManager="props.publisher"/>    
+      <UserCam class="h-full w-[480px] relative" :isonMic="false" :screenName="null" :isunsit="false" :isList="true" :mainStreamManager="props.publisher"/>    
   </div>
 </template>
 
@@ -17,6 +17,7 @@ const emit = defineEmits(["finishLoading","changeFacecount"])
 const state = reactive({
   userId: null,
   takenImg: "",
+  Timer:null,
 })
 
 const props = defineProps({
@@ -70,52 +71,53 @@ async function recognizeFaces(){
   // console.log(labeledDescriptor)
   // 두번째 인자는 역치값: 높을수록 본인 인정 기준이 널널해짐
   const faceMatcher = new faceapi.FaceMatcher(labeledDescriptor, 0.4)
-  setTimeout(()=>{ 
-  },4000)
-  props.publisher.on("streamPlaying", event => {
-    // console.log("stream")
-    
-    const video = props.publisher.videos[0]
-    const videoWidth = props.publisher.videos[0].video.clientWidth
-    const videoHeight = props.publisher.videos[0].video.clientHeight
+    setTimeout(()=>{ 
+    props.publisher.on("streamPlaying", event => {
+      // console.log("stream")
+      
+      const video = props.publisher.videos[0]
+      const videoWidth = props.publisher.videos[0].video.clientWidth
+      const videoHeight = props.publisher.videos[0].video.clientHeight
 
-    const canvas = faceapi.createCanvasFromMedia(video.video)
-    canvas.setAttribute('style', 'position: absolute;')
-    document.getElementById('local-video-undefined').before(canvas)
+      const canvas = faceapi.createCanvasFromMedia(video.video)
+      canvas.setAttribute('style', 'position: absolute;')
+      document.getElementById('local-video-undefined').before(canvas)
 
-    const displaySize = {width: videoWidth, height: videoHeight}
-    faceapi.matchDimensions(canvas, displaySize)
+      const displaySize = {width: videoWidth, height: videoHeight}
+      faceapi.matchDimensions(canvas, displaySize)
 
-    setInterval(async ()=> {
-      if(props.publisher.stream.typeOFVideo==="SCREEN") emit("changeFacecount",0)
-      else{
-        const detections = await faceapi.detectAllFaces(video.video).withFaceLandmarks().withFaceDescriptors()
-        const resizedDetections = faceapi.resizeResults(detections, displaySize)
+      if(state.Timer) clearInterval(state.Timer)
+      state.Timer = setInterval(async ()=> {
+        if(props.publisher.stream.typeOfVideo==="SCREEN") emit("changeFacecount",0)
+        else{
+          const detections = await faceapi.detectAllFaces(video.video).withFaceLandmarks().withFaceDescriptors()
+          const resizedDetections = faceapi.resizeResults(detections, displaySize)
 
-        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-        // result는 distance(거리)와 label(인식한 사람 이름) 두개의 요소로 구성.
-        // distance가 특정 값 이하면 타이머를 작동시키는 방향으로 활용 가능할 것 같아요~
-        // distance가 낮을수록 본인이 올린 사진과 일치한다는 의미
-        const results = resizedDetections.map((d) => {
-          return faceMatcher.findBestMatch(d.descriptor)
-        })
-        let dist = 1
-        for(let res of results){
-          // 이것을 점수 중 최소 값을로 이용하여 나타내자
-          dist = (dist<res.distance)?dist:res.distance
+          canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+          // result는 distance(거리)와 label(인식한 사람 이름) 두개의 요소로 구성.
+          // distance가 특정 값 이하면 타이머를 작동시키는 방향으로 활용 가능할 것 같아요~
+          // distance가 낮을수록 본인이 올린 사진과 일치한다는 의미
+          const results = resizedDetections.map((d) => {
+            return faceMatcher.findBestMatch(d.descriptor)
+          })
+          let dist = 1
+          for(let res of results){
+            // 이것을 점수 중 최소 값을로 이용하여 나타내자
+            dist = (dist<res.distance)?dist:res.distance
+          }
+          if(dist>0.45) emit("changeFacecount",1)
+          else emit("changeFacecount",0)
         }
-        if(dist>0.45) emit("changeFacecount",1)
-        else emit("changeFacecount",0)
-      }
-      // results.forEach((result, i) => {
-      //   const box = resizedDetections[i].detection.box
-      //   const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
-      //   console.log(result.toString())
-      //   drawBox.draw(canvas)
-      // })
-      // faceapi.draw.drawDetections(canvas, resizedDetections)
-    },1000)
-  })
+        // results.forEach((result, i) => {
+        //   const box = resizedDetections[i].detection.box
+        //   const drawBox = new faceapi.draw.DrawBox(box, { label: result.toString() })
+        //   console.log(result.toString())
+        //   drawBox.draw(canvas)
+        // })
+        // faceapi.draw.drawDetections(canvas, resizedDetections)
+      },1000)
+    })
+  },4000)
   emit("finishLoading",null)
 }
 

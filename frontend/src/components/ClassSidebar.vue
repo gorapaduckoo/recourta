@@ -26,7 +26,7 @@
       <div v-if="state.isattendlist" class="flex w-full flex-col">
         <div v-for="(name, index) in props.classAttList" :key="index" class="pl-5 mb-1 flex items-center justify-between">
           <div class="flex">
-            <div class="mr-2">{{ name[1] }}</div>
+            <div class="mr-2" :class="{'text-[#fe5358]':props.unsitList.indexOf(name[2])>=0}">{{ name[1] }}</div>
             <div :class="{'text-[#fe5358]':props.facecount>=900,'text-[#faa405]':props.facecount>=600&&props.facecout<900}" class="text-neutral-400" v-if="index===0&&props.facecount">
               {{Math.floor(props.facecount / 60) + ":" + (props.facecount % 60).toString().padStart(2,"0")}}
             </div>
@@ -78,7 +78,7 @@
         <div v-for="name in props.classAbsList" :key="name" class="px-5 mb-1">{{ name[1] }}</div>
       </div>
     </div>
-    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 border-neutral-400">
+    <div id="msg" ref="msg" class="flex flex-col text-base overflow-y-auto border-b-[1px] px-3 pt-2 border-neutral-400">
       <div class="mb-2" v-for="(msg,index) in props.msglist" :key="index">
         <div v-if="props.myID===msg[1]">
           <div class="flex items-end justify-end">
@@ -93,7 +93,7 @@
             <div>{{props.classAttList.find(v => v[2]===msg[1])[1]}}</div>
           </div>
           <div class="flex items-end">
-            <div class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
+            <div :class="{'text-[#faa405]':msg[0].includes('WARNING')}" class="max-w-[240px] px-3 py-2 border-2 border-neutral-400 rounded-2xl mr-2">
               {{msg[0]}}
             </div>
             <div class="text-[12px] lg:text-sm text-neutral-400">{{msg[2]}}</div>
@@ -142,6 +142,7 @@ const props = defineProps({
   isLecturer: Boolean,
   onMic: Array,
   facecount: Number,
+  unsitList: Array,
 })
 
 const state = reactive({
