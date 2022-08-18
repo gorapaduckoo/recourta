@@ -93,7 +93,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public AttendanceResponse.LectureAttendance getAttendanceOfLecture(Integer lectureId) {
-        List<Session> sessionList = sessionRepository.findAllByLectureLectureId(lectureId);
+        List<Session> sessionList = sessionRepository.findAllByLectureLectureIdOrderByStartTimeAsc(lectureId);
         List<AttendanceResponse.SessionAttendance> sessionAttendanceList = new ArrayList<>();
 
         for(Session session : sessionList) {
