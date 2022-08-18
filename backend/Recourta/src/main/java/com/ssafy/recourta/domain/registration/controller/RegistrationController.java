@@ -2,7 +2,6 @@ package com.ssafy.recourta.domain.registration.controller;
 
 import com.ssafy.recourta.domain.registration.dto.request.RegistrationRequest;
 import com.ssafy.recourta.domain.registration.dto.response.RegistrationResponse;
-import com.ssafy.recourta.domain.registration.entity.Registration;
 import com.ssafy.recourta.domain.registration.service.RegistrationService;
 import com.ssafy.recourta.global.exception.LectureException;
 import com.ssafy.recourta.global.exception.RegistrationException;

@@ -4,6 +4,7 @@ const USER = '/user'
 const LECTURE = '/lecture'
 const REGIST = '/registration'
 const CHECK = '/check'
+const ATTENDANCE = '/attendance'
 
 const openvidu_port = ":4443"
 const openvidu_server_secret = "MY_SECRET"
@@ -13,6 +14,7 @@ export default {
     signup: () => HOST + USER,
     userauth: () => HOST + '/auth/regist',
     usercode: () => HOST + '/auth/code',
+    tokenrefresh: () => HOST + '/auth/refresh',
     userinfo: userid => HOST + USER + '/' + userid,
     userimgmod: () => HOST + USER + '/img',
     userpwmod: () => HOST + USER + '/pw',
@@ -41,7 +43,14 @@ export default {
   webrtc: {
     openvd_url:() => "https://"+location.hostname+openvidu_port,
     openvd_secret:() => openvidu_server_secret,
+    exitclass: sessionid => HOST + ATTENDANCE + "/autorecord/" + sessionid,
     checkin:() => HOST + CHECK + "/in",
     checkout:() => HOST + CHECK + "/out",
-  }
+  },
+  attendance: {
+    sessionAttendance: sessionId => HOST + ATTENDANCE + '/session/' + sessionId,
+    lectureAllAttendance: lectureId => HOST + ATTENDANCE + LECTURE + '/' + lectureId,
+    changeAttendance: () => HOST + ATTENDANCE + '/change',
+    sessionstarttime: sessionId => HOST + '/session/starttime/' + sessionId,
+  },
 }

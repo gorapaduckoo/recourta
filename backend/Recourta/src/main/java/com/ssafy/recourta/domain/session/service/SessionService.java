@@ -7,6 +7,7 @@ import com.ssafy.recourta.domain.session.entity.Session;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SessionService {
@@ -15,4 +16,6 @@ public interface SessionService {
     List<SessionResponse.SessionIdMapping> searchSessionByDateAndLectureId(LocalDate startDate, LocalDate endDate, Integer lectureId) throws Exception;
     Integer changeSession(List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) throws Exception;
     SessionResponse.SessionId deleteSession(Integer sessionId);
+    Integer getEarliestAvailableSession(Integer lectureId);
+    SessionResponse.SessionStartTime getSessionStartTime(Integer sessionId);
 }

@@ -67,10 +67,24 @@
                 <input type="date" v-model.trim="floating_lecture_duration_end" id="floating_lecture_duration_end" class="form-control text-center block w-2/5 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
               </div>
             </div>
-
-            <!-- 강의 시간 -->
+            
+            <!-- 시간 추가 / 제거 -->
             <div class="form-group mb-2 flex justify-between">
-              <div class="flex flex-col justify-center">강의 시간</div>
+              <div class="">강의 시간</div>
+                <div class="w-4/5">
+                  <LectureTime
+                    v-for="lecTime in store.state.lecture.lectureTimeList"
+                    :key="lecTime"
+                    :lecTime="lecTime"
+                  />
+                <div v-if="!state.isempty" class="flex flex-col justify-center w-full border border-solid border-neutral-300 rounded h-[30px] text-sm text-neutral-400">
+                  <div>강의 시간을 추가해주세요</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 강의 시간 -->
+            <div class="form-group mb-5 flex justify-end">
               <div class="flex justify-between w-4/5">
                 <select name="floating_lecture_weekday" id="floating_lecture_weekday" class="form-control block w-2/7 px-3 py-1.5 text-xs font-normal bg-clip-padding border border-solid border-neutral-300 focus:border-[#2c5172] focus:border-2 focus:ring-0 rounded transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" required>
                   <option value="1">월요일</option>
@@ -92,16 +106,7 @@
               </div>
             </div>
 
-            <!-- 시간 추가 / 제거 -->
-            <div class="flex justify-end mb-6">
-              <div class="w-4/5">
-                <LectureTime
-                  v-for="lecTime in store.state.lecture.lectureTimeList"
-                  :key="lecTime"
-                  :lecTime="lecTime"
-                />
-              </div>
-            </div>
+            
             <!-- 강의 설명 -->
             <div class="form-group mb-6 flex justify-between">
               <div >강의 설명</div>
@@ -130,7 +135,7 @@ import LecturerCard from './LecturerCard.vue'
 import mLecturerCard from './mLecturerCard.vue'
 import LectureTime from '../components/LectureTime.vue'
 
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
@@ -147,6 +152,7 @@ const props = defineProps({
 
 const state = reactive({
   image : '',
+  isempty : computed(() => store.state.lecture.lectureTimeList.length),
 })
 
 let floating_lecture_name = ref("")
@@ -173,33 +179,38 @@ const addLectureTime = () => {
 }
 
 const makeClassSubmit = async () => {
-  let classblob = await UrltoBlob(state.image)
-  let classfd = new FormData()
-  const data = {
-    userId : store.state.user.userId,
-    title : floating_lecture_name.value,
-    content : floating_lecture_info.value,
-    startDate : floating_lecture_duration_start.value,
-    endDate : floating_lecture_duration_end.value,
-    lectureTime : store.state.lecture.lectureTimeList,
-  }
-  const json = JSON.stringify(data)
-  const datablob = new Blob([json],{type:"application/json"})
-  classfd.append("lectureImg",classblob)
-  classfd.append("request",datablob)
-  await axios.post(rct.lecture.lecturecreate(),classfd,{
-    headers: {
-      Authorization: store.state.user.accessToken,
-      'Context-Type' : 'multipart/form-data',
+  if (!store.state.lecture.lectureTimeList.length) {
+    alert('강의 시간을 추가해주세요.')
+  } else {
+    let classblob = await UrltoBlob(state.image)
+    let classfd = new FormData()
+    
+    const data = {
+      userId : store.state.user.userId,
+      title : floating_lecture_name.value,
+      content : floating_lecture_info.value,
+      startDate : floating_lecture_duration_start.value,
+      endDate : floating_lecture_duration_end.value,
+      lectureTime : store.state.lecture.lectureTimeList,
     }
-  })
-  .then(res => {
-    modalClose()
-    location.reload()
-  })
-  .catch(err => {
-    console.log(err)
-  })
+    const json = JSON.stringify(data)
+    const datablob = new Blob([json],{type:"application/json"})
+    classfd.append("lectureImg",classblob)
+    classfd.append("request",datablob)
+    await axios.post(rct.lecture.lecturecreate(),classfd,{
+      headers: {
+        Authorization: store.state.user.accessToken,
+        'Context-Type' : 'multipart/form-data',
+      }
+    })
+    .then(res => {
+      modalClose()
+      location.reload()
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
 }
 
 const onInputImage = () => {

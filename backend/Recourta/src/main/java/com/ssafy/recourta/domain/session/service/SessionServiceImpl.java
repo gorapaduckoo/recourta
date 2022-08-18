@@ -9,6 +9,7 @@ import com.ssafy.recourta.domain.session.dto.response.SessionResponse;
 import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.global.exception.LectureException;
+import com.ssafy.recourta.global.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,6 +81,7 @@ public class SessionServiceImpl implements SessionService{
         return sessions;
     }
 
+    @Override
     public Integer changeSession(@Valid List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                 () -> new LectureException.UnvalidLectureId(lectureId)
@@ -92,8 +94,27 @@ public class SessionServiceImpl implements SessionService{
         return sessionResult;
     }
 
+    @Override
     public SessionResponse.SessionId deleteSession(Integer sessionId) {
         sessionRepository.deleteById(sessionId);
         return SessionResponse.SessionId.builder().sessionId(sessionId).build();
     }
+
+    @Override
+    public Integer getEarliestAvailableSession(Integer lectureId) {
+        Session session = sessionRepository.findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(lectureId, LocalDateTime.now()).orElse(null);
+        if(session != null) return session.getSessionId();
+        else return null;
+    }
+
+    @Override
+    public SessionResponse.SessionStartTime getSessionStartTime(Integer sessionId) {
+        Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(SessionNotFoundException::new);
+        SessionResponse.SessionStartTime sessionStartTime = SessionResponse.SessionStartTime.builder()
+                .startTime(session.getStartTime())
+                .build();
+        return sessionStartTime;
+    }
+
+
 }
