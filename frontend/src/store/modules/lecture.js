@@ -1,7 +1,7 @@
 export const lecture = {
     state: {
       lectureTimeList: [],
-      lectureImgFirstUrl: '@/assets/img/lecture/',
+      lectureImgFirstUrl: 'assets/img/lecture/',
       lecInfo: {},
       searchList: [],
       classification: 1,
