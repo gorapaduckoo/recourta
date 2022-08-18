@@ -18,4 +18,7 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
     Integer deleteAllByLecture_LectureIdAndStartTimeAfter(Integer lectureId, LocalDateTime start);
 
     Optional<Session> findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(Integer lectureId, LocalDateTime end);
+
+    List<Session> findAllByLectureLectureId(Integer lectureId);
+
 }
