@@ -6,7 +6,7 @@ export const user = {
   state: {
 	  accessToken: localStorage.getItem('accessToken') || '' ,
 		refreshToken: localStorage.getItem('refreshToken') || '' ,
-		userImgFirstUrl: '/assets/img/user/',
+		userImgFirstUrl: 'assets/img/user/',
 		currentUser: {},
 		authError: null,
 		userId: null,
