@@ -41,7 +41,7 @@ public class ImgUtil {
             deleteImage(((User) o).getUserImg(), "user");
             storedFileName = uuid+".png";
 
-            File file = new File("user\\" + storedFileName);
+            File file = new File("user/" + storedFileName);
             img.transferTo(file);
 
             ((User) o).setUserImg(storedFileName);
@@ -50,7 +50,7 @@ public class ImgUtil {
 //            fileExtension = fileExtension.substring(fileExtension.lastIndexOf("."));
             storedFileName = uuid+".png";
 
-            File file = new File("lecture\\"+storedFileName);
+            File file = new File("lecture/"+storedFileName);
             img.transferTo(file);
 
             ((Lecture) o).update(storedFileName);
@@ -77,7 +77,7 @@ public class ImgUtil {
 
     public void deleteImage(String fileName, String entityName) {
         // 삭제할 파일명: 기존 파일명에서 파일확장자 제외
-        File file = new File(uploadPath+"\\" + entityName + "\\" +fileName);
+        File file = new File(uploadPath+"/" + entityName + "/" +fileName);
         // 삭제할 파일이 존재하면 파일 삭제
         file.delete();
     }
