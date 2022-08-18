@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -25,5 +26,15 @@ public class SessionResponse {
 
     public interface SessionIdMapping {
         Integer getSessionId();
+    }
+
+    @Data
+    public static class SessionStartTime {
+        private LocalDateTime startTime;
+
+        @Builder
+        public SessionStartTime(LocalDateTime startTime) {
+            this.startTime = startTime;
+        }
     }
 }

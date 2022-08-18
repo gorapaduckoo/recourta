@@ -19,6 +19,8 @@ public interface SessionRepository extends JpaRepository<Session, Integer> {
 
     Optional<Session> findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(Integer lectureId, LocalDateTime end);
 
-    List<Session> findAllByLectureLectureId(Integer lectureId);
+    List<Session> findAllByLectureLectureIdOrderByStartTimeAsc(Integer lectureId);
+
+    Optional<Session> findBySessionId(Integer sessionId);
 
 }
