@@ -12,8 +12,8 @@
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
-    <ClassMain class="mainscreen" v-if="state.session&&state.isshared" :mainStreamManager="state.mainStreamManager"/>
-    <ClassMain class="mainscreen" v-if="state.session&&!state.isshared&&state.sharesub" :mainStreamManager="state.sharesub"/>
+    <ClassMain class="mainscreen" v-if="state.session&&!state.isshared" :mainStreamManager="state.mainStreamManager"/>
+    <ClassMain class="mainscreen" v-if="state.session&&state.isshared&&state.sharesub" :mainStreamManager="state.sharesub"/>
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
