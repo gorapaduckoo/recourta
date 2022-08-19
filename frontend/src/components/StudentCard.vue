@@ -195,12 +195,14 @@ const getLectureAttendance = async () => {
   })
   .then(res => {
     state.lectureAttendance = res.data.lectureAttendance
-    state.lectureAttendance.map(sessionAtt => {
-      state.userAttendance.push(sessionAtt.sessionAttendance.find(sessionUserAtt => {
-        return sessionUserAtt.userId == store.state.user.userId
-      }).attType)
-    })
-    state.userAtt = Object.values(state.userAttendance)
+    if (state.lectureAttendance.length) {
+      state.lectureAttendance.map(sessionAtt => {
+        state.userAttendance.push(sessionAtt.sessionAttendance.find(sessionUserAtt => {
+          return sessionUserAtt.userId == store.state.user.userId
+        }).attType)
+      })
+      state.userAtt = Object.values(state.userAttendance)
+    }
   })
   .catch(err => {
     console.log(err)

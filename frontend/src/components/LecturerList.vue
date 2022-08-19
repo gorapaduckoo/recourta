@@ -205,7 +205,7 @@ const makeClassSubmit = async () => {
     })
     .then(res => {
       modalClose()
-      route.push({path:"/main"})
+      route.replace({path:"/main"})
     })
     .catch(err => {
       console.log(err)
