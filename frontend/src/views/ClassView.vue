@@ -70,7 +70,7 @@ const state = reactive({
   unsitList: [],
 
   isshare:false,
-  isshard:false,
+  isshared:false,
   isside:false,
   msgs:[],
   iscam:true,
@@ -399,7 +399,15 @@ const joinSession = () => {
     }
     else{
       state.isshared=false
-      updateMainVideoStreamManager(state.publisher)
+      state.sharesub=undefined
+      reactiveAttList()
+      const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
+      if(tmpuser && event.from.connection === props.publisher.connection.connectionId){
+        state.issublist=!state.issublist
+        setTimeout(()=>{
+          state.issublist=!state.issublist
+        },1000)
+      } 
     }
   })
 
