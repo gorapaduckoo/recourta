@@ -404,7 +404,7 @@ const joinSession = () => {
       state.sharesub=undefined
       reactiveAttList()
       const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-      if(tmpuser && event.from.connection === props.publisher.connection.connectionId){
+      if(tmpuser && event.from.connection === state.publisher.connection.connectionId){
         state.issublist=!state.issublist
         setTimeout(()=>{
           state.issublist=!state.issublist
