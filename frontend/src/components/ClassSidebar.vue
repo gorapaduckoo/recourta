@@ -158,6 +158,7 @@ const props = defineProps({
   outtime: Number,
   timemul: Number,
   timesec: Number,
+  isside: Boolean,
 })
 
 const state = reactive({
@@ -253,7 +254,7 @@ const onClickBan = (connection) => {
 }
 
 onUpdated(()=>{
-  msg.value.scrollTop = msg.value.scrollHeight
+  if(props.isside) msg.value.scrollTop = msg.value.scrollHeight
 })
 
 </script>

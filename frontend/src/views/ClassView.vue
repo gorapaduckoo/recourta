@@ -18,9 +18,9 @@
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
     <ClassToolbar class="flex-none mt-2" :isshare="state.isshare" :ismic="state.ismic" :iscam="state.iscam" :isLecturer="state.isLecturer" :issubtitle="state.issubtitle" :isAuth="state.isAuth" @tryleave="closingclass" @toggleshare="toggleshare" @togglecam="togglecam" @togglemic="togglemic" @toggleSubtitle="toggleSubtitle"/>
-    <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
+    <ClassSidebar :isside="state.isisde" @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" class="lg:hidden flex-1 max-h-[70vh] mt-2 width-full border-t-[1px] border-neutral-400"/>
   </div>
-  <ClassSidebar @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
+  <ClassSidebar :isside="true" @closeList="toggleside" @submitMsg="sendMsg" @submitAuth="sendauth" @submitCam="sendcam" @submitMic="sendmic" @submitBan="sendban" :onMic="state.onMic" :publisher="state.publisher" :subscribers="state.subscribers" :msglist="state.msgs" :myID="(state.publisher)?state.publisher.stream.connection.connectionId:null" :sidebarTitle="state.sidebarTitle" :classAttList="state.classAttList" :classAbsList="state.classAbsList" :isLecturer="state.isLecturer" :facecount="state.facecount" :unsitList="state.unsitList" :outtime="state.outtime" @updateouttime="updateouttime" v-if="state.isside" class="hidden lg:flex absolute top-0 right-0 h-full width-[360px] border-l-[1px] border-neutral-400"/>
 </div>
  
 <button @click="toggleside" :class="{'right-4 top-3':!state.isside,'right-[308px] top-2':state.isside}" class="hidden lg:flex hover:text-neutral-200 text-neutral-400 absolute">
@@ -385,18 +385,16 @@ const joinSession = () => {
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
       if(!state.isshared){
-        state.isshared=true
         reactiveAttList()
         const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-        
-        if(tmpuser) {
+        if(tmpuser) state.sharesub=tmpuser
+        if(isshare) {
           state.issublist=!state.issublist
-          state.sharesub=tmpuser
-          updateMainVideoStreamManager(tmpuser)
           setTimeout(()=>{
             state.issublist=!state.issublist
           },1000)
         }
+        state.isshared=true
       }
     }
     else{

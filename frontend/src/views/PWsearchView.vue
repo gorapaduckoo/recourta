@@ -11,7 +11,7 @@
     <router-link to="/">
       <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
 
     <!-- 설명문장 -->
     <div class="w-3/4 ml-auto mr-auto dark:text-gray-300 mb-12">

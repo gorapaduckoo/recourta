@@ -6,7 +6,7 @@
     <router-link to="/">
       <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
     <form class="pt-10" @submit.prevent="PWresetSubmit">
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
         <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8 - 20자" @click="onPasswordClick"/>

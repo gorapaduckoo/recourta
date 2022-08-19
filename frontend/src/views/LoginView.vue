@@ -5,7 +5,7 @@
     <router-link to="/">
       <img class="mt-20 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
     <form @submit.prevent="loginSubmit" class="pt-10">
       <!-- 이메일 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">

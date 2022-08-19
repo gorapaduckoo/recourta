@@ -14,7 +14,7 @@
     <router-link to="/">
       <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
 
     <!-- 입력form -->
     <form class="pt-10" @submit.prevent="signupSubmit">
