@@ -8,4 +8,5 @@ public interface AuthService {
 
     TokenDto.Refresh createTokens(User user);
     TokenDto.Refresh refreshTokens(String accessToken, String refreshToken);
+    TokenDto.Refresh deleteTokens(User user);
 }

@@ -53,4 +53,18 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthException.RefreshTokenExpired();
         }
     }
+
+    @Override
+    public TokenDto.Refresh deleteTokens(User user) {
+        String accessToken = "";
+        String refreshToken = "";
+
+        String userId = String.valueOf(user.getUserId());
+        redisUtil.deleteData(userId);
+
+        return TokenDto.Refresh.builder()
+                                .accessToken(accessToken)
+                                .refreshToken(refreshToken)
+                                .build();
+    }
 }
