@@ -118,7 +118,6 @@ async function recognizeFaces(){
       },1000)
     })
   },4000)
-  emit("finishLoading",null)
 }
 
 if(!props.isLecturer){
@@ -128,7 +127,7 @@ if(!props.isLecturer){
     faceapi.nets.faceLandmark68Net.loadFromUri(rct.user.facemodel()),
     faceapi.nets.faceRecognitionNet.loadFromUri(rct.user.facemodel()),
   ]).then(() => {
-    // console.log("success!")
+    emit("finishLoading",null)
     recognizeFaces()
   })
 }
