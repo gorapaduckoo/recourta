@@ -12,7 +12,8 @@
     <button @click="toggleSublist" :class="{'mt-0':!state.issublist}" class="hidden lg:flex my-2 px-2 hover:text-[#b8b8b8] text-neutral-300 rounded-full hover:bg-[#4e4e4e]">
       <svg :class="{'rotate-180':!state.issublist}" class="h-5 w-5"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="4" x2="12" y2="14" />  <line x1="12" y1="4" x2="16" y2="8" />  <line x1="12" y1="4" x2="8" y2="8" />  <line x1="4" y1="20" x2="20" y2="20" /></svg>
     </button>
-    <ClassMain class="mainscreen" v-if="state.session" :mainStreamManager="state.mainStreamManager"/>
+    <ClassMain class="mainscreen" v-if="state.session&&state.isshared" :mainStreamManager="state.mainStreamManager"/>
+    <ClassMain class="mainscreen" v-if="state.session&&!state.isshared&&state.sharesub" :mainStreamManager="state.sharesub"/>
     <div v-if="state.issubtitle" class="w-[480px] lg:w-[640px] flex-none text-center mt-2 text-lg">
       {{state.subtitles[state.subtitles.length - 1]}}
     </div>
@@ -52,6 +53,7 @@ const state = reactive({
   session: undefined,
   mainStreamManager: undefined,
   publisher: undefined,
+  sharesub:undefined,
   temppublisher: undefined,
   subscribers: [],
 
@@ -68,6 +70,7 @@ const state = reactive({
   unsitList: [],
 
   isshare:false,
+  isshard:false,
   isside:false,
   msgs:[],
   iscam:true,
@@ -105,6 +108,12 @@ if(state.isLecturer){
     })
   },450*1000)
 }
+
+setInterval(()=>{
+  if(state.isshare){
+    sss("ON")
+  }
+},1000)
 
 const updateouttime = (newmult,newsec) => {
   state.timemult = Number(newmult)
@@ -375,17 +384,21 @@ const joinSession = () => {
 
   state.session.on('signal:screenshare',(event) => {
     if(event.data==="ON"){
-      reactiveAttList()
-      const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-      state.issublist=!state.issublist
-      setTimeout(()=>{
+      if(!state.isshared){
+        state.isshared=true
+        reactiveAttList()
+        const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
+        
         if(tmpuser) {
           state.issublist=!state.issublist
+          state.sharesub=tmpuser  
           updateMainVideoStreamManager(tmpuser)
+          state.issublist=!state.issublist
         }
-      },500)
+      }
     }
     else{
+      state.isshared=false
       updateMainVideoStreamManager(state.publisher)
     }
   })
@@ -703,7 +716,6 @@ const sendsit = (data) => {
 }
 
 const startsharing = () => {
-  state.isshare=true
   state.temppublisher = state.publisher
   state.session.unpublish(state.publisher)
 
@@ -735,11 +747,7 @@ const startsharing = () => {
   newPublisher.once("accessAllowed", event => {
     state.publisher = newPublisher
     state.session.publish(state.publisher)
-    console.log(state.publisher)
-    console.log(state.publisher.stream.typeOfVideo)
-    setTimeout(function() {
-      sss('ON')
-    }, 1000);
+    state.isshare=true
   })
   newPublisher.once("accessAllowed", event => {
     newPublisher.stream
@@ -775,7 +783,6 @@ const stopsharing = () => {
   setTimeout(function() {
     sss('OFF')
   }, 500);
-  state.mainStreamManager = state.publisher
   // state.mainStreamManager = state.publisher
 }
 
