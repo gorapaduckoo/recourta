@@ -387,14 +387,16 @@ const joinSession = () => {
       if(!state.isshared){
         reactiveAttList()
         const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-        if(tmpuser) state.sharesub=tmpuser
-        if(isshare) {
+        if(tmpuser) {
+          state.sharesub=tmpuser
+          state.isshared=true
+        }
+        if(state.isshare) {
           state.issublist=!state.issublist
           setTimeout(()=>{
             state.issublist=!state.issublist
           },1000)
         }
-        state.isshared=true
       }
     }
     else{
