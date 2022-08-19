@@ -615,6 +615,13 @@ const leaveClass = (x) => {
 
   // --- Leave the session by calling 'disconnect' method over the Session object ---
   if (state.session) state.session.disconnect();
+  state.OV =  undefined
+  state.session = undefined
+  state.mainStreamManager = undefined
+  state.publisher = undefined
+  state.sharesub = undefined
+  state.temppublisher = undefined
+  state.subscribers = []
 
   window.removeEventListener('beforeunload', (event) => {
     // event.preventDefault();
