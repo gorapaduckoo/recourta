@@ -391,9 +391,11 @@ const joinSession = () => {
         
         if(tmpuser) {
           state.issublist=!state.issublist
-          state.sharesub=tmpuser  
+          state.sharesub=tmpuser
           updateMainVideoStreamManager(tmpuser)
-          state.issublist=!state.issublist
+          setTimeout(()=>{
+            state.issublist=!state.issublist
+          },1000)
         }
       }
     }
@@ -516,7 +518,7 @@ const joinSession = () => {
           alert('강의자가 없습니다.')
           leavePage(false)
         }
-      }, 10000);
+      }, 5000);
     }
   });
 }
