@@ -1,6 +1,7 @@
 <template>
   <DarkmodeButton />
   <CustomNavbar :curpage="state.curpage"/>
+  <CustomFooter/>
   <div class="pt-[80px]">
     <LecturerList v-if="!store.state.user.isStudent" :currentTeaching="state.currentTeaching"/>
     <CardList :currentLearning="state.currentLearning.lectureDetailList"/>
@@ -9,6 +10,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import CardList from '../components/CardList.vue'

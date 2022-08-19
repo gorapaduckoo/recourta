@@ -1,6 +1,7 @@
 <template>
   <!-- 다크모드 -->
   <DarkmodeButton />
+  <CustomFooter/>
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
 
     <!-- 뒤로가기 -->
@@ -155,7 +156,7 @@
 </template>
 
 <script setup>
-
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'

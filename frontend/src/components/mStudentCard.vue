@@ -99,9 +99,11 @@
 <script setup>
 import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
 
+const route = useRouter()
 const store = useStore()
 
 const props = defineProps({
@@ -147,7 +149,7 @@ const enterClass = () => {
   store.commit("SET_LecturerName",props.lecture.teacher)
   store.commit("SET_SidebarTitle", props.lecture.title)
   store.commit("SET_IsLecturer", false)
-  location.href="/class"
+  route.push({path:"/class"})
 }
 
 // 출결 확인 관련 함수
@@ -171,12 +173,14 @@ const getLectureAttendance = async () => {
   })
   .then(res => {
     state.lectureAttendance = res.data.lectureAttendance
-    state.lectureAttendance.map(sessionAtt => {
-      state.userAttendance.push(sessionAtt.sessionAttendance.find(sessionUserAtt => {
-        return sessionUserAtt.userId == store.state.user.userId
-      }).attType)
-    })
-    state.userAtt = Object.values(state.userAttendance)
+    if (state.lectureAttendance.length) {
+      state.lectureAttendance.map(sessionAtt => {
+        state.userAttendance.push(sessionAtt.sessionAttendance.find(sessionUserAtt => {
+          return sessionUserAtt.userId == store.state.user.userId
+        }).attType)
+      })
+      state.userAtt = Object.values(state.userAttendance)
+    }
   })
   .catch(err => {
     console.log(err)
@@ -209,7 +213,7 @@ const outRegistration = async () => {
     }
   })
   .then(res => {
-    location.reload()
+    route.replace({path:"/main"})
   })
   .catch(err => {
     console.log(err)

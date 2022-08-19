@@ -1,13 +1,11 @@
 <template>
   <router-view/>
-  <CustomFooter ref="customfooter" v-if="!state.isclass"/>
 </template>
 
 <style scoped>
 </style>
 
 <script setup>
-import CustomFooter from './components/CustomFooter.vue'
 import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
@@ -17,9 +15,6 @@ import jwt_decode from "jwt-decode"
 const store = useStore()
 
 const state = reactive({
-  isclass: computed(() => {
-    return document.location.pathname==="/class"
-  }),
   loginCheck: computed(() => store.state.user.islogin),
 })
 

@@ -40,8 +40,10 @@ import rct from '../api/rct'
 import { OpenVidu } from 'openvidu-browser'
 import { reactive } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const route = useRouter()
 
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
@@ -375,9 +377,13 @@ const joinSession = () => {
     if(event.data==="ON"){
       reactiveAttList()
       const tmpuser = state.userAll.find(user => user.stream.connection.connectionId === event.from.connectionId)
-      if(tmpuser) {
-        updateMainVideoStreamManager(tmpuser)
-      }
+      state.issublist=!state.issublist
+      setTimeout(()=>{
+        if(tmpuser) {
+          state.issublist=!state.issublist
+          updateMainVideoStreamManager(tmpuser)
+        }
+      },500)
     }
     else{
       updateMainVideoStreamManager(state.publisher)
@@ -608,7 +614,7 @@ const leaveClass = (x) => {
 
 const leavePage = (x) => {
   leaveClass(x)
-  location.href = '/main'
+  route.replace({path:"/main"})
 }
 
 const sendMsg = (data,reciever) => {

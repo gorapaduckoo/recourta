@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton/>
+  <CustomFooter/>
   <CustomNavbar :curpage="state.curpage"/>
   
   <div class="pt-[80px]">
@@ -22,6 +23,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import SearchList from '../components/SearchList.vue'

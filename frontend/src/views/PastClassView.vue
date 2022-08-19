@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[80px]">
     <PastCardList :pastLearned="state.pastLearned"/>
@@ -7,6 +8,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import PastCardList from '../components/PastCardList.vue'

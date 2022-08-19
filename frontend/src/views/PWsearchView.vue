@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
     <router-link to="/" class="absolute top-5">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
@@ -60,6 +61,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { useRouter } from 'vue-router'
 import { ref, reactive } from 'vue'
