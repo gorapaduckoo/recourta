@@ -103,7 +103,7 @@ public class LectureServiceImpl implements LectureService {
         }
     }
 
-    @Override
+     @Override
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
 
         logger.info("service in");
@@ -113,11 +113,15 @@ public class LectureServiceImpl implements LectureService {
 
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                     ()-> new LectureException.UnvalidLectureId(lectureId));
+            
+            // 현재 시간 이후의 세션은 싹 다 삭제 처리
 
             // 개강일이 오늘 이후인 강의
             if(lecture.getStartDate().isAfter(LocalDate.now().minusDays(1))) {
                 Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(lecture.getLectureId(), LocalDateTime.now());
                 if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
+                    sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(lectureId, LocalDateTime.now());
+                    imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
                     lectureRepository.deleteById(lecture.getLectureId());
 
                 } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
@@ -136,10 +140,13 @@ public class LectureServiceImpl implements LectureService {
                 sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(lecture.getLectureId(), LocalDateTime.now());
             }
 
+            // 진행중인 강의: 강의는 종강일을 오늘로 찍고, 세션은 현재 이후 세션만 날림
+
+
             logger.info("find lecture");
-            imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
+//            imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
             logger.info("image is deleted");
-            lectureRepository.deleteById(lectureId);
+//            lectureRepository.deleteById(lectureId);
             logger.info("lecture is deleted in service");
 
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
@@ -148,6 +155,7 @@ public class LectureServiceImpl implements LectureService {
             throw new LectureException.UnvalidLectureId(lectureId);
         }
     }
+
 
 
     // 자신이 가르치고 있는 강의 검색
