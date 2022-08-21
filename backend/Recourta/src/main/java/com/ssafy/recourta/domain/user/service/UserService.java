@@ -40,6 +40,9 @@ public class UserService {
     private final SessionRepository sessionRepository;
 
     @Autowired
+    private final LectureService lectureService;
+
+    @Autowired
     private final ImgUtil imgUtil;
 
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -106,35 +109,10 @@ public class UserService {
 
     @Transactional
     public UserResponse.OnlyId delete(int userId){
- logger.info("service in");
-        // 개강일이 오늘 이후인 강의들
-        List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndStartDateAfter(userId, LocalDate.now().minusDays(1));
-        for (Lecture l : lectures) {
-             logger.info("for문 in");
-            Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
-            if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
-                lectureRepository.deleteById(l.getLectureId());
-                 logger.info("if문 in");
-
-            } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
-                // 강의 종강일 업데이트 & 강의자 null 처리
-                l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
-
-                lectureRepository.save(l);
-                // 현재 시간 이후 세션 삭제 처리
-                sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
-            }
-        }
- logger.info("개강일이 오늘 이후인 강의들");
-        // 개강일이 어제 이전이고, 종강일이 오늘 이후인 강의들
-        lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
-        for (Lecture l : lectures) {
-             logger.info("for문 in");
-            l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
-
-            lectureRepository.save(l);
-            sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
-        }
+ 
+         List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
+         
+        lectureService.deleteLecture(lectures.getLectureId);
 
  logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
