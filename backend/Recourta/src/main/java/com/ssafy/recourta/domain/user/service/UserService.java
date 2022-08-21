@@ -112,8 +112,10 @@ public class UserService {
     public UserResponse.OnlyId delete(int userId){
  
          List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
-         
-        lectureService.deleteLecture(lectures.getLectureId());
+         for(Lecture l : lectures){
+            lectureService.deleteLecture(l.getLectureId());
+         }
+        
 
  logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
