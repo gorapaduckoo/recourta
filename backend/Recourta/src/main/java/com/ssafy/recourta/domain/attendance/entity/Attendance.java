@@ -6,6 +6,7 @@ import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.global.entity.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @NoArgsConstructor
 @Getter
+@Setter
 public class Attendance extends BaseEntity {
 
     @ManyToOne
