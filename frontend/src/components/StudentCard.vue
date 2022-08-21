@@ -197,9 +197,8 @@ const getLectureAttendance = async () => {
     state.lectureAttendance = res.data.lectureAttendance
     if (state.lectureAttendance.length) {
       state.lectureAttendance.map(sessionAtt => {
-        state.userAttendance.push(sessionAtt.sessionAttendance.find(sessionUserAtt => {
-          return sessionUserAtt.userId == store.state.user.userId
-        }).attType)
+        const tmp = sessionAtt.sessionAttendance.find(sessionUserAtt => sessionUserAtt.userId == store.state.user.userId)
+        if(tmp) state.userAttendance.push(tmp.attType)
       })
       state.userAtt = Object.values(state.userAttendance)
     }
