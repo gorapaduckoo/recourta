@@ -64,6 +64,7 @@ const getLectureAttendance = async () => {
       const tempAttList = Array(props.studentList[i])
       state.lectureAttendance.map(sessionAtt => {
         const tmp = sessionAtt.sessionAttendance.find(sessionUserAtt => {return sessionUserAtt.userId === props.studentList[i].userId})
+        console.log("what is tmp?",tmp)
         if(tmp) tempAttList.push(tmp.attType)
       })
       state.userAttendance.push(tempAttList)
