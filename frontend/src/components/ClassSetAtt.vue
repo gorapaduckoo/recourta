@@ -96,7 +96,11 @@ const getSessionStartTime = async (ssId) => {
   })
 }
 
-
+if (state.sessionStartTimeList.length > state.userAttendance.length - 1) {
+  for (let i = 0; i < state.sessionStartTimeList.length - (state.userAttendance.length - 1); i++) {
+    state.userAttendance.push(0)
+  }
+}
 
 </script>
 

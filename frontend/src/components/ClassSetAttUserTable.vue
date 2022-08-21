@@ -14,7 +14,8 @@
       v-for="(attendance,index) in userAttendance.slice(1,userAttendance.length)"
       :key="index"
     >
-      <select v-model="state.userAtt[index+1]" :class="{'bg-[#4fb054] dark:bg-[#4fb054]':state.userAtt[index+1]==1, 'bg-[#faa405] dark:bg-[#faa405]':state.userAtt[index+1]==2, 'bg-[#fe5358] dark:bg-[#fe5358]':state.userAtt[index+1]==3}" class="form-control block ml-auto mr-auto font-semibold bg-clip-padding border-neutral-300 focus:border-[#2c5172] focus:ring-0 transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" @change="changeAtt(index)" required>
+      <div v-if="state.userAtt[index+1]==0" class="text-center font-semibold">-</div>
+      <select v-else v-model="state.userAtt[index+1]" :class="{'bg-[#4fb054] dark:bg-[#4fb054]':state.userAtt[index+1]==1, 'bg-[#faa405] dark:bg-[#faa405]':state.userAtt[index+1]==2, 'bg-[#fe5358] dark:bg-[#fe5358]':state.userAtt[index+1]==3}" class="form-control block ml-auto mr-auto font-semibold bg-clip-padding border-neutral-300 focus:border-[#2c5172] focus:ring-0 transition ease-in-out m-0 focus:outline-none dark:bg-neutral-700" @change="changeAtt(index)" required>
         <option value=1 class="bg-[#4fb054]">출석</option>
         <option value=2 class="bg-[#faa405]">지각</option>
         <option value=3 class="bg-[#fe5358]">결석</option>
