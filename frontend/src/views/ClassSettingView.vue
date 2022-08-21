@@ -158,7 +158,7 @@ const state = reactive({
 // 강의 폐쇄 함수
 const deleteLecture = async () => {
   await axios({
-    url: rct.lecture.lectureinfo(),
+    url: rct.lecture.lectureinfo(""),
     method: 'delete',
     headers: {
       Authorization: store.state.user.accessToken,
