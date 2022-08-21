@@ -14,7 +14,6 @@ public interface LectureRepository extends JpaRepository<Lecture, Integer> {
     @Override
     Optional<Lecture> findById(Integer lectureId);
 
-    @Override
     void deleteByLectureId(Integer lectureId);
 
 
