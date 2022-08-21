@@ -62,8 +62,6 @@ public class MailService {
 
         msg+= "<div align='center' style='width:75%; margin-left:auto; margin-right:auto; margin-bottom:30px;'>";
         msg+= "<br>";
-        msg+= "<img style='width:480px;'   src=\"cid:image\">";
-        msg+= "<br>";
         msg+= "<br>";
         msg+= "<h1> 안녕하세요 Recourta입니다. </h1>";
         msg+= "<br>";
@@ -115,8 +113,6 @@ public class MailService {
 
         String msg="";
         msg+= "<div align='center' style='width:75%; margin-left:auto; margin-right:auto; margin-bottom:30px;'>";
-        msg+= "<br>";
-        msg+= "<img style='width:480px;'   src=\"cid:image\">";
         msg+= "<br>";
         msg+= "<br>";
         msg+= "<h1> 안녕하세요 Recourta입니다. </h1>";
