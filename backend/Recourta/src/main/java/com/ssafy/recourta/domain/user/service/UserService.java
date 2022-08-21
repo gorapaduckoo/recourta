@@ -113,7 +113,7 @@ public class UserService {
  
          List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
          
-        lectureService.deleteLecture(lectures.getLectureId);
+        lectureService.deleteLecture(lectures.getLectureId());
 
  logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
