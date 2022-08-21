@@ -109,7 +109,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse.OnlyId delete(int userId){
+    public UserResponse.OnlyId delete(int userId) throws Exception{
  
          List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
          for(Lecture l : lectures){
