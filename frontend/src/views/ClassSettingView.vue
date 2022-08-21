@@ -158,11 +158,11 @@ const state = reactive({
 // 강의 폐쇄 함수
 const deleteLecture = async () => {
   await axios({
-    url: "https://recourta.ga/recourta/lecture?lectureId="+store.state.lecture.lectureId,
+    url: rct.lecture.lectureinfo(Number(rout.params.lecId)),
     method: 'delete',
     headers: {
       Authorization: store.state.user.accessToken,
-    },
+    }
   })
   .then(res => {
     route.replace({path:'/main'})
@@ -171,6 +171,7 @@ const deleteLecture = async () => {
     console.log(err)
   })
 }
+
 
 const setfalse = () => {
   state.isinfo = false
