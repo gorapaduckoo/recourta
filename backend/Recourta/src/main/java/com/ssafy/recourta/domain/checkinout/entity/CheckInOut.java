@@ -4,7 +4,7 @@ import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.global.entity.BaseEntity;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
 public class CheckInOut extends BaseEntity {
 
     @ManyToOne
