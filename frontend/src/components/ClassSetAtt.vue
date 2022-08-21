@@ -67,7 +67,7 @@ const getLectureAttendance = async () => {
         const tmp = sessionAtt.sessionAttendance.find(sessionUserAtt => {return sessionUserAtt.userId === props.studentList[i].userId})
         // console.log("what is tmp?",tmp)
         if(tmp) tempAttList.push(tmp.attType)
-        else tempAttList.push(3)
+        else tempAttList.push(0)
       })
       state.userAttendance.push(tempAttList)
     }
@@ -94,12 +94,6 @@ const getSessionStartTime = async (ssId) => {
   .catch(err => {
     console.log(err)
   })
-}
-
-if (state.sessionStartTimeList.length > state.userAttendance.length - 1) {
-  for (let i = 0; i < state.sessionStartTimeList.length - (state.userAttendance.length - 1); i++) {
-    state.userAttendance.push(0)
-  }
 }
 
 </script>
