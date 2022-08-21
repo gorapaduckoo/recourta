@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -103,7 +104,8 @@ public class LectureServiceImpl implements LectureService {
         }
     }
 
-     @Override
+    @Transactional
+    @Override
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
 
         logger.info("service in");
