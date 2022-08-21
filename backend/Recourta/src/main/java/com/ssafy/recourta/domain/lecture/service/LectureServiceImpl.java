@@ -15,6 +15,8 @@ import com.ssafy.recourta.global.util.ImgUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.text.ParseException;
@@ -24,6 +26,8 @@ import java.util.List;
 
 @Service
 public class LectureServiceImpl implements LectureService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LectureServiceImpl.class);
 
     @Autowired
     private LectureRepository lectureRepository;
@@ -98,12 +102,19 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
 
+        logger.info("service in");
         if(lectureRepository.existsById(lectureId)) {
+
+            logger.info("lectureid exists");
 
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                     ()-> new LectureException.UnvalidLectureId(lectureId));
+
+            logger.info("find lecture");
             imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
+            logger.info("image is deleted");
             lectureRepository.deleteById(lectureId);
+            logger.info("lecture is deleted in service");
 
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
