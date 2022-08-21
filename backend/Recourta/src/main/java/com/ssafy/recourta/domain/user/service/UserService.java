@@ -110,9 +110,10 @@ public class UserService {
 
     @Transactional
     public UserResponse.OnlyId delete(int userId) throws Exception{
- 
+        logger.info("service in");
          List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
          for(Lecture l : lectures){
+             logger.info("for문 in");
             lectureService.deleteLecture(l.getLectureId());
          }
         
