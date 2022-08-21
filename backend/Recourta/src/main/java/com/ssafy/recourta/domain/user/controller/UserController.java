@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/user/{userId}")
-    public ResponseEntity<UserResponse.OnlyId> delete(@PathVariable int userId) {
+    public ResponseEntity<UserResponse.OnlyId> delete(@PathVariable int userId)  throws Exception{
          logger.info("controller in");
         UserResponse.OnlyId response = userService.delete(userId);
          logger.info("controller out");
