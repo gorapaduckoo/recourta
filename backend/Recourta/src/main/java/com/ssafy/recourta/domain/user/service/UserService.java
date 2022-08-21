@@ -2,6 +2,7 @@ package com.ssafy.recourta.domain.user.service;
 
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
+import com.ssafy.recourta.domain.lecture.service.LectureService;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class UserService {
 
      private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
+    @Autowired
     private final UserRepository userRepository;
 
     @Autowired
