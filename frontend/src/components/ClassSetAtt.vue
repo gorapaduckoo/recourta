@@ -60,6 +60,7 @@ const getLectureAttendance = async () => {
     for (let ssId of state.sessionList) {
       getSessionStartTime(ssId)
     }
+    console.log("what is studentList",props.studentList)
     for (let i = 0; i < props.studentList.length; i++) {
       const tempAttList = Array(props.studentList[i])
       state.lectureAttendance.map(sessionAtt => {
