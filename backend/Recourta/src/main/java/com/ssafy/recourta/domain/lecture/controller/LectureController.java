@@ -66,6 +66,7 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @ResponseBody
     @DeleteMapping("/{lectureId}")
     public ResponseEntity<LectureResponse.LectureId> deleteLecture(@PathVariable Integer lectureId) throws Exception {
         LectureResponse.LectureId result = lectureService.deleteLecture(lectureId);
