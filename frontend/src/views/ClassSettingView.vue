@@ -158,11 +158,14 @@ const state = reactive({
 // 강의 폐쇄 함수
 const deleteLecture = async () => {
   await axios({
-    url: rct.lecture.lectureinfo(store.state.lecture.lectureId),
+    url: rct.lecture.lectureinfo(),
     method: 'delete',
     headers: {
       Authorization: store.state.user.accessToken,
-    }
+    },
+    params: {
+      lectureId: store.state.lecture.lectureId,
+    },
   })
   .then(res => {
     route.replace({path:'/main'})
