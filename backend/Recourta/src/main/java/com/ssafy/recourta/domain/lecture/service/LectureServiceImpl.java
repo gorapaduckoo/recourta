@@ -110,6 +110,28 @@ public class LectureServiceImpl implements LectureService {
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                     ()-> new LectureException.UnvalidLectureId(lectureId));
 
+            // 개강일이 오늘 이후인 강의
+            if(lecture.getStartDate().isAfter(LocalDate.now().minusDays(1))) {
+                Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(lecture.getLectureId(), LocalDateTime.now());
+                if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
+                    lectureRepository.deleteById(lecture.getLectureId());
+
+                } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
+                    // 강의 종강일 업데이트 & 강의자 null 처리
+                    lecture.update(lecture.getContent(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
+
+                    lectureRepository.save(lecture);
+                    // 현재 시간 이후 세션 삭제 처리
+                    sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(lecture.getLectureId(), LocalDateTime.now());
+                }
+                // 개강일이 어제 이전, 종강일이 오늘 이후인 강의
+            } else if(lecture.getStartDate().isBefore(LocalDate.now()) && lecture.getEndDate().isAfter(LocalDate.now().minusDays(1))){
+                lecture.update(lecture.getContent(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
+
+                lectureRepository.save(lecture);
+                sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(lecture.getLectureId(), LocalDateTime.now());
+            }
+
             logger.info("find lecture");
             imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
             logger.info("image is deleted");
