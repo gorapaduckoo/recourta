@@ -15,7 +15,7 @@ public interface LectureRepository extends JpaRepository<Lecture, Integer> {
     Optional<Lecture> findById(Integer lectureId);
 
     @Override
-    void deleteById(Integer lectureId);
+    void deleteByLectureId(Integer lectureId);
 
 
     // startDate <= 현재날짜 면서 현재날짜 <= endDate인 강의 찾기
