@@ -20,11 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class UserController {
+
+     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
     private final MailService mailService;
@@ -82,7 +87,9 @@ public class UserController {
 
     @DeleteMapping(value = "/user/{userId}")
     public ResponseEntity<UserResponse.OnlyId> delete(@PathVariable int userId) {
+         logger.info("controller in");
         UserResponse.OnlyId response = userService.delete(userId);
+         logger.info("controller out");
         return ResponseEntity.ok().body(response);
     }
 

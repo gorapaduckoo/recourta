@@ -22,11 +22,14 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
 
@@ -103,13 +106,15 @@ public class UserService {
 
     @Transactional
     public UserResponse.OnlyId delete(int userId){
-
+ logger.info("service in");
         // 개강일이 오늘 이후인 강의들
         List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndStartDateAfter(userId, LocalDate.now().minusDays(1));
         for (Lecture l : lectures) {
+             logger.info("for문 in");
             Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
             if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
                 lectureRepository.deleteById(l.getLectureId());
+                 logger.info("if문 in");
 
             } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
                 // 강의 종강일 업데이트 & 강의자 null 처리
@@ -120,17 +125,18 @@ public class UserService {
                 sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
             }
         }
-
+ logger.info("개강일이 오늘 이후인 강의들");
         // 개강일이 어제 이전이고, 종강일이 오늘 이후인 강의들
         lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
         for (Lecture l : lectures) {
+             logger.info("for문 in");
             l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
 
             lectureRepository.save(l);
             sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
         }
 
-
+ logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         imgUtil.deleteImage(user.getUserImg(), "user");
         user.setPassword("");
@@ -139,7 +145,7 @@ public class UserService {
         user.setIsStudent(-1);
         userRepository.save(user);
 
-
+ logger.info("service out");
         return UserResponse.OnlyId.build(user);
     }
 

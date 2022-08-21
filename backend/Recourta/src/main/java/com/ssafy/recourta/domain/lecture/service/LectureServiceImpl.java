@@ -108,10 +108,10 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public LectureResponse.LectureId deleteLecture(Integer lectureId) {
 
-        logger.info("service in");
+      
         if(lectureRepository.existsById(lectureId)) {
 
-            logger.info("lectureid exists");
+           
 
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                     ()-> new LectureException.UnvalidLectureId(lectureId));
@@ -145,11 +145,8 @@ public class LectureServiceImpl implements LectureService {
             // 진행중인 강의: 강의는 종강일을 오늘로 찍고, 세션은 현재 이후 세션만 날림
 
 
-            logger.info("find lecture");
-//            imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
-            logger.info("image is deleted");
-//            lectureRepository.deleteById(lectureId);
-            logger.info("lecture is deleted in service");
+
+         
 
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
