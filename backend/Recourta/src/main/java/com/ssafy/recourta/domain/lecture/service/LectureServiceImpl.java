@@ -103,7 +103,7 @@ public class LectureServiceImpl implements LectureService {
             Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                     ()-> new LectureException.UnvalidLectureId(lectureId));
             imgUtil.deleteImage(lecture.getLectureImg(), "lecture");
-            lectureRepository.deleteByLectureId(lectureId);
+            lectureRepository.deleteById(lectureId);
 
             return LectureResponse.LectureId.builder().lectureId(lectureId).build();
         }
