@@ -6,6 +6,7 @@ import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
 import com.ssafy.recourta.domain.registration.service.RegistrationService;
+import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.domain.session.service.SessionService;
 import com.ssafy.recourta.domain.user.entity.User;
 import com.ssafy.recourta.domain.user.repository.UserRepository;
@@ -38,6 +39,8 @@ public class LectureServiceImpl implements LectureService {
     private RegistrationService registrationService;
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private SessionRepository sessionRepository;
 
     @Autowired
     private RegistrationRepository registrationRepository;
