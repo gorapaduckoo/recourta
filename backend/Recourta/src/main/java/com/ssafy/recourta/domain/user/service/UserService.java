@@ -121,9 +121,9 @@ public class UserService {
  logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         imgUtil.deleteImage(user.getUserImg(), "user");
-        user.setPassword("");
-        user.setUserImg("");
-        user.setEmail("");
+        user.setPassword(null);
+        user.setUserImg(null);
+        user.setEmail(null);
         user.setIsStudent(-1);
         userRepository.save(user);
 
