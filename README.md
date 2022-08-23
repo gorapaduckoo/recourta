@@ -31,6 +31,9 @@ Vue3, Vite, tailwindcss, JavaScript
 
 OpenVidu, Ubuntu
 
+- [face-api](https://github.com/vladmandic/face-api)
+- [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
+
 ## 구현 기술 목록
 ---
 <회원 관리>
