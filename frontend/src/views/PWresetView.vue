@@ -48,7 +48,7 @@ let repeat_password = ref("")
 
 const sendresettoserver = async () => {
   const url = new URL(window.location.href)
-  const code = url.search.substr(16)
+  const code = url.hash.substr(16)
   const res = await axios({
     url: rct.login.pwreset(),
     method: 'put',
