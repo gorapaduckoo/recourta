@@ -5,12 +5,13 @@
 <style scoped>
 </style>
 
-<script setup>
+<script>
 import { reactive, computed } from 'vue'
 import { useStore } from 'vuex'
-import axios from 'axios'
-import rct from './api/rct'
-import jwt_decode from "jwt-decode"
+
+export default {
+  name:'App',
+}
 
 const store = useStore()
 
