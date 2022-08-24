@@ -124,7 +124,7 @@ public class MailService {
         msg+= "<p>감사합니다.<p>";
         msg+= "<br>";
         msg+= "<div align='center' style='width:480px; border:1px solid black; font-family:verdana;';><br>";
-        msg+= "<h3 style='color:blue;'><a href='https://recourta.ga/recourta/reset?code=" +
+        msg+= "<h3 style='color:blue;'><a href='https://recourta.ga/#/recourta/reset?code=" +
                 code+"'>[비밀번호 변경하기]</a></h3>";
         msg+= "<br/> ";
         msg+= "</div>";
