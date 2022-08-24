@@ -35,13 +35,19 @@ public class LectureController {
     private SessionService sessionService;
 
     @PostMapping
-    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart("lectureImg")MultipartFile lectureImg) throws Exception {
-        LectureResponse.LectureId result = lectureService.createLecture(lecture, lectureImg);
-        Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
-        if(sessionResult <=0 ){
-            throw new LectureException.SessionSaveFail(result.getLectureId());
+    public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart(value="lectureImg", required = false)MultipartFile lectureImg) throws Exception {
+        LectureResponse.LectureId result = LectureResponse.LectureId.builder().build();
+        try {
+            result = lectureService.createLecture(lecture, lectureImg);
+            Integer sessionResult = sessionService.createSession(lecture.getLectureTime(), result.getLectureId(), false);
+            if (sessionResult <= 0) {
+                throw new LectureException.SessionSaveFail(result.getLectureId());
+            }
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch(Exception e) {
+            lectureService.deleteLecture(result.getLectureId());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{lectureId}")
@@ -52,7 +58,7 @@ public class LectureController {
     }
 
     @PutMapping("/{lectureId}")
-    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestPart("request") LectureRequest.LectureUpdateForm input, @RequestPart("lectureImg") MultipartFile lectureImg) throws Exception {
+    public ResponseEntity<LectureResponse.LectureId> updateLecture(@PathVariable Integer lectureId,@Valid @RequestPart("request") LectureRequest.LectureUpdateForm input, @RequestPart(value="lectureImg", required = false) MultipartFile lectureImg) throws Exception {
         LectureResponse.LectureId result = lectureService.updateLecture(lectureId, input, lectureImg);
 
         List<SessionRequest.SessionCreateForm> newLectureTimes = input.getLectureTime();
@@ -60,9 +66,11 @@ public class LectureController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{lectureId}")
+    @DeleteMapping(value="/{lectureId}")
     public ResponseEntity<LectureResponse.LectureId> deleteLecture(@PathVariable Integer lectureId) throws Exception {
+       
         LectureResponse.LectureId result = lectureService.deleteLecture(lectureId);
+       
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -75,6 +83,12 @@ public class LectureController {
     @GetMapping("/{userId}/currentLectureList")
     public ResponseEntity<List<LectureResponse.LecturePreview>> searchMyCurrentLecture(@PathVariable Integer userId) throws ParseException {
         List<LectureResponse.LecturePreview> result = lectureService.searchMyLecture(userId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/availableList")
+    public ResponseEntity<List<LectureResponse.LectureDetail>> searchAllLecture(@PathVariable Integer userId) throws Exception {
+        List<LectureResponse.LectureDetail> result = lectureService.searchAvailableLecture(userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

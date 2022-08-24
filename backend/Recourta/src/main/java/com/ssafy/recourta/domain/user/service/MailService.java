@@ -15,15 +15,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.sql.DataSource;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
 public class MailService {
+
 
     @Autowired
     JavaMailSender javaMailSender;
@@ -39,31 +47,51 @@ public class MailService {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, email);
-        message.setSubject("Recourta 인증번호입니다.");
+        message.setSubject("Recourta 회원가입 인증번호입니다.");
+
+        // // image
+        // MimeMultipart multipart = new MimeMultipart("related");
+        // BodyPart messageBodyPart = new MimeBodyPart();
+        // //
 
         String  code = UUID.randomUUID().toString().replaceAll("-","").substring(0, 9);
 
         redisUtil.setDataExpire(code,email,60*5L);
 
         String msg="";
-        msg+= "<div style='margin:100px;'>";
+
+        msg+= "<div align='center' style='width:75%; margin-left:auto; margin-right:auto; margin-bottom:30px;'>";
+        msg+= "<br>";
+        msg+= "<br>";
         msg+= "<h1> 안녕하세요 Recourta입니다. </h1>";
         msg+= "<br>";
-        msg+= "<p>아래 인증코드를 회원가입 창으로 돌아가 입력해주세요<p>";
+        msg+= "<p>회원가입 창으로 돌아가 아래 인증코드를 5분 안에 입력해주세요<p>";
         msg+= "<br>";
         msg+= "<p>감사합니다.<p>";
         msg+= "<br>";
-        msg+= "<div align='center' style='border:1px solid black; font-family:verdana';><br>";
+        msg+= "<div align='center' style='width:480px; border:1px solid black; font-family:verdana;';><br>";
         msg+= "<h3 style='color:blue;'>회원가입 인증 코드입니다.</h3>";
         msg+= "<div style='font-size:130%'>";
         msg+= "CODE : <strong>";
-        msg+= code+"</strong><div><br/> ";
+        msg+= code+"</strong><div> ";
         msg+= "</div>";
 
-        //message.setText("이메일 인증코드: "+code, "utf-8", "html");
+
         message.setText(msg, "utf-8", "html");
 
         message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
+
+//         //image
+//         messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
+//         multipart.addBodyPart(messageBodyPart);
+
+//         messageBodyPart = new MimeBodyPart();
+// //        javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
+
+// //        messageBodyPart.setDataHandler(new DataHandler(fds));
+//         messageBodyPart.setHeader("Content-ID","<image>");
+//         multipart.addBodyPart(messageBodyPart);
+//         message.setContent(multipart);
 
         return  message;
     }
@@ -72,14 +100,21 @@ public class MailService {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, email);
-        message.setSubject("Recourta 인증번호입니다.");
+        message.setSubject("Recourta 비밀번호 찾기 메일입니다.");
+
+        // image
+        MimeMultipart multipart = new MimeMultipart("related");
+        BodyPart messageBodyPart = new MimeBodyPart();
+        //
 
         String  code = UUID.randomUUID().toString().replaceAll("-","").substring(0, 9);
 
         redisUtil.setDataExpire(code,email,60*5L);
 
         String msg="";
-        msg+= "<div style='margin:100px;'>";
+        msg+= "<div align='center' style='width:75%; margin-left:auto; margin-right:auto; margin-bottom:30px;'>";
+        msg+= "<br>";
+        msg+= "<br>";
         msg+= "<h1> 안녕하세요 Recourta입니다. </h1>";
         msg+= "<br>";
         msg+= "<p>아래 [비밀번호 변경하기]를 눌러 새로운 비밀번호를 설정해주세요.<p>";
@@ -88,14 +123,26 @@ public class MailService {
         msg+= "<br>";
         msg+= "<p>감사합니다.<p>";
         msg+= "<br>";
-        msg+= "<div align='center' style='border:1px solid black; font-family:verdana';><br>";
-        msg+= "<h3 style='color:blue;'><a href='http://recourta.ga/recourta/reset?code=" +
+        msg+= "<div align='center' style='width:480px; border:1px solid black; font-family:verdana;';><br>";
+        msg+= "<h3 style='color:blue;'><a href='https://recourta.ga/recourta/reset?code=" +
                 code+"'>[비밀번호 변경하기]</a></h3>";
         msg+= "<br/> ";
         msg+= "</div>";
 
-        //message.setText("이메일 인증코드: "+code, "utf-8", "html");
+        message.setText("이메일 인증코드: "+code, "utf-8", "html");
         message.setText(msg, "utf-8", "html");
+
+        // //image
+        // messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
+        // multipart.addBodyPart(messageBodyPart);
+
+        // messageBodyPart = new MimeBodyPart();
+        // javax.activation.DataSource fds = new FileDataSource(MailService.class.getResource("/image/logo.png"));
+
+        // messageBodyPart.setDataHandler(new DataHandler(fds));
+        // messageBodyPart.setHeader("Content-ID","<image>");
+        // multipart.addBodyPart(messageBodyPart);
+        // message.setContent(multipart);
 
         message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
 

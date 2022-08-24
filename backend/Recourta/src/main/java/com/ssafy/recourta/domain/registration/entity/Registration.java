@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
 public class Registration extends BaseEntity {
 
     @ManyToOne

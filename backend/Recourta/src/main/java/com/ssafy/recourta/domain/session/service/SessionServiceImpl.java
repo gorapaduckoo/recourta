@@ -9,9 +9,11 @@ import com.ssafy.recourta.domain.session.dto.response.SessionResponse;
 import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.global.exception.LectureException;
+import com.ssafy.recourta.global.exception.SessionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ public class SessionServiceImpl implements SessionService{
     @Autowired
     private LectureRepository lectureRepository;
 
+    @Transactional
     @Override
     public Integer createSession(@Valid List<SessionRequest.SessionCreateForm> sessions, Integer lectureId, boolean isUpdate) {
 
@@ -42,13 +45,15 @@ public class SessionServiceImpl implements SessionService{
             );
             LocalDate startDate;
 
-
             if (!isUpdate) { // 새로 생성된 강의인 경우 개강일부터 세션 생성
                 startDate = lecture.getStartDate();
             } else { // 강의정보가 업데이트된 경우 내일부터 세션 생성
                 startDate = LocalDate.now().plusDays(1);
             }
             LocalDate endDate = lecture.getEndDate();
+
+            System.out.println(startDate + " " + endDate);
+            System.out.println(s.getEndHour() + " " + s.getEndMinute());
             LocalDate targetDate = startDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.of(s.getWeekDay())));
             while(targetDate.isBefore(endDate.plusDays(1))){
                 Session session = Session.builder()
@@ -76,6 +81,7 @@ public class SessionServiceImpl implements SessionService{
         return sessions;
     }
 
+    @Override
     public Integer changeSession(@Valid List<SessionRequest.SessionCreateForm> sessions, Integer lectureId) {
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(
                 () -> new LectureException.UnvalidLectureId(lectureId)
@@ -88,8 +94,27 @@ public class SessionServiceImpl implements SessionService{
         return sessionResult;
     }
 
+    @Override
     public SessionResponse.SessionId deleteSession(Integer sessionId) {
         sessionRepository.deleteById(sessionId);
         return SessionResponse.SessionId.builder().sessionId(sessionId).build();
     }
+
+    @Override
+    public Integer getEarliestAvailableSession(Integer lectureId) {
+        Session session = sessionRepository.findFirstByLecture_LectureIdAndEndTimeAfterOrderByEndTimeAsc(lectureId, LocalDateTime.now()).orElse(null);
+        if(session != null) return session.getSessionId();
+        else return null;
+    }
+
+    @Override
+    public SessionResponse.SessionStartTime getSessionStartTime(Integer sessionId) {
+        Session session = sessionRepository.findBySessionId(sessionId).orElseThrow(SessionNotFoundException::new);
+        SessionResponse.SessionStartTime sessionStartTime = SessionResponse.SessionStartTime.builder()
+                .startTime(session.getStartTime())
+                .build();
+        return sessionStartTime;
+    }
+
+
 }

@@ -1,10 +1,11 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
     <router-link to="/">
       <img class="mt-20 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
     <form @submit.prevent="loginSubmit" class="pt-10">
       <!-- 이메일 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group">
@@ -32,23 +33,23 @@
 </template>
 
 <script setup>
-
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
-import {useRouter} from 'vue-router'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 import rct from '../api/rct'
-import {useStore} from 'vuex'
 import jwt_decode from "jwt-decode"
 
-const route = useRouter()
 const store = useStore()
+const route = useRouter()
 
 const state = reactive({
-  email_check:true,
-  email_err_msg:'',
-  pw_check:true,
-  pw_err_msg:'',
+  email_check: true,
+  email_err_msg: '',
+  pw_check: true,
+  pw_err_msg: '',
 })
 
 let floating_email = ref("")
@@ -66,11 +67,13 @@ const login = async () => {
   .then(res => {
     store.dispatch('saveAccessToken', res.data.accessToken)
     store.dispatch('saveRefreshToken', res.data.refreshToken)
+    store.dispatch('updateIsLogin', 1)
     const jwt = jwt_decode(res.data.accessToken)
+    store.dispatch("updateRefreshTime",jwt.exp)
     store.commit("Set_userId",jwt.sub)
     store.commit("Set_isStudent",jwt.isStudent)
-    route.replace({path:'/main'})
-  })
+    route.replace({path:"/main"})
+})
   .catch(err => {
     state.email_err_msg = "가입된 이메일이 아니거나"
     state.email_check=false

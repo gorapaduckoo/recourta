@@ -2,6 +2,7 @@ package com.ssafy.recourta.domain.user.service;
 
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
+import com.ssafy.recourta.domain.lecture.service.LectureService;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.session.repository.SessionRepository;
 import com.ssafy.recourta.domain.user.dto.request.UserRequest;
@@ -22,12 +23,15 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    @Autowired
     private final UserRepository userRepository;
 
     @Autowired
@@ -35,6 +39,9 @@ public class UserService {
 
     @Autowired
     private final SessionRepository sessionRepository;
+
+    @Autowired
+    private final LectureService lectureService;
 
     @Autowired
     private final ImgUtil imgUtil;
@@ -102,40 +109,25 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse.OnlyId delete(int userId){
+    public UserResponse.OnlyId delete(int userId) throws Exception{
+        logger.info("service in");
+         List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now());
+         for(Lecture l : lectures){
+             logger.info("for문 in");
+            lectureService.deleteLecture(l.getLectureId());
+         }
+        
 
-        // 개강일이 오늘 이후인 강의들
-        List<Lecture> lectures = lectureRepository.findAllByUser_UserIdAndStartDateAfter(userId, LocalDate.now().minusDays(1));
-        for (Lecture l : lectures) {
-            Integer cnt = sessionRepository.countByLecture_LectureIdAndStartTimeBefore(l.getLectureId(), LocalDateTime.now());
-            if (cnt == 0) { // 만약 아직 시작되지 않은 강의라면 강의 삭제 처리
-                lectureRepository.deleteById(l.getLectureId());
-
-            } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
-                // 강의 종강일 업데이트 & 강의자 null 처리
-                l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
-
-                lectureRepository.save(l);
-                // 현재 시간 이후 세션 삭제 처리
-                sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
-            }
-        }
-
-        // 개강일이 어제 이전이고, 종강일이 오늘 이후인 강의들
-        lectures = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now(), LocalDate.now().minusDays(1));
-        for (Lecture l : lectures) {
-            l.update(l.getContent(), l.getStartDate(), LocalDate.now(), l.getLectureTime(), null);
-
-            lectureRepository.save(l);
-            sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(l.getLectureId(), LocalDateTime.now());
-        }
-
-
+ logger.info("user null처리");
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         imgUtil.deleteImage(user.getUserImg(), "user");
-        userRepository.deleteById(userId);
+        user.setPassword(null);
+        user.setUserImg(null);
+        user.setEmail(null);
+        user.setIsStudent(-1);
+        userRepository.save(user);
 
-
+ logger.info("service out");
         return UserResponse.OnlyId.build(user);
     }
 

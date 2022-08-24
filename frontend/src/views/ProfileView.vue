@@ -1,5 +1,6 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   <CustomNavbar :curpage="state.curpage"/>
   <div class="pt-[60px] w-1/3 min-w-[480px] ml-auto mr-auto">
     <div class="pt-20 ml-[1.2em] mb-6 text-2xl font-bold dark:font-semibold text-center tracking-[1.2em]">{{ state.name }}</div>
@@ -16,6 +17,9 @@
     <!-- 사진등록을 위한 캠/사진 화면 -->
     <div v-if="state.isCamOpen" v-show="!state.isLoad" class="my-2" :class="{ 'opacity-0' : state.isShot }">
       <div :class="{'opacity-0' : state.isShot}"></div>
+      <div v-if="!state.isFace" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">얼굴이 잘 보이게 사진을 찍어주세요.</div>
+      <div v-if="!state.isSingle" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">한 사람만 나오게 사진을 찍어주세요.</div>
+      <div v-if="state.isFace&&state.isSingle&&!state.isPhotoTake" class="mb-1 text-[15px] text-center font-bold dark:font-semibold text-[#fe5358] dark:text-[#fe5358]">얼굴 인식까지 다소 시간이 걸릴 수 있으니 잠시 기다려주세요.</div>
       <!-- 웹캠 -->
       <video width="384" height="288" class="mr-auto ml-auto" v-show="!state.isPhotoTake" ref="profileCamera" autoplay></video>
       <!-- 캡쳐 -->
@@ -30,7 +34,7 @@
         <span v-if="state.isPhotoTake && state.isCamOpen">다시찍기</span>
         <span v-else>사진촬영</span>
       </button>
-      <button v-if="state.isCamOpen && !state.isLoad && state.isPhotoTake && state.isCamOpen" type="button" class="bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a] text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md ml-2 px-3 py-0.5 text-center" @click="changePhoto">저장</button>
+      <button v-if="state.isCamOpen && !state.isLoad && state.isPhotoTake && state.isCamOpen" type="button" class="bg-[#4fb054] hover:bg-[#66bb6a] border-[#4fb054] hover:border-[#66bb6a] text-white dark:text-gray-100 text-sm border-2 focus:outline-none rounded-md ml-2 px-3 py-0.5 text-center" @click="btnClick">저장</button>
     </div>
 
     <!-- 비밀번호 변경 Button -->
@@ -68,7 +72,7 @@
             <div class="relative z-0 mb-8 mr-auto ml-auto w-3/4 group"> 
               <input type="password" id="floating_new_password" name="floating_new_password" v-model.trim="floating_new_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.new_pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.new_pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer" placeholder=" " @click="onNewPasswordClick"/>
               <label for="floating_new_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.new_pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.new_pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-5">새 비밀번호</label>
-              <label v-if="state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-gray-500 dark:text-gray-400 -bottom-3.5 right-0">영문, 숫자, 특수문자 포함 8자 이상</label>
+              <label v-if="state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-gray-500 dark:text-gray-400 -bottom-3.5 right-0">영문, 숫자, 특수문자 포함 8 - 20자</label>
               <label v-if="!state.new_pw_check" for="floating_new_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.new_pw_err_msg }}</label>
             </div>
 
@@ -111,6 +115,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import CustomNavbar from '../components/CustomNavbar.vue'
 import { ref, reactive } from 'vue'
@@ -118,9 +123,14 @@ import axios from 'axios'
 import rct from '../api/rct'
 import { useStore } from "vuex"
 import { useRouter } from 'vue-router'
+import * as faceapi from '@vladmandic/face-api'
 
 const store = useStore()
 const route = useRouter()
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri(rct.user.facemodel()),
+])
 
 const getProfile = async () => {
   await axios({
@@ -135,7 +145,8 @@ const getProfile = async () => {
     state.userId = res.data.userId
     state.name = res.data.name
     state.email = res.data.email
-    state.takenImg = 'http://localhost:8081/recourta/uploads/img/'+res.data.userImg
+    state.takenImg = store.state.user.userImgFirstUrl+res.data.userImg
+    console.log(store.state.user.userImgFirstUrl)
   })
   .catch(err => {
     console.log(err)
@@ -147,6 +158,8 @@ getProfile()
 const state = reactive({
   isCamOpen: false,
   isPhotoTake: false,
+  isFace: true,
+  isSingle: true,
   isShot: false,
   isLoad: false,
   current_pw_check : true,
@@ -208,7 +221,9 @@ const stopCamStream = () => {
   });
 }
 
-const takePhotoShot = () => {
+const takePhotoShot = async () => {
+  state.isFace = true;
+  state.isSingle = true;
   if(!state.isPhotoTake) {
     state.isShot = true;
 
@@ -223,6 +238,18 @@ const takePhotoShot = () => {
   
   const context = profileCanvas.value.getContext('2d');
   context.drawImage(profileCamera.value, 0, 0, 384, 288);
+  const detections = await faceapi.detectAllFaces(profileCamera.value)
+
+  if(detections.length==0) {
+    state.isFace=false
+    state.isSingle=true
+  } else if (detections.length==1){
+    state.isFace=true
+    state.isSingle=true
+  } else {
+    state.isFace=true
+    state.isSingle=false
+  }
 }
 
 // 사진 변경 함수
@@ -230,6 +257,12 @@ const UrltoBlob = async (dataURL) => {
   const res = await fetch(dataURL)
   const blob = await res.blob()
   return blob
+}
+
+const btnClick = () => {
+  if (state.isFace && state.isSingle) {
+    changePhoto()
+  }
 }
 
 const changePhoto = async () => {
@@ -280,13 +313,10 @@ const sendChangetoServer = async () => {
       modalClose()
       getProfile()
     }
-    else {
-      state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
-      state.current_pw_check = false
-    }
   })
   .catch(err => {
-    console.log(err)
+    state.new_pw_err_msg = '현재 비밀번호가 일치하지 않습니다'
+    state.current_pw_check = false
   })
 }
 
@@ -295,7 +325,7 @@ const pwChange = async () => {
   let pw_reg = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
 
   if(!pw_reg.test(floating_new_password.value)) {
-    state.new_pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다'
+    state.new_pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상 20자 이하이어야 합니다'
     state.new_pw_check = false
   }
   if (floating_new_password.value!==floating_repeat_new_password.value) {

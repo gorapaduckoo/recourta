@@ -1,14 +1,15 @@
 <template>
   <DarkmodeButton />
+  <CustomFooter/>
   
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
     <router-link to="/">
       <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-20 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
     <form class="pt-10" @submit.prevent="PWresetSubmit">
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onPasswordClick"/>
+        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.pw_check,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.pw_check,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100" placeholder="영문, 숫자, 특수문자 포함 8 - 20자" @click="onPasswordClick"/>
         <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.pw_check,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.pw_check,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">새 비밀번호</label>
         <label v-if="!state.pw_check" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">{{ state.pw_err_msg }}</label>
       </div>
@@ -26,6 +27,7 @@
 </template>
 
 <script setup>
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import {useRouter} from 'vue-router'
@@ -76,7 +78,7 @@ const PWresetSubmit = async () => {
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
 
   if(!pw_regex.test(floating_password.value)) {
-    state.pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다'
+    state.pw_err_msg = '비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상 20자 이하이어야 합니다'
     state.pw_check = false
   }
   if(floating_password.value!==repeat_password.value) state.repeat_check = false

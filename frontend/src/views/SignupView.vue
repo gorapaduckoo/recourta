@@ -1,6 +1,7 @@
 <template>
   <!-- 다크모드 -->
   <DarkmodeButton />
+  <CustomFooter/>
   <div class="pt-10 w-1/3 min-w-[480px] ml-auto mr-auto">
 
     <!-- 뒤로가기 -->
@@ -13,7 +14,7 @@
     <router-link to="/">
       <img class="mt-14 ml-auto mr-auto w-4/5" src="../assets/logo.png" alt="">
     </router-link>
-    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Record | Course | Ta-da!</h1>
+    <h1 class="mt-4 mb-16 text-center font-semibold text-neutral-600 dark:text-neutral-300">Recognition | Course | Ta-da!</h1>
 
     <!-- 입력form -->
     <form class="pt-10" @submit.prevent="signupSubmit">
@@ -53,9 +54,9 @@
 
       <!-- 비밀번호 입력 -->
       <div class="relative z-0 mb-6 mr-auto ml-auto w-3/4 group"> 
-        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100 placeholder-gray-500 dark:placeholder-gray-400" placeholder="영문, 숫자, 특수문자 포함 8자 이상" @click="onPasswordClick"/>
+        <input type="password" id="floating_password" name="floating_password" v-model.trim="floating_password" :class="{'border-[#fe5358] focus:border-[#fe5358] dark:border-[#fe5358] dark:focus:border-[#fe5358]':!state.ispassword,'border-gray-300 focus:border-[#2c5172] dark:border-gray-600 dark:focus:border-[#6c9cc6]':state.ispassword,}" class="block pt-2.5 pb-1 px-2 w-full text-sm bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer placeholder-opacity-100 placeholder-gray-500 dark:placeholder-gray-400" placeholder="영문, 숫자, 특수문자 포함 8 - 20자" @click="onPasswordClick"/>
         <label for="floating_password" :class="{'text-[#fe5358] dark:text-[#fe5358] peer-focus:text-[#fe5358] dark:peer-focus:text-[#fe5358]':!state.ispassword,'text-gray-500 dark:text-gray-400 peer-focus:text-[#2c5172] dark:peer-focus:text-[#6c9cc6]':state.ispassword,}" class="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-2.5 -z-10 origin-[0] peer-focus:left-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">비밀번호</label>
-        <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상이어야 합니다</label>
+        <label v-if="!state.ispassword" for="floating_password" class="absolute text-[4px] text-[#fe5358] dark:text-[#fe5358] -bottom-3.5 right-0">비밀번호는 영문, 숫자 특수문자를 포함하고 8자 이상 20자 이하이어야 합니다</label>
       </div>
 
       <!-- 비밀번호 확인 -->
@@ -105,6 +106,8 @@
             </div>
           </div>
           <div v-if="!state.isphoto" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">사진을 등록해주세요</div>
+          <div v-if="!state.isface" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">얼굴이 잘 보이게 사진을 찍어주세요.</div>
+          <div v-if="!state.issingle" class="text-[4px] text-[#fe5358] dark:text-[#fe5358]">한 사람만 나오게 사진을 찍어주세요.</div>
         </div>
 
         <!-- 카메라 버튼 -->
@@ -153,14 +156,14 @@
 </template>
 
 <script setup>
-
+import CustomFooter from '../components/CustomFooter.vue'
 import DarkmodeButton from '../components/DarkmodeButton.vue'
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import rct from '../api/rct'
 import axios from 'axios'
-
+import * as faceapi from '@vladmandic/face-api'
 
 const route = useRouter()
 const store = useStore()
@@ -177,6 +180,8 @@ const state = reactive({
   ispassword: true,
   isrepeat: true,
   isphoto: true,
+  isface: true,
+  issingle: true,
   isemailsend: false,
   isemailverified: false,
   wrongemail:'',
@@ -187,6 +192,11 @@ const state = reactive({
   emailsendbtnmsg:'메일발송',
   istimer: false,
 })
+
+
+Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri(rct.user.facemodel()),
+])
 
 const camera = ref(null)
 const canvas = ref(null)
@@ -244,7 +254,9 @@ const stopCameraStream = () => {
   });
 }
 
-const takePhoto = () => {
+const takePhoto = async () => {
+  state.isface = true
+  state.issingle = true
   state.isphoto = true
   if(!state.isPhotoTaken) {
     state.isShotPhoto = true;
@@ -258,38 +270,33 @@ const takePhoto = () => {
   context.drawImage(camera.value, 0, 0, 384, 288);
 }
 
-const sendemailtoserver = async () => {
-  const res = await axios({
-    url: rct.user.userauth(),
-    method: 'post',
-    data: {
-      email : email,
-    }
-  })
-
-  return res
-}
-
 const checkemail = async () => {
   let email_regex = new RegExp(/[A-Za-z0-9\._-]+@([A-Za-z0-9]+\.)+([A-Za-z0-9])/)
   if(email_regex.test(floating_email.value)){
     email = floating_email.value
-    const res = await sendemailtoserver()
-
-  if(res.data.success) {
-    state.isemailsend = true
-    state.isemailverified = false
-    state.isverify = true
-    if(state.Timer!==null) verifytimerStop(state.Timer)
+    await axios({
+      url: rct.user.userauth(),
+      method: 'post',
+      data: {
+        email : email,
+      }
+    }).then(res=>{
+      state.isemailsend = true
+      state.isemailverified = false
+      state.isverify = true
+      if(state.Timer!==null) verifytimerStop(state.Timer)
       state.emailsendbtnmsg='재발송'
       document.getElementById('floating_verify').removeAttribute("disabled")
       document.getElementById('checkverifybtn').removeAttribute("disabled")
       verifytimer()
-    }
-    else{
-      state.wrongemail='이미 가입된 이메일입니다'
-      state.isemail=false
-    }
+    })
+    .catch(err=>{
+      if(err.response.status===400){
+        state.wrongemail='이미 가입된 이메일입니다'
+        state.isemail=false
+      }
+      else console.log(err)
+    }) 
   }
   else {
     state.wrongemail='올바른 이메일을 입력하세요'
@@ -387,7 +394,7 @@ const signupdatatoserver = async () => {
   })
 }
 
-const signupSubmit = () => {
+const signupSubmit = async () => {
 
   if(floating_name.value==="") state.isname = false
   let pw_regex = new RegExp(/(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\?])(?=.{8,20})/)
@@ -397,9 +404,21 @@ const signupSubmit = () => {
   }
   if(!pw_regex.test(floating_password.value)) state.ispassword=false
   if(floating_password.value!==floating_repeat_password.value) state.isrepeat=false
-  if(!state.isPhotoTaken) state.isphoto=false
 
-  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto) {
+  if(!state.isPhotoTaken) state.isphoto=false
+  const detections = await faceapi.detectAllFaces(document.getElementById("photoTaken"))
+  if(detections.length==0 && state.isPhotoTaken) {
+    state.isface=false
+    state.issingle=true
+  } else if (detections.length==1){
+    state.isface=true
+    state.issingle=true
+  } else {
+    state.isface=true
+    state.issingle=false
+  }
+
+  if(state.isname&&state.isemailverified&&state.ispassword&&state.isrepeat&&state.isphoto&&state.isface&&state.issingle) {
     signupdatatoserver()
   }
 }
