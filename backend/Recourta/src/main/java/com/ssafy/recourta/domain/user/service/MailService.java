@@ -144,7 +144,7 @@ public class MailService {
         // multipart.addBodyPart(messageBodyPart);
         // message.setContent(multipart);
 
-        message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
+        message.setFrom(new InternetAddress("ID","리코타"));
 
         return  message;
     }
