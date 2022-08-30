@@ -79,7 +79,7 @@ public class MailService {
 
         message.setText(msg, "utf-8", "html");
 
-        message.setFrom(new InternetAddress("2753dudwns@naver.com","리코타"));
+        message.setFrom(new InternetAddress("ID","리코타"));
 
 //         //image
 //         messageBodyPart.setContent(msg, "text/html; charset=UTF-8");
