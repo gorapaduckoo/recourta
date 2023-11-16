@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Lecture {
     @Id
