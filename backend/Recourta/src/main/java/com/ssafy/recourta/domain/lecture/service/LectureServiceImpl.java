@@ -88,7 +88,7 @@ public class LectureServiceImpl implements LectureService {
     public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture, MultipartFile lectureImg) throws Exception {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
-        updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString());
+        updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString(), updatedLecture.getUser());
         if(lectureImg != null) {
             imgUtil.uploadImage(updatedLecture, lectureImg);
         }
@@ -128,7 +128,7 @@ public class LectureServiceImpl implements LectureService {
 
                 } else { // 한번이라도 진행했던 강의라면 강의 종강 처리
                     // 강의 종강일 업데이트 & 강의자 null 처리
-                    lecture.update(lecture.getContent(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
+                    lecture.update(lecture.getDescription(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
 
                     lectureRepository.save(lecture);
                     // 현재 시간 이후 세션 삭제 처리
@@ -136,7 +136,7 @@ public class LectureServiceImpl implements LectureService {
                 }
                 // 개강일이 어제 이전, 종강일이 오늘 이후인 강의
             } else if(lecture.getStartDate().isBefore(LocalDate.now()) && lecture.getEndDate().isAfter(LocalDate.now().minusDays(1))){
-                lecture.update(lecture.getContent(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
+                lecture.update(lecture.getDescription(), lecture.getStartDate(), LocalDate.now(), lecture.getLectureTime(), null);
 
                 lectureRepository.save(lecture);
                 sessionRepository.deleteAllByLecture_LectureIdAndStartTimeAfter(lecture.getLectureId(), LocalDateTime.now());

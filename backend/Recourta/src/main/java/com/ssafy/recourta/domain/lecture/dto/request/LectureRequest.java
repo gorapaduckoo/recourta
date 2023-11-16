@@ -2,20 +2,16 @@ package com.ssafy.recourta.domain.lecture.dto.request;
 
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
-import com.ssafy.recourta.domain.session.entity.Session;
 import com.ssafy.recourta.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.json.simple.JSONArray;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.sql.Date;
-import java.util.List;
 
 @Data
 @Schema(description = "강의 개설/조회/수정/삭제 시 입력받는 양식")
@@ -32,7 +28,7 @@ public class LectureRequest {
         @NotNull
         private String title;
         @NotNull
-        private String content;
+        private String description;
         @NotNull
         private LocalDate startDate;
         @NotNull
@@ -41,10 +37,10 @@ public class LectureRequest {
         private ArrayList<SessionRequest.SessionCreateForm> lectureTime;
 
         @Builder
-        public LectureCreateForm(Integer userId, String title, String content, LocalDate startDate, LocalDate endDate, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
+        public LectureCreateForm(Integer userId, String title, String description, LocalDate startDate, LocalDate endDate, ArrayList<SessionRequest.SessionCreateForm> lectureTime){
             this.userId = userId;
             this.title = title;
-            this.content = content;
+            this.description = description;
             this.startDate = startDate;
             this.endDate = endDate;
             this.lectureTime = lectureTime;
@@ -54,7 +50,7 @@ public class LectureRequest {
             return Lecture.builder()
                     .user(user)
                     .title(title)
-                    .content(content)
+                    .description(description)
                     .startDate(startDate)
                     .endDate(endDate)
                     .lectureTime(lectureTime.toString())

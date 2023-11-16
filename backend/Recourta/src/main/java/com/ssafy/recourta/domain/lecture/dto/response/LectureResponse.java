@@ -1,15 +1,11 @@
 package com.ssafy.recourta.domain.lecture.dto.response;
 
-import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import lombok.*;
 import org.json.simple.JSONArray;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
-
-import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 
 @Data
 @Getter
@@ -44,7 +40,7 @@ public class LectureResponse {
         @NotNull
         private String title; // 강의명
         @NotNull
-        private String content; // 강의설명
+        private String description; // 강의설명
         @NotNull
         private LocalDate startDate; // 시작일자
         @NotNull
@@ -56,12 +52,12 @@ public class LectureResponse {
         private Integer sessionId;
 
         @Builder
-        public LectureDetail(Integer lectureId, Integer userId, String teacher, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, JSONArray lectureTime) {
+        public LectureDetail(Integer lectureId, Integer userId, String teacher, String title, String description, LocalDate startDate, LocalDate endDate, String lectureImg, JSONArray lectureTime) {
             this.lectureId = lectureId;
             this.userId = userId;
             this.teacher = teacher;
             this.title = title;
-            this.content = content;
+            this.description = description;
             this.startDate = startDate;
             this.endDate = endDate;
             this.lectureImg = lectureImg;

@@ -15,50 +15,40 @@ import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 @Entity
 @NoArgsConstructor
 @Getter
-@Table(name = "lecture")
 public class Lecture {
-// 강의정보 테이블
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer lectureId; // 강의번호
+    private Integer lectureId;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user; // 개설자
-    @NotNull
-    private String title; // 강의명
-    @NotNull
-    private String content; // 강의설명
-    @NotNull
-    private LocalDate startDate; // 시작일자
-    @NotNull
-    private LocalDate endDate; // 종료일자
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    private String lectureImg; // 썸네일 이미지
-    @NotNull
-    private String lectureTime; // 강의 시간 정보
+    private String title;
+
+    private String description;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    private String lectureImg;
+
+    private String lectureTime;
 
     @Builder
-    public Lecture(User user, String title, String content, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime) {
+    public Lecture(User user, String title, String description, LocalDate startDate, LocalDate endDate, String lectureImg, String lectureTime) {
         this.user = user;
         this.title = title;
-        this.content = content;
+        this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.lectureImg = lectureImg;
         this.lectureTime = lectureTime;
     }
 
-    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureTime) {
-        this.content = content;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.lectureTime = lectureTime;
-    }
-
-    public void update(String content, LocalDate startDate, LocalDate endDate, String lectureTime, User user) {
-        this.content = content;
+    public void update(String description, LocalDate startDate, LocalDate endDate, String lectureTime, User user) {
+        this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
         this.lectureTime = lectureTime;
@@ -75,7 +65,7 @@ public class Lecture {
                 .userId(this.getUser().getUserId())
                 .teacher(this.getUser().getName())
                 .title(this.getTitle())
-                .content(this.getContent())
+                .description(this.getDescription())
                 .startDate(this.getStartDate())
                 .endDate(this.getEndDate())
                 .lectureImg(this.getLectureImg())
