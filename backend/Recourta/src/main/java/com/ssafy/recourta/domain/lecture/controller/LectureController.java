@@ -26,13 +26,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/lecture")
 public class LectureController {
-    private static final Logger logger = LoggerFactory.getLogger(LectureController.class);
 
-    @Autowired
-    private LectureService lectureService;
+    private final LectureService lectureService;
 
-    @Autowired
-    private SessionService sessionService;
+    private final SessionService sessionService;
 
     @PostMapping
     public ResponseEntity<LectureResponse.LectureId> createLecture(@Valid @RequestPart("request") LectureRequest.LectureCreateForm lecture, @RequestPart(value="lectureImg", required = false)MultipartFile lectureImg) throws Exception {
