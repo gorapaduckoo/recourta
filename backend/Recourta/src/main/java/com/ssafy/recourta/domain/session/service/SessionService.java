@@ -1,13 +1,9 @@
 package com.ssafy.recourta.domain.session.service;
 
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
 import com.ssafy.recourta.domain.session.dto.response.SessionResponse;
-import com.ssafy.recourta.domain.session.entity.Session;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SessionService {

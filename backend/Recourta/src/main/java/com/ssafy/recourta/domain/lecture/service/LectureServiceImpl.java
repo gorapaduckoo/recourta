@@ -1,7 +1,10 @@
 package com.ssafy.recourta.domain.lecture.service;
 
-import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
+import com.ssafy.recourta.domain.lecture.dto.request.LectureCreateRequest;
+import com.ssafy.recourta.domain.lecture.dto.request.LectureUpdateRequest;
+import com.ssafy.recourta.domain.lecture.dto.response.LectureDetailResponse;
+import com.ssafy.recourta.domain.lecture.dto.response.LectureIdResponse;
+import com.ssafy.recourta.domain.lecture.dto.response.LecturePreviewResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.registration.repository.RegistrationRepository;
@@ -51,7 +54,7 @@ public class LectureServiceImpl implements LectureService {
     private ImgUtil imgUtil;
 
     @Override
-    public LectureResponse.LectureId createLecture(LectureRequest.LectureCreateForm input, MultipartFile lectureImg) throws Exception {
+    public LectureIdResponse createLecture(LectureCreateRequest input, MultipartFile lectureImg) throws Exception {
         // RequestDto에 담긴 userId로 user 객체 조회
         User user = userRepository.findById(input.getUserId()).orElseThrow(UserNotFoundException::new);
 
@@ -62,7 +65,7 @@ public class LectureServiceImpl implements LectureService {
         // DB 저장 후 저장한 lecture의 lectureId를 결과값으로 반환
         Integer result = lectureRepository.save(lecture).getLectureId();
         if(result!=null){
-            return LectureResponse.LectureId.builder().lectureId(result).build();
+            return LectureIdResponse.builder().lectureId(result).build();
 
         } else {
             throw new LectureException.LectureSaveFail();
@@ -72,11 +75,11 @@ public class LectureServiceImpl implements LectureService {
 
 
     @Override
-    public LectureResponse.LectureDetail searchByLectureId(Integer lectureId) {
+    public LectureDetailResponse searchByLectureId(Integer lectureId) {
         Lecture result = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
         if (result != null) {
-            return result.toLectureDetail();
+            return LectureDetailResponse.from(result);
         }
         else {
             throw new LectureException.NullLecture();
@@ -85,10 +88,10 @@ public class LectureServiceImpl implements LectureService {
 
 
     @Override
-    public LectureResponse.LectureId updateLecture(Integer lectureId, LectureRequest.LectureUpdateForm lecture, MultipartFile lectureImg) throws Exception {
+    public LectureIdResponse updateLecture(Integer lectureId, LectureUpdateRequest lecture, MultipartFile lectureImg) throws Exception {
         Lecture updatedLecture = lectureRepository.findById(lectureId).orElseThrow(
                 ()-> new LectureException.UnvalidLectureId(lectureId));
-        updatedLecture.update(lecture.getContent(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString(), updatedLecture.getUser());
+        updatedLecture.update(lecture.getDescription(), lecture.getStartDate(), lecture.getEndDate(), lecture.getLectureTime().toString(), updatedLecture.getUser());
         if(lectureImg != null) {
             imgUtil.uploadImage(updatedLecture, lectureImg);
         }
@@ -96,7 +99,7 @@ public class LectureServiceImpl implements LectureService {
 
 
         if (result != null) {
-            return LectureResponse.LectureId.builder()
+            return LectureIdResponse.builder()
                     .lectureId(result)
                     .build();
         } else {
@@ -106,7 +109,7 @@ public class LectureServiceImpl implements LectureService {
 
     @Transactional
     @Override
-    public LectureResponse.LectureId deleteLecture(Integer lectureId) {
+    public LectureIdResponse deleteLecture(Integer lectureId) {
 
       
         if(lectureRepository.existsById(lectureId)) {
@@ -148,7 +151,7 @@ public class LectureServiceImpl implements LectureService {
 
          
 
-            return LectureResponse.LectureId.builder().lectureId(lectureId).build();
+            return LectureIdResponse.builder().lectureId(lectureId).build();
         }
         else {
             throw new LectureException.UnvalidLectureId(lectureId);
@@ -159,16 +162,16 @@ public class LectureServiceImpl implements LectureService {
 
     // 자신이 가르치고 있는 강의 검색
     @Override
-    public List<LectureResponse.LecturePreview> searchMyCurrentTeachingLecture(Integer userId) {
+    public List<LecturePreviewResponse> searchMyCurrentTeachingLecture(Integer userId) {
         // 존재하는 회원인 경우
         if(userRepository.existsById(userId)) {
             List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndEndDateAfter(userId, LocalDate.now().minusDays(1));
 //            List<Lecture> searchResult = lectureRepository.findAllByUser_UserIdAndStartDateBeforeAndEndDateAfter(userId, LocalDate.now().plusDays(1), LocalDate.now().minusDays(1));
 
             // 개설중인 강의가 없는 경우, 빈 리스트 반환
-            List<LectureResponse.LecturePreview> result = new ArrayList<>();
+            List<LecturePreviewResponse> result = new ArrayList<>();
             for (Lecture l: searchResult){
-                LectureResponse.LecturePreview lecturePreview = l.toLecturePreview();
+                LecturePreviewResponse lecturePreview = LecturePreviewResponse.from(l);
                 lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(l.getLectureId()));
                 result.add(lecturePreview);
             }
@@ -183,15 +186,15 @@ public class LectureServiceImpl implements LectureService {
 
     // 수강중인 강의 검색
     @Override
-    public List<LectureResponse.LecturePreview> searchMyLecture(Integer userId) throws ParseException {
-        List<LectureResponse.LecturePreview> result;
+    public List<LecturePreviewResponse> searchMyLecture(Integer userId) throws ParseException {
+        List<LecturePreviewResponse> result;
         if(userRepository.existsById(userId)) {
 //            List<Lecture> lectures = registrationService.getCurrentLecturesOfUser(userId).getLectureList();
 //            for (Lecture l : lectures) {
 //                result.add(l.toLecturePreview());
 //            }
             result = registrationService.getCurrentLecturePreviewsOfUser(userId).getLecturePreviewList();
-            for(LectureResponse.LecturePreview lecturePreview : result) {
+            for(LecturePreviewResponse lecturePreview : result) {
                 lecturePreview.setSessionId(sessionService.getEarliestAvailableSession(lecturePreview.getLectureId()));
             }
         } else {
@@ -203,16 +206,16 @@ public class LectureServiceImpl implements LectureService {
 
     // 신청 가능한 강의 검색
     @Override
-    public List<LectureResponse.LectureDetail> searchAvailableLecture(Integer userId) {
+    public List<LectureDetailResponse> searchAvailableLecture(Integer userId) {
 
-        List<LectureResponse.LectureDetail> result = new ArrayList<>();
+        List<LectureDetailResponse> result = new ArrayList<>();
         List<Lecture> lectures = lectureRepository.findAllByUser_UserIdNotAndStartDateAfter(userId, LocalDate.now());
 
         // 수강 신청 가능한 강의가 없을 경우 빈 리스트 return
         for (Lecture l : lectures) {
             // 개강 전이면서 타인이 개설한 강의 중, 수강중이지 않은 강의만 result에 추가
             if(!registrationRepository.findByUserUserIdAndLectureLectureId(userId, l.getLectureId()).isPresent()) {
-                result.add(l.toLectureDetail());
+                result.add(LectureDetailResponse.from(l));
             }
         }
         return result;

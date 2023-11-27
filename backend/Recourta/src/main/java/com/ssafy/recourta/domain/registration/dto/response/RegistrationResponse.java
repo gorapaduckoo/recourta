@@ -1,6 +1,7 @@
 package com.ssafy.recourta.domain.registration.dto.response;
 
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
+import com.ssafy.recourta.domain.lecture.dto.response.LectureDetailResponse;
+import com.ssafy.recourta.domain.lecture.dto.response.LecturePreviewResponse;
 import com.ssafy.recourta.domain.user.dto.response.UserResponse;
 import lombok.*;
 
@@ -13,20 +14,20 @@ public class RegistrationResponse {
 
     @Getter
     public static class LecturePreviewList {
-        private List<LectureResponse.LecturePreview> lecturePreviewList;
+        private List<LecturePreviewResponse> lecturePreviewList;
 
         @Builder
-        public LecturePreviewList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+        public LecturePreviewList(List<LecturePreviewResponse> lecturePreviewList) {
             this.lecturePreviewList = lecturePreviewList;
         }
     }
 
     @Getter
     public static class LectureDetailList {
-        private List<LectureResponse.LectureDetail> lectureDetailList;
+        private List<LectureDetailResponse> lectureDetailList;
 
         @Builder
-        public LectureDetailList(List<LectureResponse.LectureDetail> lectureDetailList) {
+        public LectureDetailList(List<LectureDetailResponse> lectureDetailList) {
             this.lectureDetailList = lectureDetailList;
         }
     }
@@ -43,18 +44,18 @@ public class RegistrationResponse {
 
     @Getter
     public static class CurrentLectureList {
-        private List<LectureResponse.LecturePreview> lecturePreviewList;
+        private List<LecturePreviewResponse> lecturePreviewList;
 
-        @Builder CurrentLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+        @Builder CurrentLectureList(List<LecturePreviewResponse> lecturePreviewList) {
             this.lecturePreviewList = lecturePreviewList;
         }
     }
 
     @Getter
     public static class PreviousLectureList {
-        private List<LectureResponse.LecturePreview> lecturePreviewList;
+        private List<LecturePreviewResponse> lecturePreviewList;
 
-        @Builder PreviousLectureList(List<LectureResponse.LecturePreview> lecturePreviewList) {
+        @Builder PreviousLectureList(List<LecturePreviewResponse> lecturePreviewList) {
             this.lecturePreviewList = lecturePreviewList;
         }
     }

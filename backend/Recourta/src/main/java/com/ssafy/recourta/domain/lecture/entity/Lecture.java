@@ -1,16 +1,11 @@
 package com.ssafy.recourta.domain.lecture.entity;
 
 
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.sql.Date;
 import java.time.LocalDate;
-
-import static com.ssafy.recourta.global.util.LectureUtil.stringToJsonArray;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,30 +52,6 @@ public class Lecture {
 
     public void update(String lectureImg) {
         this.lectureImg = lectureImg;
-    }
-
-    public LectureResponse.LectureDetail toLectureDetail() {
-        return LectureResponse.LectureDetail.builder()
-                .lectureId(this.getLectureId())
-                .userId(this.getUser().getUserId())
-                .teacher(this.getUser().getName())
-                .title(this.getTitle())
-                .description(this.getDescription())
-                .startDate(this.getStartDate())
-                .endDate(this.getEndDate())
-                .lectureImg(this.getLectureImg())
-                .lectureTime(stringToJsonArray(this.getLectureTime()))
-                .build();
-    }
-
-    public LectureResponse.LecturePreview toLecturePreview() {
-        return LectureResponse.LecturePreview.builder()
-                .lectureId(this.getLectureId())
-                .teacher(this.getUser().getName())
-                .title(this.getTitle())
-                .lectureImg(this.getLectureImg())
-                .lectureTime(stringToJsonArray(this.getLectureTime()))
-                .build();
     }
 
 }

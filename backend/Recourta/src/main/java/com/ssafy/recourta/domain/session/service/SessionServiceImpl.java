@@ -1,7 +1,5 @@
 package com.ssafy.recourta.domain.session.service;
 
-import com.ssafy.recourta.domain.lecture.dto.request.LectureRequest;
-import com.ssafy.recourta.domain.lecture.dto.response.LectureResponse;
 import com.ssafy.recourta.domain.lecture.entity.Lecture;
 import com.ssafy.recourta.domain.lecture.repository.LectureRepository;
 import com.ssafy.recourta.domain.session.dto.request.SessionRequest;
