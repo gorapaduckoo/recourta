@@ -11,23 +11,20 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name="session")
 public class Session {
 
     @Id
-    @NotNull
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer sessionId; // 해당 회차의 수업 번호
+    private Integer sessionId;
 
     @ManyToOne
-    @NotNull
     @JoinColumn(name = "lectureId")
     private Lecture lecture;
-    @NotNull
+
     private LocalDateTime startTime;
-    @NotNull
+
     private LocalDateTime endTime;
 
     @Builder
